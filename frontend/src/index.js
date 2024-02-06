@@ -5,11 +5,17 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import './index.css';
 
-import App from './App';
-import Header from "./components/header/header.js";
-import Footer from "./components/footer/footer.js";
-import Login  from "./components/login/login.js";
-import Home   from "./components/home/home.js";
+import {
+	Header,
+	Footer,
+	Login,
+	Title,
+	Home,
+	Post,
+	Browse,
+	Trip,
+	Request
+} from "./components"
 
 const Layout = () => {
 	return (
@@ -28,12 +34,32 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '/',
-				element: <Login />
+				element: <Title />
 			},
 			{
 				path: '/home',
 				element: <Home />
-			}	
+			},
+			{
+				path: '/post',
+				element: <Post />
+			},
+			{
+				path: '/post/trip',
+				element: <Trip />
+			},
+			{
+				path: '/post/request',
+				element: <Request />
+			},
+			{
+				path: '/browse',
+				element: <Browse />
+			}, 
+			{
+				path: '/login',
+				element: <Login />
+			}
 		]
 	}
 ]);

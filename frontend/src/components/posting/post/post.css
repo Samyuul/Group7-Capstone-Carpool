@@ -1,0 +1,32 @@
+#post-page {    
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+#post-page a {
+    width: 500px;
+    height: 100px;
+    background-color: black;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+
+    margin: 50px;
+    border-radius: 25px;
+
+}
+
+#post-page a:hover {
+    background-color: white;
+    color: black;
+
+}

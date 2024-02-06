@@ -1,0 +1,50 @@
+body {
+    background-color: lightgray;
+
+    height: 100vh;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+
+    height: inherit;
+}
+
+header {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-around;
+    align-items: center;
+
+    background-color: black;
+    color: white;
+}
+
+#header-login, #header-title, #header-post {
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header a {
+    padding: 15px 25px;
+    cursor: pointer;
+
+    text-decoration: none;
+    color: white;
+}
+
+header a:hover {
+    background-color: aqua;
+}

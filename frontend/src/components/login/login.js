@@ -2,8 +2,10 @@ import "./login.css"
 
 const login = (props) => {
 
+    
+
     return (
-        <div>
+        <div id="login-page">
             LOGIN PAGE
             <a href="/home">Login</a>
         </div>

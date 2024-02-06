@@ -1,0 +1,48 @@
+#trip-page {
+    width: 60%;
+
+    margin: 0 auto;
+
+    background-color: lightcoral;
+}
+
+#itinerary {
+    display: flex;
+}
+
+#travel-info {
+    width: 50%;
+}
+
+.form-cell {
+    width: 80%;
+    margin: 15px auto;
+
+    display: flex;
+}
+
+.form-cell input {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.form-cell textarea {
+    flex: 1;
+    margin-left: 15px;
+
+    height: 150px;
+    resize: none;
+}
+
+#google-map {
+    width: 45%;
+    height: 50vh;
+
+    margin: auto;
+    background-color: lightcyan;
+}
+
+#preference-section {
+    width: 80%;
+    margin: auto;
+}
