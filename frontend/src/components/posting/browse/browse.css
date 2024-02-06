@@ -1,3 +1,14 @@
-body {
-    
+#browse-page {
+
+    background-color: lightpink;
+
+}
+
+.posting {
+    width: 50%;
+    margin: 15px auto;
+    background-color: lightblue;
+
+    padding: 15px 25px;
+
 }

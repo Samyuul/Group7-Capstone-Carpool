@@ -1,8 +1,7 @@
 import "./login.css"
+import React, { useState } from 'react';
 
-const login = (props) => {
-
-    
+const Login = (props) => {
 
     return (
         <div id="login-page">
@@ -13,5 +12,5 @@ const login = (props) => {
 
 }
 
-export default login
+export default Login
 
