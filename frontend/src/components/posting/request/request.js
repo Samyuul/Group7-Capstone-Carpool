@@ -1,6 +1,7 @@
 import "./request.css"
+import React, { useState } from 'react';
 
-const request = (props) => {
+const Request = (props) => {
 
     return (
         <div>
@@ -10,4 +11,4 @@ const request = (props) => {
 
 }
 
-export default request
+export default Request

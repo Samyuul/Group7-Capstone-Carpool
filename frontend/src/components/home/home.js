@@ -1,6 +1,7 @@
 import "./home.css"
+import React, { useState } from 'react';
 
-const home = (props) => {
+const Home = (props) => {
 
     return (
 
@@ -10,4 +11,4 @@ const home = (props) => {
 
 }
 
-export default home;
+export default Home;

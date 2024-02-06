@@ -1,6 +1,7 @@
 import "./trip.css"
+import React, { useState } from 'react';
 
-const trip = (props) => {
+const Trip = (props) => {
 
     return(
 
@@ -74,4 +75,4 @@ const trip = (props) => {
 
 }
 
-export default trip
+export default Trip

@@ -1,6 +1,7 @@
 import "./footer.css"
+import React, { useState } from 'react';
 
-const footer = (props) => {
+const Footer = (props) => {
 
 
     return (
@@ -11,4 +12,4 @@ const footer = (props) => {
 
 }
 
-export default footer;
+export default Footer;

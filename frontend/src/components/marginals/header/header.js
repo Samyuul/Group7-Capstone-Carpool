@@ -1,6 +1,7 @@
 import "./header.css"
+import React, { useState } from 'react';
 
-const header = (props) => {
+const Header = (props) => {
 
     return (
         <header>
@@ -21,4 +22,4 @@ const header = (props) => {
 
 }
 
-export default header
+export default Header

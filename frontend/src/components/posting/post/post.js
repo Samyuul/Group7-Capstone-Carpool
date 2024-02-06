@@ -1,6 +1,7 @@
 import "./post.css"
+import React, { useState } from 'react';
 
-const post = (props) => {
+const Post = (props) => {
 
 
     return (
@@ -12,4 +13,4 @@ const post = (props) => {
 
 }
 
-export default post
+export default Post
