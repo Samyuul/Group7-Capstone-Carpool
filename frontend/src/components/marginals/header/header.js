@@ -1,13 +1,15 @@
 import "./header.css"
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { browserHistory } from 'react-router';
 
 const Header = (props) => {
 
     return (
         <header>
             <div id="header-post">
-                <a href="/browse">Browse</a>
-                <a href="/post">Post</a>
+                <Link to={"/browse"}>Browse</Link>
+                <Link to={"/post"}>Post</Link>
             </div>
 
             <div id="header-title">
@@ -15,7 +17,8 @@ const Header = (props) => {
             </div>
             
             <div id="header-login">
-                <a href="/login">Login</a>
+                {(props.userName === "") ? "" : <Link to={"/profile/" + props.userName}>View Profile</Link> }
+                {(props.userName === "") ? <Link to={"/login"}>Login</Link> : <Link to={"/logout"}>Logout</Link> }
             </div>
         </header>
     )

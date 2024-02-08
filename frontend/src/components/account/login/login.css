@@ -1,0 +1,33 @@
+#login-page {
+    flex: 1;
+
+    display: flex;
+}
+
+#login-image {
+    background-color: pink;
+    flex: 3;
+}
+
+#login-form {
+    background-color: lightcyan;
+    flex: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+#login-box {
+    display: flex;
+    flex-direction: column;
+    background-color: lightcoral;
+
+    padding: 15px;
+}
+
+.login-input-cell {
+    display: flex;
+    flex-direction: column;
+}

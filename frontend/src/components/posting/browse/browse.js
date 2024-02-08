@@ -10,7 +10,7 @@ const Browse = (props) => {
         return (
             postings.map((val, i) => {
                 return (
-                    <div className="posting">
+                    <div key={i} className="posting">
                         <h3>Test {i}</h3>
 
                         <p>This is a test post</p>
@@ -23,7 +23,6 @@ const Browse = (props) => {
                 )
             })
         )
-
     }
     
     return (

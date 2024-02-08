@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
@@ -14,14 +14,23 @@ import {
 	Post,
 	Browse,
 	Trip,
-	Request
+	Request,
+	User,
+	Logout,
+	Register
 } from "./components"
 
 const Layout = () => {
+
+	const [userName, setUserName] = useState("");
+
 	return (
 		<>
-			<Header />
-			<Outlet />
+			<Header 
+				userName={userName} 
+				setUserName={setUserName}
+			/>
+			<Outlet context={[userName, setUserName]}/>
 			<Footer />
 		</>
 	)
@@ -59,6 +68,18 @@ const router = createBrowserRouter([
 			{
 				path: '/login',
 				element: <Login />
+			},
+			{
+				path: '/profile/:username',
+				element: <User />
+			},
+			{
+				path: '/logout',
+				element: <Logout />
+			},
+			{
+				path: '/register',
+				element: <Register />
 			}
 		]
 	}
