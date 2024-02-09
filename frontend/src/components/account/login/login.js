@@ -1,6 +1,12 @@
 import "./login.css"
 import React, { useState } from 'react';
 import { Link, useOutletContext } from "react-router-dom";
+import axios from 'axios';
+
+import {
+	Header,
+	Footer,
+} from "./../../"
 
 const Login = (props) => {
 
@@ -8,6 +14,17 @@ const Login = (props) => {
 
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+
+    const handleLogin = async event => {
+
+        event.preventDefault();
+        const user = { usernameInput, passwordInput };
+
+        setUserName(usernameInput);
+        
+        localStorage.setItem('user', usernameInput);
+        console.log(localStorage.getItem('user'));
+    }
 
     return (
         <div id="login-page">
@@ -31,7 +48,7 @@ const Login = (props) => {
                         <input id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
                     </div>
 
-                    <Link id="login-submit" to={"/home"} onClick={() => setUserName(usernameInput)}>Login</Link>
+                    <Link id="login-submit" to={"/login"} onClick={handleLogin}>Login</Link>
 
                     <p>Don't have an account? <Link to={"/register"}>Register Here</Link></p>
                 </div>

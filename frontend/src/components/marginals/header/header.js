@@ -1,15 +1,19 @@
 import "./header.css"
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { browserHistory } from 'react-router';
+import React, { useState, useEffect } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 
 const Header = (props) => {
+
+    if (localStorage.getItem("users"))
+        console.log("success");
+    else
+        console.log("failure");
 
     return (
         <header>
             <div id="header-post">
                 <Link to={"/browse"}>Browse</Link>
-                <Link to={"/post"}>Post</Link>
+                <Link to={!localStorage.getItem('user') ? "/login" : "/post"}>Post</Link>
             </div>
 
             <div id="header-title">
@@ -17,8 +21,8 @@ const Header = (props) => {
             </div>
             
             <div id="header-login">
-                {(props.userName === "") ? "" : <Link to={"/profile/" + props.userName}>View Profile</Link> }
-                {(props.userName === "") ? <Link to={"/login"}>Login</Link> : <Link to={"/logout"}>Logout</Link> }
+                {!localStorage.getItem('user') ? <></> : <Link to={"/profile/" + localStorage.getItem('user')}>View Profile</Link> }
+                {!localStorage.getItem('user') ? <Link to={"/login"}>Login</Link> : <Link to={"/logout"}>Logout</Link> }
             </div>
         </header>
     )

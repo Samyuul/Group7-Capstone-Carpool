@@ -12,17 +12,17 @@ const Trip = (props) => {
             <h4>Planned Route</h4>
             <div id="itinerary">
                 <div id="travel-info">
-                    <div class="form-cell">
+                    <div className="form-cell">
                         <label>Starting Point: </label>
                         <input id="start-point"></input>
                     </div>
 
-                    <div class="form-cell">
+                    <div className="form-cell">
                         <label>Destination: </label>
                         <input id="end-point"></input>
                     </div>
 
-                    <div class="form-cell">
+                    <div className="form-cell">
                         <label>Additional Stops: </label>
                         <input id="stop-point"></input>
                     </div>
@@ -35,14 +35,14 @@ const Trip = (props) => {
 
             <h4>Departure Time</h4>
 
-                <div class="form-cell">
+                <div className="form-cell">
                     <label>Time: </label>
                     <input type="datetime-local"></input>
                 </div>
 
             <h4>Number of Seets</h4>
 
-                <div class="form-cell">
+                <div className="form-cell">
                     1 2 3 4 5 6 7 8 
                 </div>
 
@@ -50,7 +50,7 @@ const Trip = (props) => {
             <h4>Preferences</h4>
             <div id="preference-section">
 
-                <div class="preference-cell">
+                <div className="preference-cell">
                     <label>Test: </label>
                     <input type="checkbox"></input>
                 </div>
@@ -58,7 +58,7 @@ const Trip = (props) => {
             </div>
 
             <h4>Trip Description</h4>
-                <div class="form-cell">
+                <div className="form-cell">
                     <label>Description: </label>
                     <textarea id="desc" ></textarea>
                 </div>

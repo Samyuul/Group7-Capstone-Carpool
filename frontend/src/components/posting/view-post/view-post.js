@@ -1,20 +1,18 @@
-import "./user.css"
+import "./view-post.css"
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const User = (props) => {
+const ViewPost = (props) => {
 
-    const { username } = useParams();
+    const { postID } = useParams();
 
     return (
-
         <div>
-            {username}
+            {postID}
         </div>
-    
     )
 
 }
 
-export default User
-
+export default ViewPost

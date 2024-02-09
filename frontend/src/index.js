@@ -17,15 +17,17 @@ import {
 	Request,
 	User,
 	Logout,
-	Register
+	Register,
+	Private
 } from "./components"
 
 const Layout = () => {
 
-	const [userName, setUserName] = useState("");
+	const [userName, setUserName] = useState(localStorage.getItem("users"));
 
 	return (
 		<>
+			
 			<Header 
 				userName={userName} 
 				setUserName={setUserName}
@@ -38,6 +40,7 @@ const Layout = () => {
 
 const router = createBrowserRouter([
 	{
+		path: "/",
 		element: <Layout />,
 
 		children: [
@@ -47,19 +50,22 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/home',
-				element: <Home />
+				element: <Private><Home /></Private>
 			},
 			{
 				path: '/post',
-				element: <Post />
+				element: 
+					<Private>
+						<Post />
+					</Private>
 			},
 			{
 				path: '/post/trip',
-				element: <Trip />
+				element: <Private><Trip /></Private>
 			},
 			{
 				path: '/post/request',
-				element: <Request />
+				element: <Private><Request /></Private>
 			},
 			{
 				path: '/browse',
@@ -71,15 +77,15 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/profile/:username',
-				element: <User />
+				element: <Private><User /></Private>
 			},
 			{
 				path: '/logout',
-				element: <Logout />
+				element: <Private><Logout /></Private>
 			},
 			{
 				path: '/register',
-				element: <Register />
+				element: <Private><Register /></Private>
 			}
 		]
 	}
