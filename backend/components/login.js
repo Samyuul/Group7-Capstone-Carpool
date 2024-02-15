@@ -1,6 +1,38 @@
-import "../server"
+// import "../server";
 
+//use postman to test it:
 
+// e.g.       First make sure there is data inside local database !!!
+
+//            POST http://localhost:8080/login/
+//            Body --> from-data 
+//            Key:txtUsername       Value:vincent
+//            Key:txtPassword       Value:password  
+//            (If database have it, then it show account funded)
+
+const express = require("express");
+const mongoose = require("mongoose");
+const path = require("path");
+var myWebsite = express();
+
+const upload = require("express-fileupload");
+myWebsite.use(upload());
+
+myWebsite.use(express.urlencoded({extended:true}));
+
+myWebsite.set("views",path.join(__dirname,"../frontend/src")); //This section should change to cd../frontend/src/components
+myWebsite.use(express.static(__dirname+"../frontend/src"));//For css file but I think we don't need it
+myWebsite.set("view engine","ejs")
+
+const {check,validationResult}= require("express-validator");
+const { stringify } = require("querystring");
+
+mongoose.connect("mongodb://localhost:27017/vroom-room"),{
+    UserNewUrlParser: true,
+    UserUnifiedTopology:true
+}
+
+//*********************************************/
 const Accounts = mongoose.model("Accounts",{
     username:String,
     password:String
@@ -14,11 +46,11 @@ myWebsite.use(session({
 }));
 
 
-myWebsite.get("/login", function (req, res) {
-    res.render("login")
+myWebsite.get("/register", function (req, res) {
+    res.render("register")
 })
 
-myWebsite.post("/login", function (req, res) {
+myWebsite.post("/register", function (req, res) {
     var username = req.body.txtUsername;
     var password = req.body.txtPassword;
 
@@ -29,6 +61,7 @@ myWebsite.post("/login", function (req, res) {
         if (Accounts) {
             req.session.username = Accounts.username;
             req.session.userLoggedIn = true;
+            console.log(`Account funded`)
             res.redirect("/profile")
         }
         else {
@@ -38,3 +71,10 @@ myWebsite.post("/login", function (req, res) {
         console.log(`Error: ${err}`);
     })
 })
+
+
+
+//*********************************************/
+
+myWebsite.listen(8080);
+console.log("http://localhost:8080")
