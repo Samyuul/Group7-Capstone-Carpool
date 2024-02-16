@@ -46,11 +46,11 @@ myWebsite.use(session({
 }));
 
 
-myWebsite.get("/register", function (req, res) {
-    res.render("register")
+myWebsite.get("/login", function (req, res) {
+    res.render("login")
 })
 
-myWebsite.post("/register", function (req, res) {
+myWebsite.post("/login", function (req, res) {
     var username = req.body.txtUsername;
     var password = req.body.txtPassword;
 
