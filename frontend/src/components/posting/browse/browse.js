@@ -1,5 +1,6 @@
 import "./browse.css"
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 
 const Browse = (props) => {
 
@@ -16,9 +17,9 @@ const Browse = (props) => {
                         <p>This is a test post</p>
                         <p>Posted by: Bob</p>
 
-                        <button>
-                            Join Now!
-                        </button>
+                        <Link to={"/post/" + i}>
+                            View 
+                        </Link>
                     </div>
                 )
             })

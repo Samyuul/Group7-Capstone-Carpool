@@ -5,6 +5,10 @@ const Logout = (props) => {
 
     const [userName, setUserName] = useOutletContext();
 
+    const handleLogout = (event) => {
+        localStorage.clear();
+    }
+
     return (
 
         <div id="logout-page">
@@ -13,7 +17,7 @@ const Logout = (props) => {
                 Are you sure?
             </p>
             <div>
-                <Link id="logout-button" to={"/login"} onClick={() => setUserName("")}>
+                <Link id="logout-button" to={"/login"} onClick={handleLogout} reloadDocument >
                     Yes
                 </Link>
                 <Link id="logout-cancel-button" to={-1}>

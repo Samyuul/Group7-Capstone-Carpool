@@ -1,13 +1,14 @@
 import "./post.css"
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Post = (props) => {
 
 
     return (
         <div id="post-page">
-            <a href="/post/trip">Post a future trip</a>
-            <a href="/post/request">Request a future trip</a>
+            <Link to="/post/trip">Post a future trip</Link>
+            <Link to="/post/request">Request a future trip</Link>
         </div>
     )
 
