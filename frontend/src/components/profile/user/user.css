@@ -3,7 +3,7 @@
 
     background-color: pink;
 
-    width: 80%;
+    width: 60%;
     margin: 0 auto;
 
     display: flex;
@@ -28,8 +28,16 @@
     justify-content: center;
 }
 
+#profile-image img {
+    width: 100%;
+    height: 100%;
+    
+    object-fit: cover;
+    border-radius: 50%;
+}
+
 #profile-desc {
-    width: 60%;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -38,10 +46,9 @@
 }
 
 .review {
-    width: 60%;
+    width: 80%;
     margin: 15px auto;
 
     background-color: lightsalmon;
-
     padding: 15px;
 }

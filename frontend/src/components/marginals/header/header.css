@@ -4,6 +4,15 @@ body {
     height: 100vh;
 }
 
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
 #root {
     display: flex;
     flex-direction: column;
@@ -20,17 +29,53 @@ header {
     justify-content: space-around;
     align-items: center;
 
-    background-color: black;
-    color: white;
+    background-color: #001219;
+    color: #CA6702;
 }
 
-#header-login, #header-title, #header-post {
+#header-login {
+    display: flex;
     flex: 1;
 
+    align-items: center;
+    justify-content: right;
+
+    margin-right: 25px;
+}
+
+#header-login a {
+    margin-right: 15px;
+    padding: 8px 25px 8px 25px;
+}
+
+#header-login a img {
+    height: 36px;
+    width: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#profile-link {
+    padding: 2px 25px 2px 18px !important;
+}
+
+#header-post {
     display: flex;
+    flex: 1;
 
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: left;
+}
+
+#header-post a {
+    margin-left: 15px;
+    padding: 8px 25px 8px 18px;
+}
+
+#header-title {
+    justify-content: left;
+    padding: 10px 15px 10px 25px;
+
 }
 
 header h1 {
@@ -38,13 +83,18 @@ header h1 {
 }
 
 header a {
-    padding: 15px 25px;
-    cursor: pointer;
+    color: #94D2BD;
 
-    text-decoration: none;
-    color: white;
+    display: flex;
+    align-items: center;
+
+    column-gap: 10px;    
+    border-radius: 25px;
+
+    border: 2px solid #CA6702;
 }
 
 header a:hover {
-    background-color: aqua;
+    background-color: #0A9396;
 }
+

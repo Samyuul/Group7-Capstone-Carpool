@@ -7,6 +7,10 @@ const User = (props) => {
     const { username } = useParams();
     const [reviews, setReviews] = useState(["qwer", "asdf", "zxcv", "fghj", "rtyu"]);
 
+    const getProfileImage = () => {
+        return require('../../../img/head.webp');
+    }
+
     const renderReviews = () => {
 
         return(
@@ -32,7 +36,9 @@ const User = (props) => {
         <div id="profile-page">
             
             <div id="profile-header">
-                <div id="profile-image">Image</div>
+                <div id="profile-image">
+                    <img src={getProfileImage()}></img>
+                </div>
                 <h1>{username}</h1>
             </div>
 
