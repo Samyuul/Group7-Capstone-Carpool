@@ -1,14 +1,4 @@
-// import "../server";
 
-//use postman to test it:
-
-// e.g.       First make sure there is data inside local database !!!
-
-//            POST http://localhost:8080/login/
-//            Body --> from-data 
-//            Key:txtUsername       Value:vincent
-//            Key:txtPassword       Value:password  
-//            (If database have it, then it show account funded)
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -46,33 +36,15 @@ myWebsite.use(session({
 }));
 
 
-myWebsite.get("/login", function (req, res) {
-    res.render("login")
+myWebsite.get("/logout", function (req, res) {
+    req.session.userLoggedIn = false;//set session userlogged in to false.
+    res.render("logout")
 })
 
-myWebsite.post("/login", function (req, res) {
-    var username = req.body.txtUsername;
-    var password = req.body.txtPassword;
-
-    console.log(`username:${username} & password:${password}`)
-
-    Accounts.findOne({ username: username, password: password }).then((Accounts) => {
-        console.log(`Accounts:${Accounts}`);
-        if (Accounts) {
-            req.session.username = Accounts.username;
-            req.session.userLoggedIn = true;
-            console.log(`Account funded`)
-            res.redirect("/profile")
-        }
-        else {
-
-        }
-    }).catch((err) => {
-        console.log(`Error: ${err}`);
-    })
+myWebsite.post("/logout", function (req, res) {
+    //after click ok or next, then render to homepage.or log in page if we need.
+    res.render("home")
 })
-
-
 
 //*********************************************/
 
