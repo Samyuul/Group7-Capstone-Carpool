@@ -48,7 +48,7 @@ const Login = (props) => {
                         <input id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
                     </div>
 
-                    <Link id="login-submit" to={"/login"} onClick={handleLogin}>Login</Link>
+                    <Link id="login-submit" to={"/home"} onClick={handleLogin}>Login</Link>
 
                     <p>Don't have an account? <Link to={"/register"}>Register Here</Link></p>
                 </div>

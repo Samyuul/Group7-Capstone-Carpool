@@ -18,7 +18,8 @@ import {
 	User,
 	Logout,
 	Register,
-	Private
+	Private,
+	ViewPost
 } from "./components"
 
 const Layout = () => {
@@ -54,10 +55,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/post',
-				element: 
-					<Private>
-						<Post />
-					</Private>
+				element: <Private><Post /></Private>
 			},
 			{
 				path: '/post/trip',
@@ -85,7 +83,11 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/register',
-				element: <Private><Register /></Private>
+				element: <Register />
+			},
+			{
+				path: '/post/view/:postID',
+				element: <Private><ViewPost/></Private>
 			}
 		]
 	}

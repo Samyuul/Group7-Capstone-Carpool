@@ -40,7 +40,7 @@ const Trip = (props) => {
                     <input type="datetime-local"></input>
                 </div>
 
-            <h4>Number of Seets</h4>
+            <h4>Number of Seats</h4>
 
                 <div className="form-cell">
                     1 2 3 4 5 6 7 8 

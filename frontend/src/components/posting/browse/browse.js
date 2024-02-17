@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Browse = (props) => {
 
-    const [postings, setPostings] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const [postings, setPostings] = useState(['dafsa', 'davsadd', 'yeays', 'bffr', 'fdasf', 'esfav', 'feavd', 'aewae', 'fdasvd']);
 
     const renderPostings = () => {
 
@@ -17,7 +17,7 @@ const Browse = (props) => {
                         <p>This is a test post</p>
                         <p>Posted by: Bob</p>
 
-                        <Link to={"/post/" + i}>
+                        <Link to={"/post/view/" + val}>
                             View 
                         </Link>
                     </div>
