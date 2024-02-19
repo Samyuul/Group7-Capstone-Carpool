@@ -38,7 +38,7 @@ const Header = (props) => {
 
                 {!localStorage.getItem('user') ? 
                     <></> : 
-                    <Link id="profile-link" className="flex-link" to={"/profile/" + localStorage.getItem('user')}>
+                    <Link id="profile-link" className="flex-link" to={"/profile/"}>
                         <img id="thumbnail-image" src={getProfileImage()}></img>
                         Profile
                     </Link> }

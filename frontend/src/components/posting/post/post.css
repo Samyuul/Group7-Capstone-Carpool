@@ -10,9 +10,7 @@
 
 #post-page a {
     width: 500px;
-    height: 100px;
-    background-color: black;
-    color: white;
+    height: 125px;
 
     display: flex;
     align-items: center;
@@ -20,13 +18,40 @@
 
     text-decoration: none;
 
-    margin: 50px;
-    border-radius: 25px;
+    margin: 25px;
+    border-radius: 35px;
 
+    font-size: 24px;
+    font-weight: 600;
+    
+    box-shadow: 0 0 15px 1px #e78267;
 }
 
-#post-page a:hover {
-    background-color: white;
-    color: black;
+#post-page hr {
+    width: 600px;
+    height: 2px;
 
+    background-color: black;
+}
+
+#post-page a p {
+    margin: 0 20px;
+}
+
+#post-link {
+    background-color: #0A9396;
+    color: #EE9B00;
+}
+
+#post-link:hover {
+    filter: invert(100%);
+}
+
+#request-link {
+    background-color: #9B2226;
+    color: #94D2BD;
+}
+
+#request-link:hover {
+    filter: invert(100%);
 }

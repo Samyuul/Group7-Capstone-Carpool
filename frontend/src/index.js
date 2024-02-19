@@ -15,7 +15,7 @@ import {
 	Browse,
 	Trip,
 	Request,
-	User,
+	Profile,
 	Register,
 	Private,
 	ViewPost,
@@ -74,8 +74,12 @@ const router = createBrowserRouter([
 				element: <Public><Login /></Public>
 			},
 			{
+				path: '/profile',
+				element: <Private><Profile /></Private>
+			},
+			{
 				path: '/profile/:username',
-				element: <Private><User /></Private>
+				element: <Private><Profile /></Private>
 			},
 			{
 				path: '/register',

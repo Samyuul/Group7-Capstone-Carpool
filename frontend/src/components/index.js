@@ -7,7 +7,7 @@ export { default as Post     } from "./posting/post/post.js";
 export { default as Browse   } from './posting/browse/browse.js';
 export { default as Trip     } from "./posting/trip/trip.js"
 export { default as Request  } from "./posting/request/request.js"
-export { default as User     } from "./profile/user/user.js"
+export { default as Profile  } from "./profiles/profile/profile.js"
 export { default as Register } from "./account/register/register.js"
 export { default as Private  } from "./redirect/private.js"
 export { default as Public   } from "./redirect/public.js" 

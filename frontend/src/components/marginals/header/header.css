@@ -1,6 +1,4 @@
 body {
-    background-color: lightgray;
-
     height: 100vh;
 }
 
@@ -11,6 +9,21 @@ a {
 
 .hidden {
     visibility: hidden;
+}
+
+.underline::after {
+    content: "";
+    width: 80%;
+    height: 1px;
+    bottom: 0;
+    
+    margin: auto;
+    border-bottom: 3px solid #0d1b2a;
+
+    position: relative;
+    display: block;
+
+    margin-top: 10px;
 }
 
 #root {
