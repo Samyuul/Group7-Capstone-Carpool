@@ -5,6 +5,8 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import './index.css';
 
+import TestPage from './test/testPage';
+
 import {
 	Header,
 	Footer,
@@ -86,6 +88,10 @@ const router = createBrowserRouter([
 			{
 				path: '/register',
 				element: <Private><Register /></Private>
+			},
+			{
+				path:'/test',
+				element: <TestPage></TestPage>
 			}
 		]
 	}
