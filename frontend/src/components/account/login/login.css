@@ -1,16 +1,48 @@
 #login-page {
     flex: 1;
-
     display: flex;
 }
 
 #login-image {
-    background-color: pink;
     flex: 3;
+    background-color: #CA6702;
+}
+
+#login-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    -webkit-user-drag: none;
+    border-radius: 0 50px 50px 0;
+}
+
+#login-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: lightgray;
+    width: fit-content;
+
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+#login-switch a {
+    padding: 10px 15px;
+    border-radius: 10px;
+
+    background-color: lightgray;
+}
+
+#active-button {
+    background-color: #AE2012 !important;
+    color: white;
 }
 
 #login-form {
-    background-color: lightcyan;
+    background-color: #CA6702;
     flex: 2;
 
     display: flex;
@@ -22,12 +54,75 @@
 #login-box {
     display: flex;
     flex-direction: column;
-    background-color: lightcoral;
 
-    padding: 15px;
+    width: 70%;
+    background-color: white;
+    padding: 35px;
+
+    border-radius: 25px;
+}
+
+#login-box h2 {
+    font-size: 38px;
+}
+
+#login-box h4 {
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
 .login-input-cell {
     display: flex;
     flex-direction: column;
+}
+
+.login-input-cell input {
+    height: 45px;
+    text-indent: 38px;
+
+    font-size: 20px;
+
+    border: none;
+    background-color: lightgray;
+
+    border-radius: 15px;
+}
+
+.login-input-cell svg {
+    position: relative;
+    top: 35px;
+    left: 8px;
+}
+
+#login-submit {
+    margin: 35px auto 0px auto;
+
+    background-image: linear-gradient(90deg, #9B2226, #EE9B00);
+
+    width: 100%;
+
+    padding: 15px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    border-radius: 15px;
+}
+
+#reset-password {
+    margin: 15px auto 0 auto;
+    font-weight: 800;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+    #login-box h2 {
+        background: -webkit-linear-gradient(0, #9B2226, #EE9B00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+    }
 }

@@ -2,27 +2,50 @@ import "./header.css"
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 
+import { 
+    PlusCircle, 
+    MagnifyingGlass
+} from '@vectopus/atlas-icons-react';
+
 const Header = (props) => {
 
-    if (localStorage.getItem("users"))
-        console.log("success");
-    else
-        console.log("failure");
+    const getProfileImage = () => {
+        return require('../../../img/thumbnail.webp');
+    }
+
+    const handleLogout = (event) => {
+        localStorage.clear();
+    }
 
     return (
         <header>
-            <div id="header-post">
-                <Link to={"/browse"}>Browse</Link>
-                <Link to={!localStorage.getItem('user') ? "/login" : "/post"}>Post</Link>
-            </div>
-
             <div id="header-title">
                 <h1>Vroom Room</h1>
             </div>
+
+            <div id="header-post">
+                <Link className="flex-link" to={"/browse"}>
+                    <MagnifyingGlass size={24} weight="bold" />
+                    Browse
+                </Link>
+                <Link className="flex-link" to={!localStorage.getItem('user') ? "/login" : "/post"}>
+                    <PlusCircle size={24} weight="bold" />
+                    Post
+                </Link>
+            </div>
             
             <div id="header-login">
-                {!localStorage.getItem('user') ? <></> : <Link to={"/profile/" + localStorage.getItem('user')}>View Profile</Link> }
-                {!localStorage.getItem('user') ? <Link to={"/login"}>Login</Link> : <Link to={"/logout"}>Logout</Link> }
+
+                {!localStorage.getItem('user') ? 
+                    <></> : 
+                    <Link id="profile-link" className="flex-link" to={"/profile/"}>
+                        <img id="thumbnail-image" src={getProfileImage()}></img>
+                        Profile
+                    </Link> }
+
+                {!localStorage.getItem('user') ? 
+                    <Link to={"/login"}>Login</Link> : 
+                    <Link to={"/login"} onClick={handleLogout} reloadDocument>Logout</Link> }
             </div>
         </header>
     )

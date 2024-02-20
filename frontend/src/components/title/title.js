@@ -3,7 +3,7 @@ import "./title.css"
 const title = (props) => {
 
     return (
-        <div>
+        <div id="title-page">
             Title Page
         </div>
     )

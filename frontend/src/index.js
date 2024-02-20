@@ -17,10 +17,11 @@ import {
 	Browse,
 	Trip,
 	Request,
-	User,
-	Logout,
+	Profile,
 	Register,
-	Private
+	Private,
+	ViewPost,
+	Public
 } from "./components"
 
 const Layout = () => {
@@ -56,10 +57,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/post',
-				element: 
-					<Private>
-						<Post />
-					</Private>
+				element: <Private><Post /></Private>
 			},
 			{
 				path: '/post/trip',
@@ -75,23 +73,23 @@ const router = createBrowserRouter([
 			}, 
 			{
 				path: '/login',
-				element: <Login />
+				element: <Public><Login /></Public>
+			},
+			{
+				path: '/profile',
+				element: <Private><Profile /></Private>
 			},
 			{
 				path: '/profile/:username',
-				element: <Private><User /></Private>
-			},
-			{
-				path: '/logout',
-				element: <Private><Logout /></Private>
+				element: <Private><Profile /></Private>
 			},
 			{
 				path: '/register',
-				element: <Private><Register /></Private>
+				element: <Public><Register /></Public>
 			},
 			{
-				path:'/test',
-				element: <TestPage></TestPage>
+				path: '/post/view/:postID',
+				element: <Private><ViewPost/></Private>
 			}
 		]
 	}
