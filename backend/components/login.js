@@ -10,8 +10,23 @@
 //            Key:txtPassword       Value:password  
 //            (If database have it, then it show account funded)
 
-//import { mongoose,myWebsite } from "./JavaScriptCommon.js"
-const {mongoose, myWebsite} = require('./JavaScriptCommon.js');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require('cors'); // You need to add this to every page
+
+var myWebsite = express();
+myWebsite.use(cors()) // You need to add this to every page
+
+myWebsite.use(express.urlencoded({extended:true}));
+myWebsite.use(express.json());
+
+const {check,validationResult}= require("express-validator");
+const { stringify } = require("querystring");
+
+mongoose.connect("mongodb://localhost:27017/vroom-room"),{
+    UserNewUrlParser: true,
+    UserUnifiedTopology:true
+}
 
 //*********************************************/
 const Accounts = mongoose.model("Accounts",{
@@ -26,9 +41,10 @@ myWebsite.use(session({
     saveUninitialized: true
 }));
 
-
+// For example, you can delete this since we are rendering the login page using reactJS, you won't need res.render anywhere
+// Don't need to set ejs, view and all the other things we learned in the javascript course
 myWebsite.get("/login", function (req, res) {
-    res.render("login")
+    res.render("login");
 })
 
 myWebsite.post("/login", function (req, res) {
@@ -42,14 +58,22 @@ myWebsite.post("/login", function (req, res) {
         if (Accounts) {
             req.session.username = Accounts.username;
             req.session.userLoggedIn = true;
-            console.log(`Account funded`)
-            res.redirect("/profile")
+            console.log(`Account funded`);
+            res.send("/profile"); // Don't use redirect either, you can just send the expected url path and we can do it client side
+            // res.redirect("/profile")
         }
         else {
-
-        }
+            console.log("No account found");
+            res.status(500).send({                               
+                message: "No account found"
+            })        }
     }).catch((err) => {
         console.log(`Error: ${err}`);
+
+        // Error codes https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+        res.status(404).send({
+            message: `Error: ${err}`
+        })
     })
 })
 

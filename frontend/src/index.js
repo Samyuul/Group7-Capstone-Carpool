@@ -26,15 +26,12 @@ import {
 
 const Layout = () => {
 
-	const [userName, setUserName] = useState(localStorage.getItem("users"));
+	const [userName, setUserName] = useState("");
 
 	return (
 		<>
 			
-			<Header 
-				userName={userName} 
-				setUserName={setUserName}
-			/>
+			<Header />
 			<Outlet context={[userName, setUserName]}/>
 			<Footer />
 		</>

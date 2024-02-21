@@ -86,12 +86,30 @@
     background-color: lightgray;
 
     border-radius: 15px;
+    box-sizing: border-box;
 }
 
-.login-input-cell svg {
+.login-svg {
     position: relative;
     top: 35px;
     left: 8px;
+}
+
+.login-input-cell p {
+    margin: 0;
+    color: red;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 700;
+}
+
+.error-svg {
+    margin: 0;
+    padding: 0;
+    color: red;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #login-submit {

@@ -4,11 +4,12 @@ import { Link, useOutletContext } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
 
-import RegisterRoutes from "../../../routes/registerRoute";
+import AccountRoutes from "../../../routes/accountRoutes";
 
 import {
     Account,
-    Keys
+    Keys,
+    TriangleExclamation
 } from '@vectopus/atlas-icons-react';
 
 const Register = (props) => {
@@ -18,15 +19,49 @@ const Register = (props) => {
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
 
+    const [errorMsg, setErrorMsg] = useState(["", ""]);
+
     const registerAccount = () => {
 
-        RegisterRoutes.registerAccount("sam1111", "pass222")
-        .then(response => {
-            console.log("success!")
-        }).catch (e => {
-            console.log(e.message);
-        })
-        console.log("success!");
+        var errorMsgTemp = ["", ""];
+
+        if (usernameInput === "") 
+            errorMsgTemp[0] = "Please Enter a Username!"
+
+        if (passwordInput === "") 
+            errorMsgTemp[1] = "Please Enter a Password!";
+
+        if (errorMsgTemp.every((x) => x === "") === true)
+        {
+
+            var accountData = {
+                txtUsername: usernameInput,          // These values are from useState and they are updated by the onchange on the inputs
+                txtPassword: passwordInput
+            }
+    
+            AccountRoutes.registerAccount(accountData) // We are calling the registerAccount function in the AccountRoutes file and passing accountData
+            .then(response => {
+                console.log("success!");
+            }).catch (e => {
+                console.log(e.message);
+                console.log(e.response.data.message);
+            })
+
+        }
+        else 
+        {
+            setErrorMsg(errorMsgTemp);
+
+            var text_inputs = document.getElementsByClassName("login-input-cell")
+
+            if(errorMsgTemp[0] !== "")
+                text_inputs[0].getElementsByTagName("input")[0].style.border = "2px solid red";
+            
+            if(errorMsgTemp[1] !== "")
+                text_inputs[1].getElementsByTagName("input")[0].style.border = "2px solid red";
+
+        }
+
     }
 
     return (
@@ -47,16 +82,20 @@ const Register = (props) => {
                     </div>
 
                     <div className="login-input-cell">
-                        <Account size={24} weight="bold"  />
+                        <Account className="login-svg" size={24} weight="bold"  />
                         <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
+                        {errorMsg[0] ? 
+                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
                     </div>
 
                     <div className="login-input-cell">
-                        <Keys size={24} weight="bold" />
+                        <Keys className="login-svg" size={24} weight="bold" />
                         <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                        {errorMsg[0] ? 
+                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
                     </div>
 
-                    <Link id="login-submit" to={"/home"} onClick={() => registerAccount()}>Register</Link>
+                    <Link id="login-submit" onClick={() => registerAccount()}>Register</Link>
 
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>

@@ -46,8 +46,8 @@ const Profile = (props) => {
         return(
             reviews.map((val, i) => {
                 return(
-                    <>
-                        <div key={i} className="review">
+                    <div key={i}>
+                        <div className="review">
                             <h4>{val} - <em>Driver Review</em></h4>
                             <h4>This is a subject line 4.5 / 5</h4>
                             <h4>From Windsor to Toronto on Sept 24 2023</h4>
@@ -58,7 +58,7 @@ const Profile = (props) => {
                             </p>
                         </div>
                         <hr></hr>
-                    </>
+                    </div>
                 )
             })
         )

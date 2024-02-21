@@ -1,8 +1,10 @@
 import "./login.css"
 import React, { useState } from 'react';
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext,  useNavigate } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
+
+import AccountRoutes from "../../../routes/accountRoutes";
 
 import {
     Account,
@@ -12,16 +14,32 @@ import {
 const Login = (props) => {
 
     const [userName, setUserName] = useOutletContext();
-
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = (event) => {
 
-        const user = { usernameInput, passwordInput };
+        const userLogin = { 
+            txtUsername: usernameInput, 
+            txtPassword: passwordInput 
+        };
 
-        setUserName(usernameInput);
-        localStorage.setItem('user', usernameInput);
+        console.log(userLogin);
+
+        AccountRoutes.checkLoginInfo(userLogin)
+        .then(response => {
+
+            console.log("successful login!");
+            console.log(response.data);
+            localStorage.setItem('user', usernameInput);
+            setUserName(usernameInput);
+            navigate('/profile');
+            
+        }).catch(e => {
+            console.log(e.message);
+        })      
+        
     }
 
     return (
@@ -43,16 +61,16 @@ const Login = (props) => {
                     </div>
 
                     <div className="login-input-cell">
-                        <Account size={24} weight="bold"  />
+                        <Account size={24} weight="bold" className="login-svg" />
                         <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
                     </div>
 
                     <div className="login-input-cell">
-                        <Keys size={24} weight="bold" />
+                        <Keys size={24} weight="bold" className="login-svg" />
                         <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
                     </div>
 
-                    <Link id="login-submit" to={"/home"} onClick={handleLogin}>Login</Link>
+                    <Link id="login-submit" onClick={handleLogin}>Login</Link>
 
                     <Link id="reset-password">Forgot Password?</Link>
                 </div>

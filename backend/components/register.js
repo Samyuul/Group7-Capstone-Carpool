@@ -12,17 +12,13 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require("path");
-var myWebsite = express();
+const cors = require('cors'); // You need to add this to every page
 
-const upload = require("express-fileupload");
-myWebsite.use(upload());
+var myWebsite = express();
+myWebsite.use(cors()) // You need to add this to every page
 
 myWebsite.use(express.urlencoded({extended:true}));
-
-myWebsite.set("views",path.join(__dirname,"../frontend/src")); //This section should change to cd../frontend/src/components
-myWebsite.use(express.static(__dirname+"../frontend/src"));//For css file but I think we don't need it
-myWebsite.set("view engine","ejs")
+myWebsite.use(express.json());
 
 const {check,validationResult}= require("express-validator");
 const { stringify } = require("querystring");
@@ -45,23 +41,17 @@ myWebsite.use(session({
     saveUninitialized: true
 }));
 
-
-myWebsite.get("/register", function (req, res) {
-    res.render("register")
-})
-
 myWebsite.post("/register", function (req, res) {
     const errors = validationResult(req);
     console.log(`The validationResult is: ${errors}`);
     if(!errors.isEmpty()){
         //If we need to show why customer can't regist the account
-        res.render("register",{errors:errors.array()});
+        res.send({errors:errors.array()});                         // Don't use res.render anymore, since we are not using express to render pages, but reactJS instead
+                                                                   // Use res.send to send back messages, use postman and you will see the results
     }
     else{
         var username = req.body.txtUsername;
         var password = req.body.txtPassword;
-
-
 
         var pageData = {
             username : username,
@@ -71,18 +61,26 @@ myWebsite.post("/register", function (req, res) {
         Accounts.findOne({username:username}).then((account) =>{
             if(account){
                 console.log(`The account already been created.`);
+
+                // This lets you send an error, with error code 500 and custom message
+                res.status(500).send({
+                    message: "The account already been created."
+                })
             }
             else{
                 var newAccount = new Accounts(pageData);
                 newAccount.save().then(function(){
-                    console.log("New Account Created Successfully!")
+                    console.log("New Account Created Successfully!");
+                    res.send("New Account Created Successfully!"); // This lets you send a message (can see in postmate)
                 }).catch(function(Ex){
-                    console.log(`Db Error: ${Ex.toString()}`)
+                    console.log(`Db Error: ${Ex.toString()}`);
+
+                    res.status(404).send({     // different error code and custom messageS
+                        message: `Db Error: ${Ex.toString()}`
+                    })
                 })
             }
         })
-
-     
 
     }
 
