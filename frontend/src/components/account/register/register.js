@@ -4,6 +4,8 @@ import { Link, useOutletContext } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
 
+import RegisterRoutes from "../../../routes/registerRoute";
+
 import {
     Account,
     Keys
@@ -15,6 +17,17 @@ const Register = (props) => {
 
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+
+    const registerAccount = () => {
+
+        RegisterRoutes.registerAccount("sam1111", "pass222")
+        .then(response => {
+            console.log("success!")
+        }).catch (e => {
+            console.log(e.message);
+        })
+        console.log("success!");
+    }
 
     return (
         <div id="login-page">
@@ -43,7 +56,7 @@ const Register = (props) => {
                         <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
                     </div>
 
-                    <Link id="login-submit" to={"/home"} onClick={() => setUserName(usernameInput)}>Register</Link>
+                    <Link id="login-submit" to={"/home"} onClick={() => registerAccount()}>Register</Link>
 
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>

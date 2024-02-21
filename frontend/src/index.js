@@ -90,6 +90,10 @@ const router = createBrowserRouter([
 			{
 				path: '/post/view/:postID',
 				element: <Private><ViewPost/></Private>
+			}, 
+			{
+				path: 'test',
+				element: <TestPage></TestPage>
 			}
 		]
 	}
