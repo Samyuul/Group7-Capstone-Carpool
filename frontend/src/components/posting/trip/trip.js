@@ -1,7 +1,52 @@
 import "./trip.css"
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+
+import { 
+    useJsApiLoader, 
+    GoogleMap, 
+    Marker, 
+    Autocomplete,
+    DirectionsRenderer
+} from '@react-google-maps/api';
+
+const google = window.google = window.google ? window.google : {}
 
 const Trip = (props) => {
+
+    const { isLoaded  } = useJsApiLoader({
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
+        libraries: ['places']
+    })
+
+    const center = {lat: 43.6532, lng: 79.3832};
+
+    const [map, setMap] = useState(null);
+    const [direction, setDirection] = useState(null);
+    const [distance, setDitance] = useState('');
+    const [duration, setDuration] = useState('');
+    
+    const originRef = useRef();
+    const destinationRef = useRef();
+
+    async function calculateRoute() {
+        if (originRef.current.value === '' || destinationRef.current.value === '') {
+            return
+        } 
+
+        const directionService = new google.maps.DirectionsService()
+        const results = await directionService.route({
+            origin: originRef.current.value,
+            destination: destinationRef.current.value,
+            travelMode: google.maps.TravelMode.DRIVING
+        })
+
+        setDirection(results);
+    }
+
+    if (!isLoaded) {
+        console.log(process.env.REACT_APP_GOOGLE_API_KEY);
+        return <></>
+    }
 
     return(
 
@@ -14,22 +59,38 @@ const Trip = (props) => {
                 <div id="travel-info">
                     <div className="form-cell">
                         <label>Starting Point: </label>
-                        <input id="start-point"></input>
+
+                        <Autocomplete>
+                        <input id="start-point" ref={originRef}/>
+                        </Autocomplete>
                     </div>
 
                     <div className="form-cell">
                         <label>Destination: </label>
-                        <input id="end-point"></input>
+                        <Autocomplete>
+                        <input id="end-point" ref={destinationRef}/>
+                        </Autocomplete>
                     </div>
 
                     <div className="form-cell">
                         <label>Additional Stops: </label>
                         <input id="stop-point"></input>
                     </div>
+
+                    <button onClick={calculateRoute}>
+                        TestButton
+                    </button>
                 </div>
 
                 <div id="google-map">
-                    GOOGLE MAP
+                    <GoogleMap 
+                        center={center} 
+                        zoom={15} 
+                        mapContainerStyle={{width: '100%', height: '100%'}}
+                        onLoad={(map) => setMap(map)}>
+                        <Marker position={center} />
+                        {direction ? <DirectionsRenderer directions={direction}/> : <></>}
+                    </GoogleMap>
                 </div>
             </div>
 

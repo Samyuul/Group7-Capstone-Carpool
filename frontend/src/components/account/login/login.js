@@ -40,6 +40,9 @@ const Login = (props) => {
             console.log(e.message);
         })      
         
+        localStorage.setItem('user', usernameInput);
+        setUserName(usernameInput);
+        navigate('/profile');
     }
 
     return (
