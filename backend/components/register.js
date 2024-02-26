@@ -1,4 +1,4 @@
-// import "../server";
+
 
 //use postman to test it:
 
@@ -14,7 +14,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
 
+
+
 var myWebsite = express();
+
+const upload = require("express-fileupload");//need this !!!!!!!!!!!!
+myWebsite.use(upload());//need this !!!!!!!!!!!!
+
 myWebsite.use(cors()) // You need to add this to every page
 
 myWebsite.use(express.urlencoded({extended:true}));
@@ -33,6 +39,34 @@ const Accounts = mongoose.model("Accounts",{
     username:String,
     password:String
 })
+//*********************************************/
+//the following profiles and reviews just create when register, 
+//but will keep empty for now.
+const Profiles = mongoose.model("Profiles", {
+    username:String,
+    tripsAsDriver : Number,
+    tripsAsPassenger : Number,
+    travlledDistance : Number,
+    names : String,
+    joinTime : String,
+    gender : String,
+    age : Number,
+    aboutMe : String,
+
+});
+const Reviews = mongoose.model("Reviews", {
+    username:String,
+    driverReviewRate : Number,
+    passengerReviewRate : Number,
+    reviewerName : String,
+    reviewerRate : Number,
+    tripFrom : String,
+    tripTo : String,
+    tripTime : String,
+    reviewMessage : String,
+});
+//*********************************************/
+
 
 var session = require("express-session");
 myWebsite.use(session({
@@ -52,7 +86,7 @@ myWebsite.post("/register", function (req, res) {
     else{
         var username = req.body.txtUsername;
         var password = req.body.txtPassword;
-
+        
         var pageData = {
             username : username,
             password : password
@@ -61,7 +95,7 @@ myWebsite.post("/register", function (req, res) {
         Accounts.findOne({username:username}).then((account) =>{
             if(account){
                 console.log(`The account already been created.`);
-
+                console.log(`username:${username} and password:${password}`)
                 // This lets you send an error, with error code 500 and custom message
                 res.status(500).send({
                     message: "The account already been created."
@@ -69,16 +103,25 @@ myWebsite.post("/register", function (req, res) {
             }
             else{
                 var newAccount = new Accounts(pageData);
+                var newProfiles = new Profiles({username:username});
+                var newReviews = new Reviews({username:username});
                 newAccount.save().then(function(){
                     console.log("New Account Created Successfully!");
                     res.send("New Account Created Successfully!"); // This lets you send a message (can see in postmate)
                 }).catch(function(Ex){
                     console.log(`Db Error: ${Ex.toString()}`);
-
                     res.status(404).send({     // different error code and custom messageS
                         message: `Db Error: ${Ex.toString()}`
                     })
                 })
+
+                newProfiles.save().then(function(){
+                    
+                 })
+                 newReviews.save().then(function(){
+                     
+                 })
+
             }
         })
 
@@ -88,22 +131,6 @@ myWebsite.post("/register", function (req, res) {
 
 
 
-    // console.log(`username:${username} & password:${password}`)
-
-    // Accounts.findOne({ username: username, password: password }).then((Accounts) => {
-    //     console.log(`Accounts:${Accounts}`);
-    //     if (Accounts) {
-    //         req.session.username = Accounts.username;
-    //         req.session.userLoggedIn = true;
-    //         console.log(`Account funded`)
-    //         res.redirect("/profile")
-    //     }
-    //     else {
-
-    //     }
-    // }).catch((err) => {
-    //     console.log(`Error: ${err}`);
-    // })
 })
 
 

@@ -1,4 +1,4 @@
-// import "../server";
+
 
 //use postman to test it:
 
@@ -13,6 +13,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
+
+const upload = require("express-fileupload");//need this !!!!!!!!!!!!
+myWebsite.use(upload());//need this !!!!!!!!!!!!
 
 var myWebsite = express();
 myWebsite.use(cors()) // You need to add this to every page
