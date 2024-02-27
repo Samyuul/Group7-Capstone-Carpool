@@ -56,31 +56,30 @@ myWebsite.post("/driver", function (req, res) {
   if (req.session.userLoggedIn) {
     var StartingPoint = req.body.txtStartingPoint;
     var Destination = req.body.txtDestination;
-    // var AdditionalStops = req.body.txtAdditionalStops;
-    // var DepartureTime = req.body.txtDepartureTime;
-    // var SeatsTotal = req.body.txtSeatsTotal;
-    // var Preference = req.body.txtPreference;
-    // var Description = req.body.txtDescription;
-    // var PostedBy = req.session.username;
-    // var PostedFor = "Driver";
+    var AdditionalStops = req.body.txtAdditionalStops;
+    var DepartureTime = req.body.txtDepartureTime;
+    var SeatsTotal = req.body.txtSeatsTotal;
+    var Preference = req.body.txtPreference;
+    var Description = req.body.txtDescription;
+    var PostedBy = req.session.username;
+    var PostedFor = "Driver";
 
     var postDetails = {
       StartingPoint: StartingPoint,
       Destination: Destination,
-      // AdditionalStops: AdditionalStops,
-      // DepartureTime: DepartureTime,
-      // SeatsTotal: SeatsTotal,
-      // Preference: Preference,
-      // Description: Description,
+      AdditionalStops: AdditionalStops,
+      DepartureTime: DepartureTime,
+      SeatsTotal: SeatsTotal,
+      Preference: Preference,
+      Description: Description,
+      PostedBy: PostedBy,
+      PostedFor: PostedFor,
     };
 
-    //use username to find the database and update info into profile.
-    const username = req.session.username;
+  
 
     RidesDetails.findOne().then((ridesdetail) => {
-      if (ridesdetail) {
-        //no need, always create new.
-      } else {
+      
         var newRide = new RidesDetails(postDetails);
         newRide
           .save()
@@ -92,7 +91,7 @@ myWebsite.post("/driver", function (req, res) {
               message: `Db Error: ${Ex.toString()}`,
             });
           });
-      }
+      
     });
   }
 

@@ -41,32 +41,39 @@ myWebsite.get("/message/:id", function (req, res) {
   if (req.session.userLoggedIn) {
     const usernameSentFrom = req.session.username;
     const usernameSentTo = req.params.id;
-    res.send(`Welcome, ${usernameSentFrom}, here's record with ${usernameSentTo}`);
+    console.log(`Welcome, ${usernameSentFrom}, here's record with ${usernameSentTo}`);
 
     Messages.find({
-        $and:[
-            {usernameSentFrom:usernameSentFrom},
-            {usernameSentTo:usernameSentTo},
-        ]   
-    }).sort({time:"asc"}).then(messageHistory => {
-        if(messageHistory.length>0){
-            res.json(messageHistory);
+      usernameSentFrom: usernameSentFrom,
+      usernameSentTo: usernameSentTo,
+    })
+      .sort({ time: "desc" })
+      .then((messageHistory) => {
+        
+        if (messageHistory.length > 0) {
+          const messageList=[];
+          messageHistory.forEach(reply=>{
+          const{usernameSentFrom,usernameSentTo,message,time}=reply;
+          console.log(`From:${usernameSentFrom};To:${usernameSentTo};Message:${message};Time:${time}.`)
+          messageList.push(`From:${usernameSentFrom};To:${usernameSentTo};Message:${message};Time:${time}.`);
+        })
+        res.send(messageList.join(`\n`));
+        } else {
+          res.send("No Message");
         }
-        else{
-            res.send("No Message");
-        }
-    }).catch(function (Ex) {
+      })
+      .catch(function (Ex) {
         res.status(404).send({
           message: `Db Error: ${Ex.toString()}`,
         });
-    });
+      });
 
   } else {
     res.send(`Can't find session`);
   }
 });
 
-myWebsite.post("/message", function (req, res) {
+myWebsite.post("/message/:id", function (req, res) {
   if (req.session.userLoggedIn) {
     const usernameSentFrom = req.session.username;
     const usernameSentTo = req.params.id;
@@ -82,9 +89,7 @@ myWebsite.post("/message", function (req, res) {
 
    
     Messages.findOne().then((message) => {
-      if (message) {
-        //no need, always create new.
-      } else {
+      
         var newMessage = new Messages(postDetails);
         newMessage
           .save()
@@ -96,7 +101,7 @@ myWebsite.post("/message", function (req, res) {
               message: `Db Error: ${Ex.toString()}`,
             });
           });
-      }
+      
     });
   }
 

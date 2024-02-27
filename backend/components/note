@@ -1,1 +1,13 @@
+Browse-
+Driver-done. share ridesdetails database. input can be empty.
+Passanger-done. share ridesdetails database. input can be empty.
+Login-done.
+Logout-done.
+message-done.
+profile-
+register-done.
+
+
+
 1. I cant use postman to test cookie/session.
+all the test been done without cookie/session.(rewrite and remove session section).

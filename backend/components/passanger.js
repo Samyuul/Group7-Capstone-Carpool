@@ -43,7 +43,7 @@ myWebsite.use(
   })
 );
 
-myWebsite.get("/driver", function (req, res) {
+myWebsite.get("/passanger", function (req, res) {
   if (req.session.userLoggedIn) {
     const username = req.session.username;
     res.send(`Welcome, ${username}`);
@@ -52,36 +52,34 @@ myWebsite.get("/driver", function (req, res) {
   }
 });
 
-myWebsite.post("/driver", function (req, res) {
+myWebsite.post("/passanger", function (req, res) {
   if (req.session.userLoggedIn) {
-    var PostedFor = "Passanger";
     var StartingPoint = req.body.txtStartingPoint;
     var Destination = req.body.txtDestination;
-    // var DepartureTime = req.body.txtDepartureTime;
-    // var SeatsTotal = req.body.txtSeatsTotal;
-    // var Preference = req.body.txtPreference;
-    // var Description = req.body.txtDescription;
-    // var PostedBy = req.session.username;
-   
+    var AdditionalStops = req.body.txtAdditionalStops;
+    var DepartureTime = req.body.txtDepartureTime;
+    var SeatsTotal = req.body.txtSeatsTotal;
+    var Preference = req.body.txtPreference;
+    var Description = req.body.txtDescription;
+    var PostedBy = req.session.username;
+    var PostedFor = "Driver";
 
     var postDetails = {
-      PostedFor : PostedFor,
-      StartingPoint : StartingPoint,
-      Destination : Destination,
-      // AdditionalStops: AdditionalStops,
-      // DepartureTime: DepartureTime,
-      // SeatsTotal: SeatsTotal,
-      // Preference: Preference,
-      // Description: Description,
+      StartingPoint: StartingPoint,
+      Destination: Destination,
+      AdditionalStops: AdditionalStops,
+      DepartureTime: DepartureTime,
+      SeatsTotal: SeatsTotal,
+      Preference: Preference,
+      Description: Description,
+      PostedBy: PostedBy,
+      PostedFor: PostedFor,
     };
 
-    //use username to find the database and update info into profile.
-    const username = req.session.username;
+  
 
     RidesDetails.findOne().then((ridesdetail) => {
-      if (ridesdetail) {
-        //no need, always create new.
-      } else {
+      
         var newRide = new RidesDetails(postDetails);
         newRide
           .save()
@@ -93,7 +91,7 @@ myWebsite.post("/driver", function (req, res) {
               message: `Db Error: ${Ex.toString()}`,
             });
           });
-      }
+      
     });
   }
 
