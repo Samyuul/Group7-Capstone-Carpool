@@ -59,11 +59,10 @@ myWebsite.use(
   })
 );
 
-myWebsite.get("/driver", function (req, res) {
+myWebsite.get("/profile", function (req, res) {
   if (req.session.userLoggedIn) {
     const username=req.session.username;
-    
-    res.send(`${username}`);
+    res.send(`Welcome, ${username}`);
   }
   else{
     res.send(`Can't find session`);
@@ -72,7 +71,7 @@ myWebsite.get("/driver", function (req, res) {
   
 });
 
-myWebsite.post("/driver", function (req, res) {
+myWebsite.post("/profile", function (req, res) {
   if (req.session.userLoggedIn) {
     var StartingPoint = req.body.txtStartingPoint;
     var Destination = req.body.txtDestination;
@@ -91,6 +90,15 @@ myWebsite.post("/driver", function (req, res) {
       Preference: Preference,
       Description: Description,
     };
+
+    //use username to find the database and update info into profile.
+    const username=req.session.username;
+    Profiles.findById({_id:username}).then((profile)=>{
+      profile.name=name,
+      profile.email=email
+    })
+
+
   }
 
   res.send("clicked button to different page");

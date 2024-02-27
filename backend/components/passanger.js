@@ -54,19 +54,20 @@ myWebsite.get("/driver", function (req, res) {
 
 myWebsite.post("/driver", function (req, res) {
   if (req.session.userLoggedIn) {
+    var PostedFor = "Passanger";
     var StartingPoint = req.body.txtStartingPoint;
     var Destination = req.body.txtDestination;
-    // var AdditionalStops = req.body.txtAdditionalStops;
     // var DepartureTime = req.body.txtDepartureTime;
     // var SeatsTotal = req.body.txtSeatsTotal;
     // var Preference = req.body.txtPreference;
     // var Description = req.body.txtDescription;
     // var PostedBy = req.session.username;
-    // var PostedFor = "Driver";
+   
 
     var postDetails = {
-      StartingPoint: StartingPoint,
-      Destination: Destination,
+      PostedFor : PostedFor,
+      StartingPoint : StartingPoint,
+      Destination : Destination,
       // AdditionalStops: AdditionalStops,
       // DepartureTime: DepartureTime,
       // SeatsTotal: SeatsTotal,

@@ -20,17 +20,11 @@ mongoose.connect("mongodb://localhost:27017/vroom-room"),
   };
 
 /*************************************************/
-const RidesDetails = mongoose.model("RidesDetails", {
-  StartingPoint: String,
-  Destination: String,
-  AdditionalStops: String,
-  DepartureTime: String,
-  SeatsTaken: Number,
-  SeatsTotal: Number,
-  Preference: String,
-  Description: String,
-  PostedBy: String,
-  PostedFor: String,
+const Messages = mongoose.model("Messages", {
+  usernameSentFrom: String,
+  usernameSentTo: String,
+  message: String,
+  time: String,
 });
 
 var session = require("express-session");
@@ -43,46 +37,56 @@ myWebsite.use(
   })
 );
 
-myWebsite.get("/driver", function (req, res) {
+myWebsite.get("/message/:id", function (req, res) {
   if (req.session.userLoggedIn) {
-    const username = req.session.username;
-    res.send(`Welcome, ${username}`);
+    const usernameSentFrom = req.session.username;
+    const usernameSentTo = req.params.id;
+    res.send(`Welcome, ${usernameSentFrom}, here's record with ${usernameSentTo}`);
+
+    Messages.find({
+        $and:[
+            {usernameSentFrom:usernameSentFrom},
+            {usernameSentTo:usernameSentTo},
+        ]   
+    }).sort({time:"asc"}).then(messageHistory => {
+        if(messageHistory.length>0){
+            res.json(messageHistory);
+        }
+        else{
+            res.send("No Message");
+        }
+    }).catch(function (Ex) {
+        res.status(404).send({
+          message: `Db Error: ${Ex.toString()}`,
+        });
+    });
+
   } else {
     res.send(`Can't find session`);
   }
 });
 
-myWebsite.post("/driver", function (req, res) {
+myWebsite.post("/message", function (req, res) {
   if (req.session.userLoggedIn) {
-    var StartingPoint = req.body.txtStartingPoint;
-    var Destination = req.body.txtDestination;
-    // var AdditionalStops = req.body.txtAdditionalStops;
-    // var DepartureTime = req.body.txtDepartureTime;
-    // var SeatsTotal = req.body.txtSeatsTotal;
-    // var Preference = req.body.txtPreference;
-    // var Description = req.body.txtDescription;
-    // var PostedBy = req.session.username;
-    // var PostedFor = "Driver";
+    const usernameSentFrom = req.session.username;
+    const usernameSentTo = req.params.id;
+    var message = req.body.txtMessage;
+    var time = new Date();
 
     var postDetails = {
-      StartingPoint: StartingPoint,
-      Destination: Destination,
-      // AdditionalStops: AdditionalStops,
-      // DepartureTime: DepartureTime,
-      // SeatsTotal: SeatsTotal,
-      // Preference: Preference,
-      // Description: Description,
+        usernameSentFrom: usernameSentFrom,
+        usernameSentTo: usernameSentTo,
+        message: message,
+        time: time,
     };
 
-    //use username to find the database and update info into profile.
-    const username = req.session.username;
-
-    RidesDetails.findOne().then((ridesdetail) => {
-      if (ridesdetail) {
+   
+    Messages.findOne().then((message) => {
+      if (message) {
         //no need, always create new.
       } else {
-        var newRide = new RidesDetails(postDetails);
-        newRide
+        var newMessage = new Messages(postDetails);
+        newMessage
           .save()
           .then(function () {
             res.send("New Account Created Successfully!");

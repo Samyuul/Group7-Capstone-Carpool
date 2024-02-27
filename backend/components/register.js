@@ -14,8 +14,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
 
-
-
 var myWebsite = express();
 
 const upload = require("express-fileupload");//need this !!!!!!!!!!!!

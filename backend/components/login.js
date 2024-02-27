@@ -13,11 +13,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
-
+var myWebsite = express();
 const upload = require("express-fileupload");//need this !!!!!!!!!!!!
 myWebsite.use(upload());//need this !!!!!!!!!!!!
 
-var myWebsite = express();
+
 myWebsite.use(cors()) // You need to add this to every page
 
 myWebsite.use(express.urlencoded({extended:true}));
@@ -61,9 +61,9 @@ myWebsite.post("/login", function (req, res) {
         if (Accounts) {
             req.session.username = Accounts.username;
             req.session.userLoggedIn = true;
-            console.log(`Account funded`);
-            res.send("/profile"); // Don't use redirect either, you can just send the expected url path and we can do it client side
-            // res.redirect("/profile")
+            const username=req.session.username;
+            res.send(`Welcome, ${username}`);//this is for testing session can keep username, and yes it works.
+            
         }
         else {
             console.log("No account found");
