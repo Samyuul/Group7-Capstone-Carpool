@@ -31,6 +31,7 @@ const RidesDetails = mongoose.model("RidesDetails", {
   Description: String,
   PostedBy: String,
   PostedFor: String,
+  PostedTime:String,
 });
 
 var session = require("express-session");
@@ -63,6 +64,7 @@ myWebsite.post("/passanger", function (req, res) {
     var Description = req.body.txtDescription;
     var PostedBy = req.session.username;
     var PostedFor = "Driver";
+    var PostedTime = new Date();
 
     var postDetails = {
       StartingPoint: StartingPoint,
@@ -74,6 +76,7 @@ myWebsite.post("/passanger", function (req, res) {
       Description: Description,
       PostedBy: PostedBy,
       PostedFor: PostedFor,
+      PostedTime : PostedTime,
     };
 
   

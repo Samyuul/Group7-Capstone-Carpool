@@ -20,11 +20,18 @@ mongoose.connect("mongodb://localhost:27017/vroom-room"),
   };
 
 /*************************************************/
-const Messages = mongoose.model("Messages", {
-  usernameSentFrom: String,
-  usernameSentTo: String,
-  message: String,
-  time: String,
+const RidesDetails = mongoose.model("RidesDetails", {
+  StartingPoint: String,
+  Destination: String,
+  AdditionalStops: String,
+  DepartureTime: String,
+  SeatsTaken: Number,
+  SeatsTotal: Number,
+  Preference: String,
+  Description: String,
+  PostedBy: String,
+  PostedFor: String,
+  PostedTime:String,
 });
 
 var session = require("express-session");
@@ -37,42 +44,62 @@ myWebsite.use(
   })
 );
 
-myWebsite.get("/message/:usernameto", function (req, res) {
-  
-    const usernameSentFrom = "vincent";
-    const usernameSentTo = "sam";
-    console.log(`Welcome, ${usernameSentFrom}, here's record with ${usernameSentTo}`);
-    
-
-    Messages.find({
-      usernameSentFrom: usernameSentFrom,
-      usernameSentTo: usernameSentTo,
-    })
-      .sort({ time: "desc" })
-      .then((messageHistory) => {
-        
-        if (messageHistory.length > 0) {
-          const messageList=[];
-          messageHistory.forEach(reply=>{
-          const{usernameSentFrom,usernameSentTo,message,time}=reply;
-          console.log(`From:${usernameSentFrom};To:${usernameSentTo};Message:${message};Time:${time}.`)
-          messageList.push(`From:${usernameSentFrom};To:${usernameSentTo};Message:${message};Time:${time}.`);
-        })
-        res.send(messageList.join(`\n`));
-        } else {
-          res.send("No Message");
-        }
-      })
-      .catch(function (Ex) {
-        res.status(404).send({
-          message: `Db Error: ${Ex.toString()}`,
-        });
-      });
-
-  
+myWebsite.get("/driver", function (req, res) {
+  if (req.session.userLoggedIn) {
+    const username = req.session.username;
+    res.send(`Welcome, ${username}`);
+  } else {
+    res.send(`Can't find session`);
+  }
 });
 
+myWebsite.post("/driver", function (req, res) {
 
+    var StartingPoint = req.body.txtStartingPoint;
+    var Destination = req.body.txtDestination;
+    var AdditionalStops = req.body.txtAdditionalStops;
+    var DepartureTime = req.body.txtDepartureTime;
+    var SeatsTotal = req.body.txtSeatsTotal;
+    var Preference = req.body.txtPreference;
+    var Description = req.body.txtDescription;
+    var PostedBy = "Henry";
+    var PostedFor = "Passanger";
+    var PostedTime = new Date();
+
+    var postDetails = {
+      StartingPoint: StartingPoint,
+      Destination: Destination,
+      AdditionalStops: AdditionalStops,
+      DepartureTime: DepartureTime,
+      SeatsTotal: SeatsTotal,
+      Preference: Preference,
+      Description: Description,
+      PostedBy: PostedBy,
+      PostedFor: PostedFor,
+      PostedTime : PostedTime,
+    };
+
+  
+
+    RidesDetails.findOne().then((ridesdetail) => {
+      
+        var newRide = new RidesDetails(postDetails);
+        newRide
+          .save()
+          .then(function () {
+            res.send("New Account Created Successfully!");
+          })
+          .catch(function (Ex) {
+            res.status(404).send({
+              message: `Db Error: ${Ex.toString()}`,
+            });
+          });
+      
+    });
+  
+
+  res.send("clicked button to different page");
+});
 
 //*********************************************/
 

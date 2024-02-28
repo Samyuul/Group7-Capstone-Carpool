@@ -84,10 +84,27 @@ myWebsite.post("/register", function (req, res) {
     else{
         var username = req.body.txtUsername;
         var password = req.body.txtPassword;
+
+        var tripsAsDriver = 0;
+        var tripsAsPassenger = 0;
+        var driverReviewRate =5.0;
+        var passengerReviewRate = 5.0;
         
-        var pageData = {
+        var accountData = {
             username : username,
             password : password
+        }
+
+        var profileData ={
+            username : username,
+            tripsAsDriver : tripsAsDriver,
+            tripsAsPassenger : tripsAsPassenger,
+        }
+
+        var reviewData = {
+            username : username,
+            driverReviewRate : driverReviewRate,
+            passengerReviewRate : passengerReviewRate
         }
 
         Accounts.findOne({username:username}).then((account) =>{
@@ -100,9 +117,9 @@ myWebsite.post("/register", function (req, res) {
                 })
             }
             else{
-                var newAccount = new Accounts(pageData);
-                var newProfiles = new Profiles({username:username});
-                var newReviews = new Reviews({username:username});
+                var newAccount = new Accounts(accountData);
+                var newProfiles = new Profiles(profileData);
+                var newReviews = new Reviews(reviewData);
                 newAccount.save().then(function(){
                     console.log("New Account Created Successfully!");
                     res.send("New Account Created Successfully!"); // This lets you send a message (can see in postmate)
@@ -114,10 +131,10 @@ myWebsite.post("/register", function (req, res) {
                 })
 
                 newProfiles.save().then(function(){
-                    
+                    console.log("New profiles Created Successfully!");
                  })
                  newReviews.save().then(function(){
-                     
+                    console.log("New reviews Created Successfully!");
                  })
 
             }
