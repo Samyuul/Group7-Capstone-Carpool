@@ -63,19 +63,21 @@ const Login = (props) => {
                         <Link to={"/register"}>Sign Up</Link>
                     </div>
 
-                    <div className="login-input-cell">
-                        <Account size={24} weight="bold" className="login-svg" />
-                        <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
-                    </div>
+                    <form>
+                        <div className="login-input-cell">
+                            <Account size={24} weight="bold" className="login-svg" />
+                            <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
+                        </div>
 
-                    <div className="login-input-cell">
-                        <Keys size={24} weight="bold" className="login-svg" />
-                        <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
-                    </div>
+                        <div className="login-input-cell">
+                            <Keys size={24} weight="bold" className="login-svg" />
+                            <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                        </div>
 
-                    <Link id="login-submit" onClick={handleLogin}>Login</Link>
-
+                        <button id="login-submit" onClick={handleLogin}>Login</button>
+                    </form>
                     <Link id="reset-password">Forgot Password?</Link>
+
                 </div>
             </div>
         </div>

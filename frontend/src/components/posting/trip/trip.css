@@ -6,6 +6,25 @@
     background-color: lightcoral;
 }
 
+#trip-page h4 {
+    width: fit-content;
+    margin: auto;
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+#trip-page h4::after{
+    content: "";
+    width: 80%;
+    height: 1px;
+    bottom: 0;
+    margin: auto;
+    border-bottom: 3px solid #0d1b2a;
+    position: relative;
+    display: block;
+    margin-top: 10px;
+}
+
 #itinerary {
     display: flex;
 }
@@ -42,7 +61,47 @@
     background-color: lightcyan;
 }
 
+.selector {
+    background-color: lightblue;
+    aspect-ratio: 1;
+    border-radius: 50%;
+
+    cursor: pointer;
+    border: none;
+}
+
+.seat-selector {
+    width: 7%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.luggage-selector {
+    width: 10%;
+}
+
+.pref-selector {
+    width: 10%;
+}
+
+.selector-container {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.current-selector {
+    background-color: pink;
+}
+
 #preference-section {
     width: 80%;
     margin: auto;
+}
+
+#waypoint-container {
+    display: flex;
+    flex-direction: column;
 }

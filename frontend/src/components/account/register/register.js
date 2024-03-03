@@ -21,7 +21,9 @@ const Register = (props) => {
 
     const [errorMsg, setErrorMsg] = useState(["", ""]);
 
-    const registerAccount = () => {
+    const registerAccount = (event) => {
+
+        event.preventDefault();
 
         var errorMsgTemp = ["", ""];
 
@@ -81,21 +83,23 @@ const Register = (props) => {
                         <Link to={"/register"} id="active-button">Sign Up</Link>
                     </div>
 
-                    <div className="login-input-cell">
-                        <Account className="login-svg" size={24} weight="bold"  />
-                        <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
-                        {errorMsg[0] ? 
-                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
-                    </div>
+                    <form>
+                        <div className="login-input-cell">
+                            <Account className="login-svg" size={24} weight="bold"  />
+                            <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
+                            {errorMsg[0] ? 
+                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
+                        </div>
 
-                    <div className="login-input-cell">
-                        <Keys className="login-svg" size={24} weight="bold" />
-                        <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
-                        {errorMsg[0] ? 
-                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
-                    </div>
+                        <div className="login-input-cell">
+                            <Keys className="login-svg" size={24} weight="bold" />
+                            <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                            {errorMsg[1] ? 
+                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
+                        </div>
 
-                    <Link id="login-submit" onClick={() => registerAccount()}>Register</Link>
+                        <button id="login-submit" onClick={registerAccount}>Register</button>
+                    </form>
 
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>
