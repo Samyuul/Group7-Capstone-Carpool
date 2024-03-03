@@ -102,7 +102,7 @@ const Trip = (props) => {
     }
 
     // Add waypoint 
-    const handleAdd = () d=> {
+    const handleAdd = () => {
         setInputList([... inputList, '']);
     }
 
