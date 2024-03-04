@@ -18,22 +18,22 @@ const libraries = ['places'];
 const Trip = (props) => {
 
     const { isLoaded  } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-        //googleMapsApiKey: "",
+        //googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
+        googleMapsApiKey: "",
         libraries
     })
 
     const [map, setMap] = useState(null);
     const [direction, setDirection] = useState(null);
-    const [distance, setDitance] = useState('');
+    const [distance, setDistance] = useState('');
     const [duration, setDuration] = useState('');
 
     const originRef = useRef();
     const destinationRef = useRef();
-    const waypointRef = useRef([]);
+    const waypointRef = useRef(['']);
 
     const [inputList, setInputList] = useState(['']);
-    const [wayPointList, setWayPointList] = useState(['']);
+    const [wayPointList, setWayPointList] = useState([{location: '', stopover: true, selected: false}]);
 
     const [seatBtn, setSeatBtn] = useState([true, false, false, false, false, false, false]);
     const [luggageBtn, setLuggageBtn] = useState([true, false, false, false]);
@@ -51,29 +51,29 @@ const Trip = (props) => {
 
     // Individual toggle for each button
     const toggleOtherPref = (index) => {
-        var newSelectArr = [... otherPref];
+        var newSelectArr = [...otherPref];
         newSelectArr[index] = !newSelectArr[index];
         setOtherPref(newSelectArr); 
     }
 
+    // ----------------------------------
+    // Functions for waypoints for routes
+    // ----------------------------------
 	const onLoad = (autocomplete, index) => {
-		var currArr = [... inputList]
+		var currArr = [...inputList]
 		currArr[index] = autocomplete;
 		setInputList(currArr);
 	}
-
-	const onPlaceChanged = (index) => {
+    
+    // Selection made via drop down
+	const onPlaceChanged = (index, e) => {
 		if (inputList[index] != null) {
 			const place = inputList[index].getPlace();
-			const name = place.name;
-			const status = place.business_status;
 			const formattedAddress = place.formatted_address;
-			// console.log(place);
-			console.log(`Name: ${name}`);
-			console.log(`Formatted Address: ${formattedAddress}`);
 
-            var currList = [... wayPointList]
-            currList[index] = formattedAddress;
+            var currList = [...wayPointList]
+            currList[index]['location'] = formattedAddress;
+            currList[index]['selected'] = true;
             setWayPointList(currList);
 
 		} else {
@@ -81,46 +81,71 @@ const Trip = (props) => {
 		}
 	}
 
-
-    // Change waypoint input 
-    const handleInput = (e, index) => {
-        const currList = [... wayPointList];
-        //currList[index] = e.target.value;
-        currList[index] = waypointRef.current[index].value;
-        console.log(currList);
+    // Text changed via typing
+    const handleChange = (index, e) => {
+        let currList = [...wayPointList];
+        currList[index]['location'] = e.target.value;
+        currList[index]['selected'] = false;
         setWayPointList(currList);
-    }
+    }   
 
     // Remove waypoint 
     const handleRemove = (index) => {
-        var currList = [... wayPointList];
-        var currInputList = [... inputList];
-        currList.splice(1, 1);
-        currInputList.splice(1, 1);
+        var currList = [...wayPointList];
+        var currInputList = [...inputList];
+        currList.splice(index , 1);
+        currInputList.splice(index, 1);
         setWayPointList(currList);
         setInputList(currInputList);
     }
 
     // Add waypoint 
     const handleAdd = () => {
-        setInputList([... inputList, '']);
+        setInputList([...inputList, '']);
+        setWayPointList([...wayPointList, {location: '', stopover: true, selected: false}])
     }
 
     // Display and calculate route on map
     async function calculateRoute() {
-        if (originRef.current.value === '' || destinationRef.current.value === '') {
-            console.log(wayPointList);
+        if (originRef.current.value === '' || destinationRef.current.value === '') 
             return
-        } 
+
+        var validWayPointList = wayPointList.filter((waypoint) => waypoint.selected === true)
+
+        validWayPointList = validWayPointList.map((waypoint) => {
+            return {location: waypoint.location, stopover: true}
+        })
 
         const directionService = new google.maps.DirectionsService()
         const results = await directionService.route({
             origin: originRef.current.value,
             destination: destinationRef.current.value,
-            travelMode: google.maps.TravelMode.DRIVING
+            travelMode: google.maps.TravelMode.DRIVING,
+            waypoints: validWayPointList
         })
 
+        var estimatedRoute = results.routes[0].legs;
+
+        console.log(estimatedRoute);
+
+        var legs = results.routes[0].legs;
+        var estimatedDistance = 0.0;
+        var estimatedDuration = 0.0;
+
+        for (var i = 0 ; i < legs.length; i++)
+        {
+            estimatedDistance = estimatedDistance + legs[i].distance.value;
+            estimatedDuration = estimatedDuration + legs[i].duration.value;
+        }
+
+        var timeDuration = Math.floor(estimatedDuration / 3600) + " hrs " + Math.floor((estimatedDuration / 60) % 60) + " min";
+
         setDirection(results);
+        setDistance(estimatedDistance);
+        setDuration(estimatedDuration);
+        console.log(estimatedDuration);
+        console.log(estimatedDistance);
+        console.log(timeDuration);
     }
 
     // Return waypoint inputs
@@ -128,26 +153,14 @@ const Trip = (props) => {
         return (
             <div>
             {inputList.map((x, i) => {
-                console.log(x, i);
                 return(
                     <div key={i} className="form-cell">
 			            <Autocomplete onPlaceChanged={() => onPlaceChanged(i)} onLoad={(e) => onLoad(e, i)}>
                             <input
                                 type="text"
                                 placeholder="Search for Tide Information"
-                                defaultValue={wayPointList[i]}
-                                style={{
-                                boxSizing: `border-box`,
-                                border: `1px solid transparent`,
-                                width: `240px`,
-                                height: `32px`,
-                                padding: `0 12px`,
-                                borderRadius: `3px`,
-                                boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                                fontSize: `14px`,
-                                outline: `none`,
-                                textOverflow: `ellipses`,
-                                }}
+                                onChange={(e) => handleChange(i, e)}
+                                value={wayPointList[i]['location'] || ''}
                             />
                         </Autocomplete>
                         {(inputList.length > 1 ? <button onClick={() => handleRemove(i)}>Remove</button> : <></>
@@ -170,7 +183,9 @@ const Trip = (props) => {
                 return (
                     <button 
                     key={i} 
-                    className={"selector " + btnName + (val ? "current-selector" : "")} 
+                    className={"selector " + btnName + (val ? "current-selector " : "")
+                        + (i === 0 ? "selector-left" : "") 
+                        + (i === (btnArray.length - 1) ? "selector-right" : "")} 
                     onClick={() => (
                         btnName === "pref-selector ") ?
                         toggleOtherPref(i) :
@@ -192,9 +207,16 @@ const Trip = (props) => {
         )
     }
 
+    const getTimeInHrsMin = (seconds) => {
+        return Math.floor(seconds / 3600) + " hrs " + Math.floor((seconds / 60) % 60) + " min";
+    }
+
+    const getDistanceInKm = (meter) => {
+        return (meter / 1000.0).toFixed(2) + " km"
+    }
+
     // Don't page if maps hasn't been loaded successfully 
     if (!isLoaded) {
-        console.log(process.env.REACT_APP_GOOGLE_API_KEY);
         return <></>
     }
 
@@ -202,23 +224,27 @@ const Trip = (props) => {
 
         <div id="trip-page">
             
-            <h2>Post Your Trip!</h2>
+            <h2 className="underline">Post Your Trip!</h2>
 
-            <h4>Planned Route</h4>
+            <h4 className="underline">Planned Route</h4>
+            
             <div id="itinerary">
                 <div id="travel-info">
+                    <h5>Itinerary</h5>
+                    <p>Choose your starting and ending positions, with any stops along the way.</p>
+            
                     <div className="form-cell">
                         <label>Starting Point: </label>
 
-                        <Autocomplete>
-                        <input id="start-point" ref={originRef}/>
+                        <Autocomplete className="flex-input">
+                            <input id="start-point" ref={originRef}/>
                         </Autocomplete>
                     </div>
 
                     <div className="form-cell">
                         <label>Destination: </label>
-                        <Autocomplete>
-                        <input id="end-point" ref={destinationRef}/>
+                        <Autocomplete className="flex-input">
+                            <input id="end-point" ref={destinationRef}/>
                         </Autocomplete>
                     </div>
 
@@ -227,12 +253,15 @@ const Trip = (props) => {
                         {getWaypoints()}
                     </div>
 
+                    <div>
+                        {distance ? <p> Estimated Distance: {getDistanceInKm(distance)} </p> :  <></>}
+                        {duration ? <p> Estimated Time: {getTimeInHrsMin(duration)} </p> : <></>}
+                    </div>
 
                     <button onClick={calculateRoute}>
                         TestButton
                     </button>
                 </div>
-
 
                 <div id="google-map">
                     <GoogleMap 
