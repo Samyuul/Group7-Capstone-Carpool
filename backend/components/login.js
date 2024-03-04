@@ -46,13 +46,13 @@ myWebsite.use(session({
 
 // For example, you can delete this since we are rendering the login page using reactJS, you won't need res.render anywhere
 // Don't need to set ejs, view and all the other things we learned in the javascript course
-myWebsite.get("/login", function (req, res) {
-    res.render("login");
-})
+// myWebsite.get("/login", function (req, res) {
+//     res.render("login");
+// })
 
 myWebsite.post("/login", function (req, res) {
-    var username = req.body.txtUsername;
-    var password = req.body.txtPassword;
+    var username = req.body.username;
+    var password = req.body.password;
 
     console.log(`username:${username} & password:${password}`)
 
