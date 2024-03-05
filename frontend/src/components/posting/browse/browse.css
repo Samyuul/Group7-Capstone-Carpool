@@ -1,14 +1,61 @@
 #browse-page {
+    width: 60%;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    background-color: lightpink;
+    text-align: center;
+}
 
+.search-bar {
+    display: flex;
+    align-items: center;
+
+    justify-content: space-around;
+    background: gray;
+
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.search-bar input {
+    padding: 25px 15px 25px 42px;
+    height: 25px;
+    font-size: 16px;
+
+    border: none;
+    background-color: lightgray;
+
+    box-sizing: border-box;
+    border-radius: 15px;
+}
+
+#search-btn {
+    background-image: linear-gradient(90deg, #9B2226, #EE9B00);
+
+    width: 25%;
+    padding: 15px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    border-radius: 15px;
+    border: none;
+
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    cursor: pointer;
+
+    margin-left: 42px;
 }
 
 .posting {
-    width: 50%;
     margin: 15px auto;
     background-color: lightblue;
 
     padding: 15px 25px;
-
+    text-align: left;
 }

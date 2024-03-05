@@ -25,7 +25,7 @@ const libraries = ['places'];
 
 const Trip = (props) => {
 
-    const { isLoaded  } = useJsApiLoader({
+    const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
         //googleMapsApiKey: "",
         libraries
@@ -353,7 +353,7 @@ const Trip = (props) => {
                     <div className="form-cell itinerary dest">
                         <label>Starting Point: </label>
 
-                        <img className="waypoint-svg" src={waypoint}></img>
+                        <img className="waypoint-svg" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input id="start-point" ref={originRef}/>
                         </Autocomplete>
@@ -361,7 +361,7 @@ const Trip = (props) => {
 
                     <div className="form-cell itinerary dest">
                         <label>Destination: </label>
-                        <img className="waypoint-svg" src={waypoint}></img>
+                        <img className="waypoint-svg" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input id="end-point" ref={destinationRef}/>
                         </Autocomplete>

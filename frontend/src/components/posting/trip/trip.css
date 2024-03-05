@@ -1,7 +1,7 @@
 #trip-page {
     width: 60%;
     margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif    ;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #trip-page h2 {
@@ -166,7 +166,7 @@
     left: 35px;
 }
 
-#date-picker, .time-picker {
+#date-picker, #date-picker2, .time-picker {
     padding: 25px 12px 25px 42px;
     font-size: 16px;
     height: 25px;
