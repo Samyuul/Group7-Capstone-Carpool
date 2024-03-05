@@ -11,9 +11,10 @@
 //            (If database have it, then it show account funded)
 
 const express = require("express");
+const myWebsite = express.Router();
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
-var myWebsite = express();
+// var myWebsite = express();
 const upload = require("express-fileupload");//need this !!!!!!!!!!!!
 myWebsite.use(upload());//need this !!!!!!!!!!!!
 
@@ -46,13 +47,19 @@ myWebsite.use(session({
 
 // For example, you can delete this since we are rendering the login page using reactJS, you won't need res.render anywhere
 // Don't need to set ejs, view and all the other things we learned in the javascript course
+// myWebsite.get("/login", function (req, res) {
+//     res.render("login");
+// })
+
 myWebsite.get("/login", function (req, res) {
-    res.render("login");
+    
+    res.send("This is the login page")
 })
 
+
 myWebsite.post("/login", function (req, res) {
-    var username = req.body.txtUsername;
-    var password = req.body.txtPassword;
+    var username = req.body.username;
+    var password = req.body.password;
 
     console.log(`username:${username} & password:${password}`)
 
@@ -84,5 +91,6 @@ myWebsite.post("/login", function (req, res) {
 
 //*********************************************/
 
-myWebsite.listen(8080);
-console.log("http://localhost:8080")
+// myWebsite.listen(8080);
+// console.log("http://localhost:8080")
+module.exports = myWebsite;
