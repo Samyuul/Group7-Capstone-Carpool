@@ -11,9 +11,10 @@
 //            (If database have it, then it show account funded)
 
 const express = require("express");
+const myWebsite = express.Router();
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
-var myWebsite = express();
+// var myWebsite = express();
 const upload = require("express-fileupload");//need this !!!!!!!!!!!!
 myWebsite.use(upload());//need this !!!!!!!!!!!!
 
@@ -50,6 +51,12 @@ myWebsite.use(session({
 //     res.render("login");
 // })
 
+myWebsite.get("/login", function (req, res) {
+    
+    res.send("This is the login page")
+})
+
+
 myWebsite.post("/login", function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
@@ -84,5 +91,6 @@ myWebsite.post("/login", function (req, res) {
 
 //*********************************************/
 
-myWebsite.listen(8080);
-console.log("http://localhost:8080")
+// myWebsite.listen(8080);
+// console.log("http://localhost:8080")
+module.exports = myWebsite;

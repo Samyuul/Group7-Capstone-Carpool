@@ -1,11 +1,12 @@
 
 
 const express = require("express");
+const myWebsite =  express.Router();
 const mongoose = require("mongoose");
 // const path = require("path");
 const cors = require("cors")
 
-var myWebsite = express();
+// var myWebsite = express();
 
 // const upload = require("express-fileupload");
 // myWebsite.use(upload());
@@ -51,5 +52,7 @@ myWebsite.post("/logout", function (req, res) {
 
 //*********************************************/
 
-myWebsite.listen(8080);
-console.log("http://localhost:8080")
+// myWebsite.listen(8080);
+// console.log("http://localhost:8080")
+
+module.exports = myWebsite;

@@ -11,3 +11,6 @@ register-done.
 
 1. I cant use postman to test cookie/session.
 all the test been done without cookie/session.(rewrite and remove session section).
+
+2. Server.js tested successfuly with login and logout. Login tested with mongodb. done.
+Issues: Can't find out why postman won't work anymore. Frontend test successful.
