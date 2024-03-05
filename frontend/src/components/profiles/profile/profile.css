@@ -186,6 +186,8 @@
 .review-section {
     margin-bottom: 30px;
     padding-bottom: 30px;
+
+    border-radius: 0 0 25px 25px;
 }
 
 .review + hr {

@@ -1,10 +1,6 @@
 #trip-page {
     width: 60%;
-
     margin: 0 auto;
-
-    background-color: lightcoral;
-
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif    ;
 }
 
@@ -17,13 +13,23 @@
     width: fit-content;
     margin: auto;
     margin-bottom: 40px;
-    margin-top: 20px;
+    margin-top: 120px;
     font-size: 24px;
+}
+
+#first-title {
+    margin-top: 0px !important;
 }
 
 #trip-page h5 {
     font-size: 18px;
     margin: 0;
+
+    text-align: left;
+}
+
+.trip-desc-txt {
+    text-align: center;
 }
 
 #itinerary {
@@ -32,6 +38,15 @@
 
 #travel-info {
     width: 40%;
+}
+
+.single-line-cell {
+    justify-content: space-around;
+}
+
+.flex-inline {
+    display: flex;
+    align-items: center;
 }
 
 .form-cell {
@@ -48,12 +63,76 @@
     font-size: 16px;
 }
 
-.form-cell input {
+.waypoint-svg {
+    width: 30px;
+    position: relative;
+    left: 36px;
+}
+
+.exit-svg {
+    position: relative;
+    right: 34px;
+}
+
+.trip-btn {
+    margin: 15px auto 0px auto;
+
+    background-image: linear-gradient(90deg, #9B2226, #EE9B00);
+
+    width: 50%;
+
+    padding: 15px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    border-radius: 15px;
+    border: none;
+
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    cursor: pointer;
+}
+
+/* --------------- */
+/* -- Waypoints -- */
+/* --------------- */
+#waypoint-inputs {
+    margin-top: 15px;
+}
+
+.itinerary {
+    display: flex;
+    align-items: center;
+}
+
+.itinerary input {
     flex: 1;
-    margin-left: 15px;
+    padding: 25px 40px 25px 42px;
     height: 25px;   
     font-size: 16px;
     border-radius: 15px;
+
+    border: none;
+    background-color: lightgray;
+
+    box-sizing: border-box;
+
+    margin: 7px 0;
+}
+
+#waypoint-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dest input {
+    margin: 12px 0;
 }
 
 .form-cell textarea {
@@ -62,47 +141,79 @@
 
     height: 150px;
     resize: none;
+
+    border: none;
+    background-color: lightgray;
+    border-radius: 25px;
+
+    padding: 25px;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
 }
 
 #google-map {
     flex: 1;
-    height: 50vh;
-
-    margin: auto;
-    background-color: lightcyan;
-
+    height: 500px;
     margin-left: 25px;
 }
 
+/* ----------------- */
+/* -- Preferences -- */
+/* ----------------- */
+#calendar-svg {
+    position: relative;
+    left: 35px;
+}
+
+#date-picker, .time-picker {
+    padding: 25px 12px 25px 42px;
+    font-size: 16px;
+    height: 25px;
+    border-radius: 15px;
+
+    border: none;
+    background-color: lightgray;
+
+    box-sizing: border-box;
+}
+
+.time-picker {
+    padding-left: 12px;
+    margin-left: 15px;
+}
+
 .selector {
-    background-color: lightblue;
-    aspect-ratio: 1;
+    background-color: #E9D8A6;
 
     cursor: pointer;
     border: none;
+
+    padding: 15px 0;
+    font-weight: 700;
+
 }
 
 .selector-left {
-    border-radius: 50% 0 0 50%;
+    border-radius: 25px 0 0 25px;
 }
 
 .selector-right {
-    border-radius: 0 50% 50% 0;
+    border-radius: 0 25px 25px 0;
 }
 
 .seat-selector {
     width: 7%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 900;
     font-size: 18px;
 }
 
 .luggage-selector {
-    width: 10%;
+    width: 100px;
 }
 
 .pref-selector {
-    width: 10%;
+    width: 120px;
 }
 
 .selector-container {
@@ -110,11 +221,11 @@
 
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .current-selector {
-    background-color: pink;
+    background-color: #BB3E03;
+    color: white;
 }
 
 #preference-section {
@@ -122,12 +233,21 @@
     margin: auto;
 }
 
-#waypoint-container {
-    display: flex;
-    flex-direction: column;
-}
-
 .flex-input {
     width: 100%;
     display: flex;
+}
+
+.model-txt {
+    margin-right: 25px;
+    margin-left: 10px;
+    width: 150px;
+}
+
+.model-txt::placeholder {
+    color: rgb(170, 170, 170);
+}
+
+.btn-spacing {
+    margin: 35px auto;
 }
