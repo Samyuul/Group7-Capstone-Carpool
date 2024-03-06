@@ -86,9 +86,9 @@ const Browse = (props) => {
                 </div>
 
                 <div className="flex-inline">
-                    <CalendarDots id="calendar-svg" size={24}/>
+                    <CalendarDots className="calendar-svg" size={24}/>
                     <DatePicker
-                        id="date-picker2"
+                        id="date-picker-search"
                         format="MMMM DD, YYYY"
                         minDate={new Date()}
                         sort

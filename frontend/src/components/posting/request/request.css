@@ -1,7 +1,5 @@
 #request-page {
     width: 60%;
-
     margin: 0 auto;
-
-    background-color: lightcoral;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

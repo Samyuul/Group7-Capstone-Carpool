@@ -9,7 +9,8 @@ import AccountRoutes from "../../../routes/accountRoutes";
 import {
     Account,
     Keys,
-    TriangleExclamation
+    TriangleExclamation,
+    XmarkCircle
 } from '@vectopus/atlas-icons-react';
 
 const Register = (props) => {
@@ -20,11 +21,11 @@ const Register = (props) => {
     const [passwordInput, setPasswordInput] = useState("");
 
     const [errorMsg, setErrorMsg] = useState(["", ""]);
+    const [errorMsg2, setErrorMsg2] = useState();
 
     const registerAccount = (event) => {
 
         event.preventDefault();
-
         var errorMsgTemp = ["", ""];
 
         if (usernameInput === "") 
@@ -47,13 +48,22 @@ const Register = (props) => {
             }).catch (e => {
                 console.log(e.message);
                 console.log(e.response.data.message);
+                setErrorMsg2(e.response.data.message);
             })
+            
+            // Apply red highlight
+            var text_inputs = document.getElementsByClassName("login-input-cell")
+            text_inputs[0].getElementsByTagName("input")[0].style.border = "none";
+            text_inputs[1].getElementsByTagName("input")[0].style.border = "none";
+            setErrorMsg(errorMsgTemp);
 
         }
         else 
         {
             setErrorMsg(errorMsgTemp);
+            setErrorMsg2("");
 
+            // Apply red highlight
             var text_inputs = document.getElementsByClassName("login-input-cell")
 
             if(errorMsgTemp[0] !== "")
@@ -83,23 +93,26 @@ const Register = (props) => {
                         <Link to={"/register"} id="active-button">Sign Up</Link>
                     </div>
 
-                    <form>
-                        <div className="login-input-cell">
-                            <Account className="login-svg" size={24} weight="bold"  />
-                            <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
-                            {errorMsg[0] ? 
-                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
-                        </div>
+                    {errorMsg2 ? 
+                    <p className="error-msg-login">
+                        {errorMsg2} <XmarkCircle onClick={() => setErrorMsg2("")} size={24} />
+                    </p> : <></>}
 
-                        <div className="login-input-cell">
-                            <Keys className="login-svg" size={24} weight="bold" />
-                            <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
-                            {errorMsg[1] ? 
-                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
-                        </div>
+                    <div className="login-input-cell">
+                        <Account className="login-svg" size={24} weight="bold"  />
+                        <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
+                        {errorMsg[0] ? 
+                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
+                    </div>
 
-                        <button id="login-submit" onClick={registerAccount}>Register</button>
-                    </form>
+                    <div className="login-input-cell">
+                        <Keys className="login-svg" size={24} weight="bold" />
+                        <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                        {errorMsg[1] ? 
+                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
+                    </div>
+
+                    <button id="login-submit" onClick={registerAccount}>Register</button>
 
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>

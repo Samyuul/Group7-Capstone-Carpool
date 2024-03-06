@@ -1,15 +1,15 @@
-#trip-page {
+#trip-page, #request-page {
     width: 60%;
     margin: 0 auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#trip-page h2 {
+#trip-page h2, #request-page h2 {
     width: fit-content;    
     font-size: 32px;
 }
 
-#trip-page h4 {
+#trip-page h4, #request-page h4 {
     width: fit-content;
     margin: auto;
     margin-bottom: 40px;
@@ -17,11 +17,11 @@
     font-size: 24px;
 }
 
-#first-title {
+.first-title {
     margin-top: 0px !important;
 }
 
-#trip-page h5 {
+#trip-page h5, #request-page h5 {
     font-size: 18px;
     margin: 0;
 
@@ -32,7 +32,7 @@
     text-align: center;
 }
 
-#itinerary {
+.itinerary {
     display: flex;
 }
 
@@ -105,7 +105,7 @@
     margin-top: 15px;
 }
 
-.itinerary {
+.itinerary, .itinerary-info {
     display: flex;
     align-items: center;
 }
@@ -152,7 +152,7 @@
     font-size: 16px;
 }
 
-#google-map {
+.google-map {
     flex: 1;
     height: 500px;
     margin-left: 25px;
@@ -161,12 +161,12 @@
 /* ----------------- */
 /* -- Preferences -- */
 /* ----------------- */
-#calendar-svg {
+.calendar-svg {
     position: relative;
     left: 35px;
 }
 
-#date-picker, #date-picker2, .time-picker {
+#date-picker-search, #date-picker-trip, #date-picker-request, .time-picker {
     padding: 25px 12px 25px 42px;
     font-size: 16px;
     height: 25px;

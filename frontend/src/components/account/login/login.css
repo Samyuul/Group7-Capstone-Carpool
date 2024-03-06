@@ -139,6 +139,21 @@
     font-weight: 800;
 }
 
+.error-msg-login {
+    background-color: #cc0000;
+    color: white;
+
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: 700;
+
+    margin-bottom: 5px;
+    margin-top: 25px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
 /* Gradient text color */
 @supports (background-clip: text) or (-webkit-background-clip: text) {
     #login-box h2 {

@@ -177,10 +177,10 @@ const Trip = (props) => {
         // Retrieve directions
         const directionService = new google.maps.DirectionsService()
         const results = await directionService.route({
-        origin: originRef.current.value,
-        destination: destinationRef.current.value,
-        travelMode: google.maps.TravelMode.DRIVING,
-        waypoints: validWayPointList
+            origin: originRef.current.value,
+            destination: destinationRef.current.value,
+            travelMode: google.maps.TravelMode.DRIVING,
+            waypoints: validWayPointList
         })
 
         // Calculate distance and estimated time 
@@ -343,10 +343,10 @@ const Trip = (props) => {
             
             <h2 className="underline">Post Your Trip!</h2>
 
-            <h4 id="first-title" className="underline">Planned Route</h4>
+            <h4 className="first-title underline">Planned Route</h4>
             
-            <div id="itinerary">
-                <div id="travel-info">
+            <div className="itinerary-info">
+                <div className="travel-info">
                     <h5>Itinerary</h5>
                     <p>Choose your starting and ending positions, with any stops along the way.</p>
             
@@ -355,7 +355,7 @@ const Trip = (props) => {
 
                         <img className="waypoint-svg" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="start-point" ref={originRef}/>
+                            <input ref={originRef}/>
                         </Autocomplete>
                     </div>
 
@@ -363,7 +363,7 @@ const Trip = (props) => {
                         <label>Destination: </label>
                         <img className="waypoint-svg" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="end-point" ref={destinationRef}/>
+                            <input ref={destinationRef}/>
                         </Autocomplete>
                     </div>
 
@@ -378,7 +378,7 @@ const Trip = (props) => {
                     </div>
                 </div>
 
-                <div id="google-map">
+                <div className="google-map">
                     <GoogleMap 
                         zoom={15} 
                         mapContainerStyle={{width: '100%', height: '100%'}}
@@ -396,9 +396,9 @@ const Trip = (props) => {
             <div className="form-cell single-line-cell">
                 <div className="flex-inline">
                     <label>Date: </label>
-                    <CalendarDots id="calendar-svg" size={24}/>
+                    <CalendarDots className="calendar-svg" size={24}/>
                     <DatePicker
-                        id="date-picker"
+                        id="date-picker-trip"
                         value={dates}
                         onChange={limitSetDates}
                         format="MMMM DD, YYYY"
@@ -444,7 +444,7 @@ const Trip = (props) => {
             </div>
 
             <h4 className="underline">Preferences</h4>
-            <div id="preference-section">
+            <div className="preference-section">
 
                 <div className="preference-cell">
                     <h5>Luggage: </h5>
@@ -498,7 +498,7 @@ const Trip = (props) => {
             <h4 className="underline">Trip Description</h4>
                 <div onChange={(e) => setTripDesc(e.target.value)} className="form-cell">
                     <label>Description: </label>
-                    <textarea id="desc" ></textarea>
+                    <textarea/>
                 </div>
 
             <h4 className="underline">Rules</h4>
