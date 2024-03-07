@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import DatePicker from "react-multi-date-picker";
-import DatePanel from "react-multi-date-picker/plugins/date_panel";
 
 import { 
     XmarkCircle,
@@ -15,7 +14,6 @@ import waypoint from "../../../img/waypoint.svg";
 import { 
     useJsApiLoader, 
     GoogleMap, 
-    Marker, 
     Autocomplete,
     DirectionsRenderer
 } from '@react-google-maps/api';
@@ -126,12 +124,14 @@ const Trip = (props) => {
     // Remove waypoint 
     const handleRemove = (index) => {
 
+        var currList = [...wayPointList];
+        var currTxtList = [...inputTxtList];
+        var currInputList = [...inputList];
+
         if (inputList.length === 1) // Only one waypoint present
         {
             if (wayPointList[0]['location']) // There's something to clear
             {
-                var currList = [...wayPointList];
-                var currTxtList = [...inputTxtList];
                 currList[index]['location'] = '';
                 currTxtList[index] = '';
                 setWayPointList(currList);
@@ -140,9 +140,7 @@ const Trip = (props) => {
         }
         else 
         {
-            var currList = [...wayPointList];
-            var currTxtList = [...inputTxtList];
-            var currInputList = [...inputList];
+
             currList.splice(index , 1);
             currTxtList.splice(index, 1);
             currInputList.splice(index, 1);
@@ -184,15 +182,14 @@ const Trip = (props) => {
         })
 
         // Calculate distance and estimated time 
-        var estimatedRoute = results.routes[0].legs;
         var legs = results.routes[0].legs;
         var estimatedDistance = 0.0;
         var estimatedDuration = 0.0;
 
         for (var i = 0 ; i < legs.length; i++)
         {
-        estimatedDistance = estimatedDistance + legs[i].distance.value;
-        estimatedDuration = estimatedDuration + legs[i].duration.value;
+            estimatedDistance = estimatedDistance + legs[i].distance.value;
+            estimatedDuration = estimatedDuration + legs[i].duration.value;
         }
 
         setDirection(results);
@@ -209,24 +206,24 @@ const Trip = (props) => {
     const getWaypoints = () => {
         return (
             <div id="waypoint-inputs">
-            {inputList.map((x, i) => {
-                return(
-                    <div key={i} className="itinerary waypoint">
-                        <img className="waypoint-svg" src={waypoint}></img>
-			            <Autocomplete onPlaceChanged={() => onPlaceChanged(i)} onLoad={(e) => onLoad(e, i)}>
-                            <input
-                                type="text"
-                                placeholder="Enter a location"
-                                onChange={(e) => handleChange(i, e)}
-                                value={inputTxtList[i] || ''}
-                            />
-                        </Autocomplete>
-                        
-                        <XmarkCircle className="exit-svg" onClick={() => handleRemove(i)} size={24} /> 
-                    </div>
-                )
-            })}
-            <button className="trip-btn" onClick={() => handleAdd()}>Add</button>
+                {inputList.map((x, i) => {
+                    return(
+                        <div key={i} className="itinerary waypoint">
+                            <img className="waypoint-svg" alt="waypoint" src={waypoint}></img>
+                            <Autocomplete onPlaceChanged={() => onPlaceChanged(i)} onLoad={(e) => onLoad(e, i)}>
+                                <input
+                                    type="text"
+                                    placeholder="Enter a location"
+                                    onChange={(e) => handleChange(i, e)}
+                                    value={inputTxtList[i] || ''}
+                                />
+                            </Autocomplete>
+                            
+                            <XmarkCircle className="exit-svg" onClick={() => handleRemove(i)} size={24} /> 
+                        </div>
+                    )
+                })}
+                <button className="trip-btn" onClick={() => handleAdd()}>Add</button>
             </div>
         )
     }
@@ -291,6 +288,8 @@ const Trip = (props) => {
             tripID: uuidv4()
         }
 
+        console.log(newTrip);
+
         var test = {
             start:"Toronto, ON, Canada",
             end:"Burlington, ON, Canada",
@@ -353,7 +352,7 @@ const Trip = (props) => {
                     <div className="form-cell itinerary dest">
                         <label>Starting Point: </label>
 
-                        <img className="waypoint-svg" src={waypoint}/>
+                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input ref={originRef}/>
                         </Autocomplete>
@@ -361,7 +360,7 @@ const Trip = (props) => {
 
                     <div className="form-cell itinerary dest">
                         <label>Destination: </label>
-                        <img className="waypoint-svg" src={waypoint}/>
+                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input ref={destinationRef}/>
                         </Autocomplete>
@@ -380,9 +379,10 @@ const Trip = (props) => {
 
                 <div className="google-map">
                     <GoogleMap 
-                        zoom={15} 
+                        zoom={3} 
                         mapContainerStyle={{width: '100%', height: '100%'}}
-                        onLoad={(map) => setMap(map)}>
+                        onLoad={(map) => setMap(map)}
+                        center={{lat: 54.5260, lng: -105.2551}}>
                         {direction ? <DirectionsRenderer directions={direction}/> : <></>}
                     </GoogleMap>
                 </div>

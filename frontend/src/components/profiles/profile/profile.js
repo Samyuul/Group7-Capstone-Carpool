@@ -151,7 +151,7 @@ const Profile = (props) => {
                 {reviews.length ? 
                 <>
                     {renderReviews()}
-                    <Link id="read-more-btn" onClick={() => setIndex(index + 1)}>Read More</Link>
+                    <Link className="read-more-btn trip-btn" onClick={() => setIndex(index + 1)}>Read More</Link>
                 </>
                 : emptyReviewMessage()}
             </div>

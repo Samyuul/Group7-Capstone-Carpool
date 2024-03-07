@@ -112,26 +112,9 @@
     vertical-align: middle;
 }
 
-#login-submit {
-    margin: 35px auto 0px auto;
-
-    background-image: linear-gradient(90deg, #9B2226, #EE9B00);
-
-    width: 100%;
-
-    padding: 15px 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: white;
-
-    border-radius: 15px;
-    border: none;
-
-    font-size: 16px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.login-submit {
+    margin: 35px auto 0px auto !important;
+    width: 100% !important;
 }
 
 #reset-password {

@@ -197,17 +197,7 @@
     background-color: black;
 }
 
-#read-more-btn {
-    margin: auto;
-    display: block;
-    width: fit-content;
-
-    background-image: linear-gradient(90deg, #9B2226, #EE9B00);
-
-    color: white;
-    padding: 15px 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px 1px #e78267;
-
+.read-more-btn {
     margin-top: 35px;
+    width: 30% !important;
 }

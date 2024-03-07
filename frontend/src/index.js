@@ -21,7 +21,8 @@ import {
 	Register,
 	Private,
 	ViewPost,
-	Public
+	Public,
+	History
 } from "./components"
 
 const Layout = () => {
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
 				path: '/post/view/:postID',
 				element: <Private><ViewPost/></Private>
 			}, 
+			{
+				path: '/history',
+				element: <Private><History/></Private>
+			},
 			{
 				path: 'test',
 				element: <TestPage></TestPage>

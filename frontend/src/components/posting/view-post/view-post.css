@@ -1,12 +1,19 @@
 #view-post-page {
 
     flex: 1;
-
-    background-color: lightpink;
+    width: 60%;
+    margin: auto;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 
+}
+
+#trip-desc-page {
+    padding: 35px;
+    
+    background-color: lightgray;
+    border-radius: 15px;
+    width: 80%;
 }

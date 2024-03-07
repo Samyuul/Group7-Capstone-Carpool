@@ -43,6 +43,7 @@ const Request = (props) => {
     const [departTime, setDepartTime] = useState('');
     const [returnTime, setReturnTime] = useState('');
 
+    const [seatBtn, setSeatBtn] = useState([true, false, false, false, false, false, false]);
     const [luggageBtn, setLuggageBtn] = useState([true, false, false, false]);
     const [otherPref, setOtherPref] = useState([false, false, false, false, false]);
 
@@ -155,6 +156,7 @@ const Request = (props) => {
             depart: departTime,
             return: returnTime,
             luggage: luggageBtn,
+            seat: seatBtn,
             pref: otherPref,
             desc: tripDesc,
             distance: distance,
@@ -274,6 +276,23 @@ const Request = (props) => {
                                     "Medium",
                                     "Large",
                                 ])}
+                        </div>
+                    </div>
+
+                    <h5>Number of Seats Required:</h5>
+
+                    <div className="form-cell">
+                        <div className="selector-container">
+                            {getButtons("seat-selector ", seatBtn, setSeatBtn, 
+                            [
+                                "1",
+                                "2",
+                                "3",
+                                "4",
+                                "5",
+                                "6",
+                                "7"
+                            ])}
                         </div>
                     </div>
 

@@ -63,7 +63,7 @@ header {
 
 #header-login a img {
     height: 36px;
-    width: 32px;
+    width: 36px;
     object-fit: cover;
     border-radius: 50%;
 }
@@ -111,3 +111,6 @@ header a:hover {
     background-color: #0A9396;
 }
 
+.flex-link {
+    padding: 10px 25px 10px 25px !important;
+}

@@ -1,6 +1,6 @@
 import "./login.css"
 import React, { useState } from 'react';
-import { Link, useOutletContext,     useNavigate } from "react-router-dom";
+import { Link, useOutletContext, useNavigate } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
 
@@ -82,7 +82,7 @@ const Login = (props) => {
                         <input type="password" id="password-input" value={passwordInput} className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
                     </div>
 
-                    <button id="login-submit" onClick={handleLogin}>Login</button>
+                    <button className="trip-btn login-submit" onClick={handleLogin}>Login</button>
                     <Link id="reset-password">Forgot Password?</Link>
 
                 </div>

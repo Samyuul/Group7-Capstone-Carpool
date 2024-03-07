@@ -1,12 +1,11 @@
 import "./browse.css"
 import React, { useState, useRef } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Autocomplete } from "@react-google-maps/api"
 import DatePicker from "react-multi-date-picker";
 
 import { 
-    XmarkCircle,
     CalendarDots
  } from "@vectopus/atlas-icons-react";
 
@@ -15,6 +14,8 @@ import {
 const Browse = (props) => {
 
     const [postings, setPostings] = useState(['dafsa', 'davsadd', 'yeays', 'bffr', 'fdasf', 'esfav', 'feavd', 'aewae', 'fdasvd']);
+
+    let navigate = useNavigate();
 
     const test = [{
         start:"Toronto, ON, Canada",
@@ -36,26 +37,60 @@ const Browse = (props) => {
         name:"Sarah Smith",
         tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"}];
 
+    const getProfileImage = () => {
+        return require('../../../img/thumbnail.webp');
+    }
+
+    const getLuggageSize = (arr) => {
+
+        const sizes = ["None", "Small", "Medium", "Large"];
+        return("Luggage: " + sizes[arr.indexOf(true)]);
+    }
+
+    const getSeat = (arr) => {
+        return("Seats Left: " + (arr.indexOf(true) + 1));
+    }
+
+    const getPref = (arr) => {
+        
+        const preferences = ['Winter Tires', 'Bikes', 'Pets', 'Snow Gear', 'Smoking'];
+
+        return (
+            arr.map((val, i) => {
+                return (<p>{preferences[i]}: {val ? 'Yes' : 'No'}</p>)
+            })
+        )
+
+    }
+
     const renderPostings = () => {
 
         return (
             postings.map((val, i) => {
                 return (
-                    <div key={i} className="posting">
-                        <div id="user-info">
-
+                    <div key={i} className="posting" onClick={() => navigate('/post/view/1234')}>
+                        <div className="user-info">
+                            <img src={getProfileImage()} alt="profile"></img>
+                            <div>
+                                <p>{test[0].name}</p>
+                                <p>4.6 / 5.0 - 7 Driven</p>
+                            </div>
                         </div>
 
-                        <div id="trip-info">
+                        <div className="trip-info">
 
-                        <h3>Test {i}</h3>
+                            <p>From: {test[0].start}</p>
+                            <p>To: {test[0].end}</p>
+                            <p>On: {test[0].date[0]} at {test[0].depart}</p>
+                            <br></br>
+                            <p>{getLuggageSize(test[0].luggage)}</p>
+                            <p>{getSeat(test[0].seat)}</p>
+                        </div>
 
-                            <p>This is a test post</p>
-                            <p>Posted by: Bob</p>
-
-                            <Link to={"/post/view/" + val}>
-                                View 
-                            </Link>
+                        <div className="pref-info">
+                            <p>Preferences:</p>
+                            <br></br>
+                            {getPref(test[0].pref)}
                         </div>
 
                     </div>
@@ -76,12 +111,12 @@ const Browse = (props) => {
 
             <div className="search-bar">
                 <div className="flex-inline">
-                    <img className="waypoint-svg" src={waypoint}/>
+                    <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                     <input placeholder="Start"/>
                 </div>
 
                 <div className="flex-inline">
-                    <img className="waypoint-svg" src={waypoint}/>
+                    <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                     <input placeholder="End"/>
                 </div>
 
@@ -97,7 +132,7 @@ const Browse = (props) => {
                 </div>
 
                 
-                <button id="search-btn" onClick={() => console.log("submit")}>
+                <button className="gradient-btn trip-btn" onClick={() => console.log("submit")}>
                     Search
                 </button>
 

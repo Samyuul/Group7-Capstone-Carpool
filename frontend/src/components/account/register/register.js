@@ -112,7 +112,7 @@ const Register = (props) => {
                             <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
                     </div>
 
-                    <button id="login-submit" onClick={registerAccount}>Register</button>
+                    <button className="trip-btn login-submit" onClick={registerAccount}>Register</button>
 
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>

@@ -1,6 +1,6 @@
 import "./header.css"
-import React, { useState, useEffect } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { 
     PlusCircle, 
@@ -24,11 +24,11 @@ const Header = (props) => {
             </div>
 
             <div id="header-post">
-                <Link className="flex-link" to={"/browse"}>
+                <Link to={"/browse"}>
                     <MagnifyingGlass size={24} weight="bold" />
                     Browse
                 </Link>
-                <Link className="flex-link" to={!localStorage.getItem('user') ? "/login" : "/post"}>
+                <Link to={!localStorage.getItem('user') ? "/login" : "/post"}>
                     <PlusCircle size={24} weight="bold" />
                     Post
                 </Link>
@@ -37,15 +37,21 @@ const Header = (props) => {
             <div id="header-login">
 
                 {!localStorage.getItem('user') ? 
+                        <></> : 
+                        <Link className="flex-link" to={"/history"}>
+                            History
+                        </Link> }
+
+                {!localStorage.getItem('user') ? 
                     <></> : 
-                    <Link id="profile-link" className="flex-link" to={"/profile/"}>
-                        <img id="thumbnail-image" src={getProfileImage()}></img>
+                    <Link id="profile-link" to={"/profile/"}>
+                        <img id="thumbnail-image" src={getProfileImage()} alt="profile"></img>
                         Profile
                     </Link> }
 
                 {!localStorage.getItem('user') ? 
-                    <Link to={"/login"}>Login</Link> : 
-                    <Link to={"/login"} onClick={handleLogout} reloadDocument>Logout</Link> }
+                    <Link to={"/login"} className="flex-link">Login</Link> : 
+                    <Link to={"/login"} className="flex-link" onClick={handleLogout} reloadDocument>Logout</Link> }
             </div>
         </header>
     )
