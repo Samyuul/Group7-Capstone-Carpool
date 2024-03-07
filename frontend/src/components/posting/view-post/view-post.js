@@ -70,7 +70,7 @@ const ViewPost = (props) => {
 
                         <p>From: {test.start}</p>
                         <p>To: {test.end}</p>
-                        <p>On: {test.date} at {test.depart}</p>
+                        <p>On: {test.date[0]} at {test.depart}</p>
                         <br></br>
                         <p>{getLuggageSize(test.luggage)}</p>
                         <p>{getSeat(test.seat)}</p>
@@ -93,7 +93,7 @@ const ViewPost = (props) => {
 
             <p id="trip-desc-page">Trip Descrption: {test.desc}</p>
 
-            <button>Join This Trip!</button>
+            <button className="trip-btn">Join This Trip!</button>
         </div>
     )
 

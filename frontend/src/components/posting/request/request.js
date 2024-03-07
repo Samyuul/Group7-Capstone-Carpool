@@ -223,9 +223,10 @@ const Request = (props) => {
 
                 <div className="google-map">
                     <GoogleMap 
-                        zoom={15} 
+                        zoom={3} 
                         mapContainerStyle={{width: '100%', height: '100%'}}
-                        onLoad={(map) => setMap(map)}>
+                        onLoad={(map) => setMap(map)}
+                        center={{lat: 54.5260, lng: -105.2551}}>
                         {direction ? <DirectionsRenderer directions={direction}/> : <></>}
                     </GoogleMap>
                 </div>
