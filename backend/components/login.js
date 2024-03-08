@@ -38,12 +38,31 @@ const Accounts = mongoose.model("Accounts",{
     password:String
 })
 
+const CookiesID = mongoose.model("CookiesID",{
+    username:String,
+    userID:String,
+})
+
 var session = require("express-session");
 myWebsite.use(session({
     secret: "secret",
     resave: false,
     saveUninitialized: true
 }));
+
+function generateRandomId(length) {
+    // Define the characters that can be part of the ID
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    
+    // Generate a string of the specified length
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    
+    return result;
+  }
 
 // For example, you can delete this since we are rendering the login page using reactJS, you won't need res.render anywhere
 // Don't need to set ejs, view and all the other things we learned in the javascript course
@@ -65,14 +84,48 @@ myWebsite.post("/login", function (req, res) {
 
     Accounts.findOne({ username: username, password: password }).then((Accounts) => {
         console.log(`Accounts:${Accounts}`);
+        
         if (Accounts) {
-            req.session.username = Accounts.username;
-            req.session.userLoggedIn = true;
-            const username=req.session.username;
-            res.send(`Welcome, ${username}`);//this is for testing session can keep username, and yes it works.
+            //req.session.username = Accounts.username;
+            //req.session.userLoggedIn = true;
+            //const username=req.session.username;
             
+            
+            CookiesID.findOne({username:username}).then((CookieID) =>{
+                if(CookieID){
+                    console.log(`Account haven't logout yet!`);
+                    console.log(`Account CookiesID:${CookieID}`)
+                    // This lets you send an error, with error code 500 and custom message
+                    res.status(500).send({
+                        message: "Account haven't logout yet!."
+                    })
+                }
+                else{
+                    const userID = generateRandomId(10);
+
+                    var newInput = {
+                        username : username,
+                        userID : userID,
+                    }
+
+                    var newCookieID = new CookiesID(newInput);
+                    
+                    newCookieID.save().then(function(){
+                        console.log("New newCookieID Created Successfully!");
+                        res.send("New newCookieID Created Successfully!"); // This lets you send a message (can see in postmate)
+                    }).catch(function(Ex){
+                        console.log(`Db Error: ${Ex.toString()}`);
+                        res.status(404).send({     // different error code and custom messageS
+                            message: `Db Error: ${Ex.toString()}`
+                        })
+                    })
+
+                
+                
+                }
+            })
         }
-        else {
+        else{
             console.log("No account found");
             res.status(500).send({                               
                 message: "No account found"
