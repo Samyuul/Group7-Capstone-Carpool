@@ -24,3 +24,17 @@
     background-color: lightgray;
 
 }
+
+.history-container {
+    display: flex;
+    align-items: center;
+}
+
+.history-container .trip-btn {
+    height: 55px;
+    width: 100px;
+}
+
+.history-container .posting {
+    margin: 10px 0px 10px 0;
+}

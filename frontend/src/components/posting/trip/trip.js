@@ -29,7 +29,6 @@ const Trip = (props) => {
         libraries
     })
 
-    const [map, setMap] = useState(null);
     const [direction, setDirection] = useState(null);
     const [distance, setDistance] = useState('');
     const [duration, setDuration] = useState('');
@@ -285,6 +284,7 @@ const Trip = (props) => {
             distance: distance,
             eta: duration,
             name: "Sarah Smith",
+            requestType: true,
             tripID: uuidv4()
         }
 
@@ -309,6 +309,8 @@ const Trip = (props) => {
             eta:7186,
             name:"Sarah Smith",
             tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"}
+
+        console.log(test);
 
     }
 
@@ -350,19 +352,19 @@ const Trip = (props) => {
                     <p>Choose your starting and ending positions, with any stops along the way.</p>
             
                     <div className="form-cell itinerary dest">
-                        <label>Starting Point: </label>
+                        <label htmlFor="start-point">Starting Point: </label>
 
                         <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input ref={originRef}/>
+                            <input id="start-point" ref={originRef}/>
                         </Autocomplete>
                     </div>
 
                     <div className="form-cell itinerary dest">
-                        <label>Destination: </label>
+                        <label htmlFor="end-point">Destination: </label>
                         <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input ref={destinationRef}/>
+                            <input id="end-point" ref={destinationRef}/>
                         </Autocomplete>
                     </div>
 
@@ -379,10 +381,9 @@ const Trip = (props) => {
 
                 <div className="google-map">
                     <GoogleMap 
-                        zoom={3} 
+                        zoom={direction ? "" : 3} 
                         mapContainerStyle={{width: '100%', height: '100%'}}
-                        onLoad={(map) => setMap(map)}
-                        center={{lat: 54.5260, lng: -105.2551}}>
+                        center={direction ? "" : {lat: 54.5260, lng: -105.2551}}>
                         {direction ? <DirectionsRenderer directions={direction}/> : <></>}
                     </GoogleMap>
                 </div>
@@ -395,7 +396,7 @@ const Trip = (props) => {
             </p>
             <div className="form-cell single-line-cell">
                 <div className="flex-inline">
-                    <label>Date: </label>
+                    <label htmlFor="date-picker-trip">Date: </label>
                     <CalendarDots className="calendar-svg" size={24}/>
                     <DatePicker
                         id="date-picker-trip"
@@ -409,13 +410,13 @@ const Trip = (props) => {
                 </div>
 
                 <div className="flex-inline">
-                    <label>Departure Time:</label>
-                    <input onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
+                    <label htmlFor="depart-time">Departure Time:</label>
+                    <input id="depart-time" onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
 
                 <div className="flex-inline">
-                    <label>Return Time (Optional):</label>
-                    <input onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
+                    <label htmlFor="return-time">Return Time (Optional):</label>
+                    <input id="return-time" onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
             </div>
 
@@ -423,23 +424,23 @@ const Trip = (props) => {
 
             <div className="form-cell single-line-cell">
                 <div className="flex-inline">
-                    <label>Model: </label>
-                    <input onChange={(e) => setCarModel(e.target.value)} placeholder="e.g. Ford Focus" className="time-picker model-txt"></input>
+                    <label htmlFor="car-model">Model: </label>
+                    <input id="car-model" onChange={(e) => setCarModel(e.target.value)} placeholder="e.g. Ford Focus" className="time-picker model-txt"></input>
                 </div>
 
                 <div className="flex-inline">
-                    <label>Type: </label>
-                    <input onChange={(e) => setCarType(e.target.value)} className="time-picker model-txt"/>
+                    <label htmlFor="car-type">Type: </label>
+                    <input id="car-type" onChange={(e) => setCarType(e.target.value)} className="time-picker model-txt"/>
                 </div>
                 
                 <div className="flex-inline">
-                    <label>Color: </label>
-                    <input onChange={(e) => setCarColor(e.target.value)} className="time-picker model-txt"/>
+                    <label htmlFor="car-color">Color: </label>
+                    <input id="car-color" onChange={(e) => setCarColor(e.target.value)} className="time-picker model-txt"/>
                 </div>
 
                 <div>
-                    <label>License Plate: </label>
-                    <input onChange={(e) => setCarPlate(e.target.value)} placeholder="e.g. ABCD 123" className="time-picker model-txt"></input>
+                    <label htmlFor="car-license">License Plate: </label>
+                    <input id="car-license" onChange={(e) => setCarPlate(e.target.value)} placeholder="e.g. ABCD 123" className="time-picker model-txt"></input>
                 </div>
             </div>
 
@@ -486,7 +487,7 @@ const Trip = (props) => {
                                 "Bikes",
                                 "Pets",
                                 "Snow Gear",
-                                "Smoking"
+                                "No Smoking"
                             ])}
                         </div>
                     </div>
@@ -497,8 +498,10 @@ const Trip = (props) => {
 
             <h4 className="underline">Trip Description</h4>
                 <div onChange={(e) => setTripDesc(e.target.value)} className="form-cell">
-                    <label>Description: </label>
-                    <textarea/>
+                    <label htmlFor="trip-desc-input">Description: </label>
+                    <div className="textarea-container">
+                        <textarea id="trip-desc-input"/>
+                    </div>
                 </div>
 
             <h4 className="underline">Rules</h4>

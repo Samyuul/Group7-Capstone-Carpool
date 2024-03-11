@@ -22,7 +22,8 @@ import {
 	Private,
 	ViewPost,
 	Public,
-	History
+	History,
+	Edit
 } from "./components"
 
 const Layout = () => {
@@ -31,7 +32,6 @@ const Layout = () => {
 
 	return (
 		<>
-			
 			<Header />
 			<Outlet context={[userName, setUserName]}/>
 			<Footer />
@@ -92,6 +92,10 @@ const router = createBrowserRouter([
 			{
 				path: '/history',
 				element: <Private><History/></Private>
+			},
+			{
+				path: '/edit-profile',
+				element: <Private><Edit/></Private>
 			},
 			{
 				path: 'test',

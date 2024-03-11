@@ -1,0 +1,73 @@
+#edit-profile {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#profile-inputs {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+.profile-input-txt {
+    display: flex;
+    align-items: center;
+}
+
+.profile-input-txt input, textarea, select{
+    padding: 25px 40px 25px 42px;
+    height: 25px;
+    font-size: 16px;
+    border-radius: 15px;
+    border: none;
+    background-color: lightgray;
+    box-sizing: border-box;
+}
+
+.textarea-style {
+    padding: 15px 40px 15px 42px;
+    height: 100px;
+    width: 100%;
+    resize: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+.profile-input-txt svg {
+    width: 30px;
+    position: relative;
+    left: 36px;
+}
+
+.textarea-container {
+    overflow: hidden;
+    width: 100%;
+    border-radius: 15px;
+    height: fit-content;
+}
+
+#edit-profile label {
+
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+#edit-profile .trip-btn {
+    margin-top: 40px;
+}
+
+.profile-input-txt .trip-btn {
+    margin: 0 !important;
+    margin-left: 25px !important;
+
+    padding: 5px !important;
+    width: 150px;
+}
+
+.profile-input-txt select {
+    padding: 15px 40px 15px 42px !important;
+    height: 55px !important;
+}

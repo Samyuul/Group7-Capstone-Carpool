@@ -1,129 +1,122 @@
 import "./browse.css"
-import React, { useState, useRef } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
 
-import { Autocomplete } from "@react-google-maps/api"
 import DatePicker from "react-multi-date-picker";
 
 import { 
-    CalendarDots
- } from "@vectopus/atlas-icons-react";
+    useJsApiLoader, 
+    Autocomplete
+} from '@react-google-maps/api';
 
- import waypoint from "../../../img/waypoint.svg";
+import { CalendarDots } from "@vectopus/atlas-icons-react";
+
+import waypoint from "../../../img/waypoint.svg";
+import data from "./test.json";
+import PostTemplate from "../../template/postTemplate";
+
+import ReactPaginate from 'react-paginate';
+
+const libraries = ['places'];
+const items = [...Array(33).keys()];
+const postData = data.concat(data).concat(data).concat(data);
 
 const Browse = (props) => {
 
-    const [postings, setPostings] = useState(['dafsa', 'davsadd', 'yeays', 'bffr', 'fdasf', 'esfav', 'feavd', 'aewae', 'fdasvd']);
+    // Pagination variables
+    const [currentItems, setCurrentItems] = useState(null);
+    const [pageCount, setPageCount] = useState(0);
+    const [itemOffset, setItemOffset] = useState(0);
 
-    let navigate = useNavigate();
+    const [startLoc, setStartLoc] = useState("");
+    const [endLoc, setEndLoc] = useState("");
+    const [dates, setDates] = useState([]);
+    const originRef = useRef();
+    const destinationRef = useRef();
 
-    const test = [{
-        start:"Toronto, ON, Canada",
-        end:"Burlington, ON, Canada",
-        waypoints:["Guelph, ON, Canada"],
-        date:["March 14, 2024","March 20, 2024","March 21, 2024"],
-        depart:"14:24",
-        return:"17:25",
-        model:"Ford Focus",
-        type:"Hatch Back",
-        color:"Red",
-        plate:"ABC 1234",
-        luggage:[false,false,true,false],
-        seat:[false,false,true,false,false,false,false],
-        pref:[true,true,true,false,false],
-        desc:"This is a test description for entering into the system. Please ignore what this message says.",
-        distance:149840,
-        eta:7186,
-        name:"Sarah Smith",
-        tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"}];
+    const itemsPerPage = 4;
 
-    const getProfileImage = () => {
-        return require('../../../img/thumbnail.webp');
-    }
+    // Set up pagination 
+    useEffect(() => {
+        const endOffset = itemOffset + itemsPerPage;
+        setCurrentItems(postData.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(postData.length / itemsPerPage));
+        window.scrollTo({
+        //    top: 0,
+        //    left: 0,
+            behavior: "smooth"
+          });
+    }, [itemOffset, itemsPerPage]);
+    
+    // Invoke when user click to request another page.
+    const handlePageClick = (event) => {
+        const newOffset = event.selected * itemsPerPage % items.length;
+        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+        setItemOffset(newOffset);
+    };
 
-    const getLuggageSize = (arr) => {
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
+        //googleMapsApiKey: "",
+        libraries
+    })
 
-        const sizes = ["None", "Small", "Medium", "Large"];
-        return("Luggage: " + sizes[arr.indexOf(true)]);
-    }
-
-    const getSeat = (arr) => {
-        return("Seats Left: " + (arr.indexOf(true) + 1));
-    }
-
-    const getPref = (arr) => {
-        
-        const preferences = ['Winter Tires', 'Bikes', 'Pets', 'Snow Gear', 'Smoking'];
+    const renderPostings = (data) => {
 
         return (
-            arr.map((val, i) => {
-                return (<p>{preferences[i]}: {val ? 'Yes' : 'No'}</p>)
-            })
-        )
-
-    }
-
-    const renderPostings = () => {
-
-        return (
-            postings.map((val, i) => {
-                return (
-                    <div key={i} className="posting" onClick={() => navigate('/post/view/1234')}>
-                        <div className="user-info">
-                            <img src={getProfileImage()} alt="profile"></img>
-                            <div>
-                                <p>{test[0].name}</p>
-                                <p>4.6 / 5.0 - 7 Driven</p>
-                            </div>
-                        </div>
-
-                        <div className="trip-info">
-
-                            <p>From: {test[0].start}</p>
-                            <p>To: {test[0].end}</p>
-                            <p>On: {test[0].date[0]} at {test[0].depart}</p>
-                            <br></br>
-                            <p>{getLuggageSize(test[0].luggage)}</p>
-                            <p>{getSeat(test[0].seat)}</p>
-                        </div>
-
-                        <div className="pref-info">
-                            <p>Preferences:</p>
-                            <br></br>
-                            {getPref(test[0].pref)}
-                        </div>
-
-                    </div>
-                )
-            })
+            <div className="items">
+                {data && data.map((val, i) => {
+                    return(<PostTemplate key={i} data={val}/>)
+                })}
+            </div>
         )
     }
     
+    const searchFunc = () => {
+        
+        var searchConditions = {
+            startLoc: startLoc,
+            endLoc: endLoc,
+            dates: dates
+        }
+
+        console.log(searchConditions);
+    }
+
+    // Don't page if maps hasn't been loaded successfully 
+    if (!isLoaded) {
+        return <></>
+    }
+
     return (
         <div id="browse-page">
-
             <h2>
                 Find a Trip
             </h2>
             <p>
-                Enter your starting and ending point and browse away!
+                Enter Your Starting and Ending Point and Browse Away!
             </p>
 
             <div className="search-bar">
                 <div className="flex-inline">
                     <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
-                    <input placeholder="Start"/>
+                    <Autocomplete onPlaceChanged={(e) => setStartLoc(originRef.current.value)}>
+                        <input placeholder="Start" ref={originRef}/>
+                    </Autocomplete>
                 </div>
 
                 <div className="flex-inline">
                     <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
-                    <input placeholder="End"/>
+                    <Autocomplete onPlaceChanged={(e) => setEndLoc(destinationRef.current.value)}>
+                        <input placeholder="End" ref={destinationRef}/>
+                    </Autocomplete>
                 </div>
 
                 <div className="flex-inline">
                     <CalendarDots className="calendar-svg" size={24}/>
                     <DatePicker
-                        id="date-picker-search"
+                        id="date-picker-request"
+                        value={dates}
+                        onChange={setDates}
                         format="MMMM DD, YYYY"
                         minDate={new Date()}
                         sort
@@ -132,13 +125,34 @@ const Browse = (props) => {
                 </div>
 
                 
-                <button className="gradient-btn trip-btn" onClick={() => console.log("submit")}>
+                <button className="gradient-btn trip-btn" onClick={() => searchFunc()}>
                     Search
                 </button>
 
             </div>
 
-            {renderPostings()}
+            {renderPostings(currentItems)}
+            <ReactPaginate
+                nextLabel="&#8658;"
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={2}
+                marginPagesDisplayed={2}
+                pageCount={pageCount}
+                previousLabel="&#8656;"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                breakLabel="..."
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                containerClassName="pagination"
+                activeClassName="active"
+                renderOnZeroPageCount={null}
+            />
+    
         </div>
     )
 
