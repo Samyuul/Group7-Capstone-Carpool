@@ -98,6 +98,14 @@ const router = createBrowserRouter([
 				element: <Private><Edit/></Private>
 			},
 			{
+				path: '/edit-trip/:postID',
+				element: <Private><Trip/></Private>
+			},
+			{
+				path: '/edit-request/:postID',
+				element: <Private><Request/></Private>
+			},
+			{
 				path: 'test',
 				element: <TestPage></TestPage>
 			}

@@ -1,6 +1,7 @@
 import "./trip.css"
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useParams } from "react-router-dom";
 
 import DatePicker from "react-multi-date-picker";
 
@@ -23,6 +24,8 @@ const libraries = ['places'];
 
 const Trip = (props) => {
 
+    const { postID } = useParams();
+
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
         //googleMapsApiKey: "",
@@ -35,6 +38,9 @@ const Trip = (props) => {
 
     const originRef = useRef();
     const destinationRef = useRef();
+
+    const [startPoint, setStartPoint] = useState('');
+    const [endPoint, setEndPoint] = useState('');
 
     const [inputList, setInputList] = useState(['']);
     const [wayPointList, setWayPointList] = useState([{location: '', stopover: true}]);
@@ -54,6 +60,68 @@ const Trip = (props) => {
     const [otherPref, setOtherPref] = useState([false, false, false, false, false]);
 
     const [tripDesc, setTripDesc] = useState('');
+
+    // Load initial value if required
+    useEffect(() => {
+
+        if (postID)
+        {
+            var pageData = {
+                _id: {
+                  "$oid": "65eb74a4a88e8a0c5872dd28"
+                },
+                start: "Toronto, ON, Canada",
+                end: "Burlington, ON, Canada",
+                waypoints: ["Guelph, ON, Canada"],
+                date: ["March 14, 2024","March 20, 2024","March 21, 2024"],
+                depart: "14:24",
+                return: "16:55",
+                model: "Ford Focus",
+                type: "Hatch Back",
+                color: "Red",
+                plate: "ABC 1234",
+                luggage: [false,false,true,false],
+                seat: [false,false,true,false,false,false,false],
+                pref: [true,true,true,false,false],
+                desc: "This is a test description for entering into the system. Please ignore what this message says.",
+                distance: "149840",
+                eta: "7186",
+                name: "Sarah Smith",
+                tripID: "469ed35b-c8f1-42df-9edb-d83764564acd"
+            }
+            
+            setStartPoint(pageData.start);
+            setEndPoint(pageData.end);
+            setDates(pageData.date);
+            setDepartTime(pageData.depart);
+            setReturnTime(pageData.return);
+            setCarModel(pageData.model);
+            setCarType(pageData.type);
+            setCarColor(pageData.color);
+            setCarPlate(pageData.plate);
+            setLuggageBtn(pageData.luggage);
+            setSeatBtn(pageData.seat);
+            setOtherPref(pageData.pref);
+            setTripDesc(pageData.desc);
+         
+            setInputTxtList(pageData.waypoints);
+
+            var currWayPointList = pageData.waypoints.map((val, i) => {
+                return {location: val, stopover: true}
+            });
+
+            setWayPointList(currWayPointList);
+
+            var currInputList = pageData.waypoints.map((val, i) => {
+                return ''
+            });
+
+            setInputList(currInputList);
+
+            calculateRoute();
+        }
+
+    }, [])
 
     // ---------------------------------------
     // Functions for waypoints for preferences
@@ -356,7 +424,7 @@ const Trip = (props) => {
 
                         <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="start-point" ref={originRef}/>
+                            <input defaultValue={startPoint} id="start-point" ref={originRef}/>
                         </Autocomplete>
                     </div>
 
@@ -364,7 +432,7 @@ const Trip = (props) => {
                         <label htmlFor="end-point">Destination: </label>
                         <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="end-point" ref={destinationRef}/>
+                            <input defaultValue={endPoint} id="end-point" ref={destinationRef}/>
                         </Autocomplete>
                     </div>
 
@@ -411,12 +479,12 @@ const Trip = (props) => {
 
                 <div className="flex-inline">
                     <label htmlFor="depart-time">Departure Time:</label>
-                    <input id="depart-time" onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
+                    <input id="depart-time" value={departTime} onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
 
                 <div className="flex-inline">
                     <label htmlFor="return-time">Return Time (Optional):</label>
-                    <input id="return-time" onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
+                    <input id="return-time" value={returnTime} onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
             </div>
 
@@ -425,22 +493,22 @@ const Trip = (props) => {
             <div className="form-cell single-line-cell">
                 <div className="flex-inline">
                     <label htmlFor="car-model">Model: </label>
-                    <input id="car-model" onChange={(e) => setCarModel(e.target.value)} placeholder="e.g. Ford Focus" className="time-picker model-txt"></input>
+                    <input id="car-model" value={carModel} onChange={(e) => setCarModel(e.target.value)} placeholder="e.g. Ford Focus" className="time-picker model-txt"></input>
                 </div>
 
                 <div className="flex-inline">
                     <label htmlFor="car-type">Type: </label>
-                    <input id="car-type" onChange={(e) => setCarType(e.target.value)} className="time-picker model-txt"/>
+                    <input id="car-type" value={carType} onChange={(e) => setCarType(e.target.value)} className="time-picker model-txt"/>
                 </div>
                 
                 <div className="flex-inline">
                     <label htmlFor="car-color">Color: </label>
-                    <input id="car-color" onChange={(e) => setCarColor(e.target.value)} className="time-picker model-txt"/>
+                    <input id="car-color" value={carColor} onChange={(e) => setCarColor(e.target.value)} className="time-picker model-txt"/>
                 </div>
 
                 <div>
                     <label htmlFor="car-license">License Plate: </label>
-                    <input id="car-license" onChange={(e) => setCarPlate(e.target.value)} placeholder="e.g. ABCD 123" className="time-picker model-txt"></input>
+                    <input id="car-license" value={carPlate} onChange={(e) => setCarPlate(e.target.value)} placeholder="e.g. ABCD 123" className="time-picker model-txt"></input>
                 </div>
             </div>
 
@@ -497,10 +565,10 @@ const Trip = (props) => {
             </div>
 
             <h4 className="underline">Trip Description</h4>
-                <div onChange={(e) => setTripDesc(e.target.value)} className="form-cell">
+                <div className="form-cell">
                     <label htmlFor="trip-desc-input">Description: </label>
                     <div className="textarea-container">
-                        <textarea id="trip-desc-input"/>
+                        <textarea value={tripDesc} onChange={(e) => setTripDesc(e.target.value)} id="trip-desc-input"/>
                     </div>
                 </div>
 

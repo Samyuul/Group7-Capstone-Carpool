@@ -17,7 +17,7 @@ const History = (props) => {
                 return (
                     <div className="history-container" key={i}>
                         <PostTemplate data={val}/>
-                        <button onClick={() => navigate('/edit-post/' + val.tripID)} className="trip-btn">Edit</button>
+                        <button onClick={() => navigate('/edit-trip/' + val.tripID)} className="trip-btn">Edit</button>
                     </div>
                 )
             })
