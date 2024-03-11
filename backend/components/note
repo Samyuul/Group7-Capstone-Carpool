@@ -14,3 +14,7 @@ all the test been done without cookie/session.(rewrite and remove session sectio
 
 2. Server.js tested successfuly with login and logout. Login tested with mongodb. done.
 Issues: Can't find out why postman won't work anymore. Frontend test successful.
+
+3. random key after login. save it as the username.
+
+4. make database as frontend. make few examples.

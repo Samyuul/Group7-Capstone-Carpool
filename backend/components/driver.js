@@ -20,22 +20,30 @@ mongoose.connect("mongodb://localhost:27017/vroom-room"),
   };
 
 /*************************************************/
-const RidesDetails = mongoose.model("RidesDetails", {
-  StartingPoint: String,
-  Destination: String,
-  AdditionalStops: String,
-  DepartureTime: String,
-  SeatsTaken: Number,
-  SeatsTotal: Number,
-  Preference: String,
-  Description: String,
-  PostedBy: String,
-  PostedFor: String,
-  PostedTime:String,
+const DriverDetails = mongoose.model("DriverDetails", {
+  start: String,
+  end: String,
+  waypoints: String,
+  date: String,
+  depart: String,
+  returns: String,
+  model: String,
+  type: String,
+  color: String,
+  plate: String,
+  luggage: String,
+  seat: String,
+  pref: String,
+  desc: String,
+  distance: String,
+  eta: String,
+  name: String,
+  tripID: String,
 });
 
 var session = require("express-session");
 const { time } = require("console");
+const { copyFileSync } = require("fs");
 myWebsite.use(
   session({
     secret: "secret",
@@ -45,60 +53,73 @@ myWebsite.use(
 );
 
 myWebsite.get("/driver", function (req, res) {
-  if (req.session.userLoggedIn) {
-    const username = req.session.username;
-    res.send(`Welcome, ${username}`);
-  } else {
-    res.send(`Can't find session`);
-  }
+  // if (req.session.userLoggedIn) {
+  //   const username = req.session.username;
+  //   res.send(`Welcome, ${username}`);
+  // } else {
+  //   res.send(`Can't find session`);
+  // }
 });
 
 myWebsite.post("/driver", function (req, res) {
-  if (req.session.userLoggedIn) {
-    var StartingPoint = req.body.txtStartingPoint;
-    var Destination = req.body.txtDestination;
-    var AdditionalStops = req.body.txtAdditionalStops;
-    var DepartureTime = req.body.txtDepartureTime;
-    var SeatsTotal = req.body.txtSeatsTotal;
-    var Preference = req.body.txtPreference;
-    var Description = req.body.txtDescription;
-    var PostedBy = req.session.username;
-    var PostedFor = "Driver";
-    var PostedTime = new Date();
+  //if (req.session.userLoggedIn) {
 
-    var postDetails = {
-      StartingPoint: StartingPoint,
-      Destination: Destination,
-      AdditionalStops: AdditionalStops,
-      DepartureTime: DepartureTime,
-      SeatsTotal: SeatsTotal,
-      Preference: Preference,
-      Description: Description,
-      PostedBy: PostedBy,
-      PostedFor: PostedFor,
-      PostedTime : PostedTime,
-    };
+  var start = req.body.start;
+  var end = req.body.end;
+  var waypoints = req.body.waypoints;
+  var date = req.body.date;
+  var depart = req.body.depart;
+  var returns = req.body.return;
+  var model = req.body.model;
+  var type = req.body.type;
+  var color = req.body.color;
+  var plate = req.body.plate;
+  var luggage = req.body.luggage;
+  var seat = req.body.seat;
+  var pref = req.body.pref;
+  var desc = req.body.desc;
+  var distance = req.body.distance;
+  var eta = req.body.eta;
+  var name = req.body.name;
+  var tripID = req.body.tripID;
 
-  
+  var postDetails = {
+    start: start,
+    end: end,
+    waypoints: waypoints,
+    date: date,
+    depart: depart,
+    returns: returns,
+    model: model,
+    type: type,
+    color: color,
+    plate: plate,
+    luggage: luggage,
+    seat: seat,
+    pref: pref,
+    desc: desc,
+    distance: distance,
+    eta: eta,
+    name: name,
+    tripID: tripID,
+  };
 
-    RidesDetails.findOne().then((ridesdetail) => {
-      
-        var newRide = new RidesDetails(postDetails);
-        newRide
-          .save()
-          .then(function () {
-            res.send("New Account Created Successfully!");
-          })
-          .catch(function (Ex) {
-            res.status(404).send({
-              message: `Db Error: ${Ex.toString()}`,
-            });
-          });
-      
-    });
-  }
+  DriverDetails.findOne().then(() => {
+    var newRide = new DriverDetails(postDetails);
+    newRide
+      .save()
+      .then(function () {
+        res.send("New Account Created Successfully!");
+      })
+      .catch(function (Ex) {
+        res.status(404).send({
+          message: `Db Error: ${Ex.toString()}`,
+        });
+      });
+  });
+  //}
 
-  res.send("clicked button to different page");
+  console.log("clicked button to different page");
 });
 
 //*********************************************/
