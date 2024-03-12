@@ -23,7 +23,8 @@ import {
 	ViewPost,
 	Public,
 	History,
-	Edit
+	Edit,
+	Review
 } from "./components"
 
 const Layout = () => {
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
 			{
 				path: '/edit-request/:postID',
 				element: <Private><Request/></Private>
+			},
+			{
+				path: '/edit-review/:username',
+				element: <Private><Review/></Private>	
 			},
 			{
 				path: 'test',

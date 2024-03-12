@@ -172,6 +172,11 @@
     left: 35px;
 }
 
+.model-svg {
+    position: relative;
+    left: 42px
+}
+
 #date-picker-search, #date-picker-trip, #date-picker, .time-picker {
     padding: 25px 12px 25px 42px;
     font-size: 16px;
@@ -248,6 +253,10 @@
     margin-right: 25px;
     margin-left: 10px;
     width: 150px;
+}
+
+.model-offset {
+    padding-left: 35px;
 }
 
 .model-txt::placeholder {

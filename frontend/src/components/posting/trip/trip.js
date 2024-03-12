@@ -22,9 +22,34 @@ import {
 const google = window.google = window.google ? window.google : {}
 const libraries = ['places'];
 
+var data = {
+    _id: {
+      "$oid": "65eb74a4a88e8a0c5872dd28"
+    },
+    start: "Toronto, ON, Canada",
+    end: "Burlington, ON, Canada",
+    waypoints: ["Guelph, ON, Canada", "Hamilton, ON, Canada", "Dallas, TX"],
+    date: ["March 14, 2024","March 20, 2024","March 21, 2024"],
+    depart: "14:24",
+    return: "16:55",
+    model: "Ford Focus",
+    type: "Hatch Back",
+    color: "Red",
+    plate: "ABC 1234",
+    luggage: [false,false,true,false],
+    seat: [false,false,true,false,false,false,false],
+    pref: [true,true,true,false,false],
+    desc: "This is a test description for entering into the system. Please ignore what this message says.",
+    distance: "149840",
+    eta: "7186",
+    name: "Sarah Smith",
+    tripID: "469ed35b-c8f1-42df-9edb-d83764564acd"
+}
+
 const Trip = (props) => {
 
     const { postID } = useParams();
+    const [loadFlag, setLoadFlag] = useState(false);
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -66,30 +91,8 @@ const Trip = (props) => {
 
         if (postID)
         {
-            var pageData = {
-                _id: {
-                  "$oid": "65eb74a4a88e8a0c5872dd28"
-                },
-                start: "Toronto, ON, Canada",
-                end: "Burlington, ON, Canada",
-                waypoints: ["Guelph, ON, Canada"],
-                date: ["March 14, 2024","March 20, 2024","March 21, 2024"],
-                depart: "14:24",
-                return: "16:55",
-                model: "Ford Focus",
-                type: "Hatch Back",
-                color: "Red",
-                plate: "ABC 1234",
-                luggage: [false,false,true,false],
-                seat: [false,false,true,false,false,false,false],
-                pref: [true,true,true,false,false],
-                desc: "This is a test description for entering into the system. Please ignore what this message says.",
-                distance: "149840",
-                eta: "7186",
-                name: "Sarah Smith",
-                tripID: "469ed35b-c8f1-42df-9edb-d83764564acd"
-            }
-            
+            var pageData = data;
+
             setStartPoint(pageData.start);
             setEndPoint(pageData.end);
             setDates(pageData.date);
@@ -116,9 +119,47 @@ const Trip = (props) => {
                 return ''
             });
 
+            console.log(currInputList);
             setInputList(currInputList);
 
-            calculateRoute();
+            const calculateExistingRoute = async () => {
+             
+                try {
+                    // Retrieve directions
+                    const directionService = new google.maps.DirectionsService()
+                    const results = await directionService.route({
+                        origin: pageData.start,
+                        destination: pageData.end,
+                        travelMode: google.maps.TravelMode.DRIVING,
+                        waypoints: pageData.waypoints
+                    })
+
+                    // Calculate distance and estimated time 
+                    var legs = results.routes[0].legs;
+                    var estimatedDistance = 0.0;
+                    var estimatedDuration = 0.0;
+
+                    for (var i = 0 ; i < legs.length; i++)
+                    {
+                        estimatedDistance = estimatedDistance + legs[i].distance.value;
+                        estimatedDuration = estimatedDuration + legs[i].duration.value;
+                    }
+
+                    setDirection(results);
+                    setDistance(estimatedDistance);
+                    setDuration(estimatedDuration);
+                }
+                catch (ex) 
+                {
+                    console.log(ex.message);
+                }
+
+
+            }
+
+
+            setLoadFlag(true);
+            //calculateExistingRoute();
         }
 
     }, [])
@@ -228,6 +269,7 @@ const Trip = (props) => {
     // Display and calculate route on map
 
     const calculateRoute = useCallback(async() => {
+
         // No destination or origin set
         if (originRef.current.value === '' || destinationRef.current.value === '') 
             return
@@ -376,6 +418,8 @@ const Trip = (props) => {
             distance:149840,
             eta:7186,
             name:"Sarah Smith",
+            userID:"444ed35b-c8f1-42df-9edb-d83764564acd",
+            postType: true,
             tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"}
 
         console.log(test);
@@ -406,7 +450,7 @@ const Trip = (props) => {
         return <></>
     }
 
-    return(
+    return((loadFlag || typeof(postID) === 'undefined' ) ?
 
         <div id="trip-page">
             
@@ -448,12 +492,17 @@ const Trip = (props) => {
                 </div>
 
                 <div className="google-map">
-                    <GoogleMap 
-                        zoom={direction ? "" : 3} 
-                        mapContainerStyle={{width: '100%', height: '100%'}}
-                        center={direction ? "" : {lat: 54.5260, lng: -105.2551}}>
-                        {direction ? <DirectionsRenderer directions={direction}/> : <></>}
-                    </GoogleMap>
+
+                    {direction ? 
+                        <GoogleMap
+                            mapContainerStyle={{width: '100%', height: '100%'}}>
+                            <DirectionsRenderer directions={direction}/>   
+                        </GoogleMap>:
+                        <GoogleMap                        
+                            zoom={3} 
+                            mapContainerStyle={{width: '100%', height: '100%'}}
+                            center={{lat: 54.5260, lng: -105.2551}}>
+                        </GoogleMap>}
                 </div>
             </div>
 
@@ -583,7 +632,7 @@ const Trip = (props) => {
             <button className="trip-btn btn-spacing" onClick={submitTrip}>
                 Submit
             </button>
-        </div>
+        </div> : <></>
 
     )
 }

@@ -7,6 +7,7 @@
   "waypoints": ["Guelph, ON, Canada"],
   "date": ["March 14, 2024","March 20, 2024","March 21, 2024"],
   "depart": "14:24",
+  "return": "16:24",
   "model": "Ford Focus",
   "type": "Hatch Back",
   "color": "Red",
@@ -19,6 +20,8 @@
   "eta": "7186",
   "name": "Sarah Smith",
   "tripID": "469ed35b-c8f1-42df-9edb-d83764564acd",
+  "postType": true,
+  "userID": "ccd2345b-c8f1-42df-9edb-212324564acd",
   "__v": 0
 },
 {

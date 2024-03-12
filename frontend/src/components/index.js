@@ -14,3 +14,4 @@ export { default as Public   } from "./redirect/public.js"
 export { default as ViewPost } from "./posting/view-post/view-post.js"
 export { default as History  } from "./profiles/history/history.js"
 export { default as Edit     } from "./profiles/editProfile/editProfile.js"
+export { default as Review   } from './profiles/reviews/review.js' 

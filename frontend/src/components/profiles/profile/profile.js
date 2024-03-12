@@ -116,7 +116,8 @@ const Profile = (props) => {
                 <div id="profile-image">
                     <img src={getProfileImage()} alt="profile"></img>
                     <div id="user-info">
-                        <div className="trip-btn" onClick={() => navigate('/edit-profile')}>Edit</div>
+                        {username ? <></> :
+                            <div className="trip-btn" onClick={() => navigate('/edit-profile')}>Edit</div>}
                         <div id="header-info">
                             <div className="header-info-section">
                                 <CarFront size={40} weight="bold" />
@@ -149,6 +150,7 @@ const Profile = (props) => {
             </div>
 
             <h2 className="underline">{profileData.firstName}'s Reviews</h2>
+            {username ? <div className="trip-btn" onClick={() => navigate('/edit-profile')}>Leave a Review</div> : <></>}
             <div id="both-profile-rating">
                 <div id="profile-rating">
                     <div className="individual-profile-rating">
