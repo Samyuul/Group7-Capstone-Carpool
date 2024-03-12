@@ -2,12 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
 var myWebsite = express();
+
+
 const upload = require("express-fileupload");//need this !!!!!!!!!!!!
 myWebsite.use(upload());//need this !!!!!!!!!!!!
 
 
 myWebsite.use(cors()) // You need to add this to every page
-
 myWebsite.use(express.urlencoded({extended:true}));
 myWebsite.use(express.json());
 
@@ -15,6 +16,7 @@ mongoose.connect("mongodb://localhost:27017/vroom-room"),{
     UserNewUrlParser: true,
     UserUnifiedTopology:true
 }
+
 
 var session = require("express-session");
 myWebsite.use(session({
