@@ -1,7 +1,6 @@
 import "./profile.css"
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import reviewData from "./data.json";
 
 import {
     CarFront,
@@ -13,75 +12,145 @@ import {
     BlockProhibited
 } from '@vectopus/atlas-icons-react';
 
+import ProfileRoutes from "../../../routes/profileRoutes";
+import StatisticsRoutes from "../../../routes/statisticsRoutes";
+import ReviewRoutes from "../../../routes/reviewRoutes";
+
+import AltReviewTemplate from "../../template/review/reviewTemplate";
+import PostTemplate from "../../template/post/postTemplate";
+
 const Profile = (props) => {
 
     const { username } = useParams();
     const [reviews, setReviews] = useState([]);
-    const [reviewView, setReviewView] = useState(false);
+    const [reviewView, setReviewView] = useState("Driver");
     const [index, setIndex] = useState(1);
 
     const navigate = useNavigate();
+
+    const [profileData, setProfileData] = useState({});
+    const [statisticData, setStatisticData] = useState({});
+    const [reviewData, setReviewData] = useState([]);
 
     const getProfileImage = () => {
         return require('../../../img/head.webp');
     }
 
-    const profileData = {
-        firstName: "Sarah",
-        lastName: "Smith",
-        joined: "Sept 18, 2023",
-        age: 23,
-        tripDriver: 7,
-        tripPassenger: 3,
-        tripDistance: 54.2,
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed placerat lectus, at porta risus. Cras scelerisque lobortis imperdiet. Cras rutrum tortor nec enim dictum, at lacinia sapien pharetra. Nunc congue sagittis nunc sit amet iaculis. Morbi pellentesque eget nisl sit amet condimentum. Aliquam sit amet tempor tellus. In interdum mauris vitae molestie tempor. Vestibulum quis purus quam.",
-        passengerRating: 4.3,
-        driverRating: 4.5,
-        gender: "Female",
-        day: 12,
-        month: 4,
-        year: 1996
-    }
-
+    // On initial load
     useEffect(() => {
 
-        const retrieved_reviews = reviewData;
-        const numberOfItems = 2 * index;
-        var validReviews = [];
-
-        var count = 0;
-        
-        for (let i = 0; i < retrieved_reviews.length; i++)
-        {
-            // false == driver review, true = passenger review
-            if (retrieved_reviews[i].type === reviewView) // Match desired review type
+        async function fetchData() {
+            if (username) // Viewing other people's profiles
             {
-                if (count < numberOfItems)
-                {
-                    validReviews.push(retrieved_reviews[i]);
-                    count++;
-                }
+                
+                await ProfileRoutes.retrieveOthersProfile({username: username})
+                .then(async (response) => {
+    
+                    if (response.data.userID === localStorage.getItem("userID"))
+                    {
+                        navigate("/profile");
+                        window.location.reload();
+                    }    
+    
+                    await StatisticsRoutes.retrieveStatistics({userID: response.data.userID})
+                    .then((response) => {
+                        setStatisticData(response.data);
+                    }).catch((e) => {
+                        console.log(e.message);
+                    })
+
+                    await ReviewRoutes.retrieveAllReviews({userID: response.data.userID})
+                    .then(async (response) => {
+    
+                        setReviewData(response.data);
+    
+                    }).catch((e) => {
+                        console.log(e.message);
+                    });
+
+                    setProfileData(response.data);
+    
+                }).catch((e) => {
+                    console.log(e.message)
+                })          
+
+            }
+            else 
+            {
+                
+                // Load profile data
+                await ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
+                .then(async (response) => {
+    
+                    setProfileData(response.data);
+    
+                }).catch((e) => {
+                    console.log(e.message);
+                });
+
+                // Load statistic data
+                await StatisticsRoutes.retrieveStatistics({userID: localStorage.getItem("userID")})
+                .then(async (response) => {
+
+                    setStatisticData(response.data);
+                    
+                }).catch((e) => {
+                    console.log(e.message);
+                });
+
+                // Load review data
+                await ReviewRoutes.retrieveAllReviews({userID: localStorage.getItem("userID")})
+                .then(async (response) => {
+
+                    setReviewData(response.data);
+
+                }).catch((e) => {
+                    console.log(e.message);
+                });
             }
         }
 
-        setReviews(validReviews);
+        fetchData();
+        
+    }, [])
 
-    }, [index, reviewView])
+    // User clicks read more
+    useEffect(() => {
+
+        if (reviewData.length) // Data exists
+        {
+            const retrieved_reviews = reviewData;
+
+            const numberOfItems = 2 * index;
+            var validReviews = [];
+    
+            var count = 0;
+                
+            for (let i = 0; i < retrieved_reviews.length; i++)
+            {
+                // false == driver review, true = passenger review
+                if (retrieved_reviews[i].type === reviewView) // Match desired review type
+                {
+                    if (count < numberOfItems)
+                    {
+                        validReviews.push(retrieved_reviews[i]);
+                        count++;
+                    }
+                }
+            }
+    
+            setReviews(validReviews);
+        }
+
+
+    }, [index, reviewView, reviewData])
 
     const renderReviews = () => {
-
+        console.log(reviews);
         return(
             reviews.map((val, i) => {
                 return(
-                    <div key={i}>
-                        <div className="review">
-                            <h4>{val.name} - <em>{val.type ? "Passenger" : "Driver"} Review</em></h4>
-                            <h4 className="review-icon">{val.subject} - {val.rating} / 5<Star size={24}/> </h4>
-                            <h4>From: {val.start} to {val.end} on {val.date}</h4>
-                            <p>{val.desc}</p>
-                        </div>
-                        <hr></hr>
-                    </div>
+                    <AltReviewTemplate key={i} data={val} />
                 )
             })
         )
@@ -100,12 +169,16 @@ const Profile = (props) => {
 
     const setDriverReview = () => {
         setIndex(1);
-        setReviewView(false);
+        setReviewView("Driver");
     }
 
     const setPassengerReview = () => {
         setIndex(1);
-        setReviewView(true);
+        setReviewView("Passenger");
+    }
+
+    const getDistanceInKm = (meter) => {
+        return (meter / 1000.0).toFixed(2) + " km"
     }
 
     return (
@@ -121,24 +194,24 @@ const Profile = (props) => {
                         <div id="header-info">
                             <div className="header-info-section">
                                 <CarFront size={40} weight="bold" />
-                                <h2>{profileData.tripDriver}</h2>
+                                <h2>{statisticData.tripDriver}</h2>
                                 <h4>Trips As Driver</h4>
                             </div>
                             <div className="header-info-section">
                                 <User size={40} weight="bold" />
-                                <h2>{profileData.tripPassenger}</h2>
+                                <h2>{statisticData.tripPassenger}</h2>
                                 <h4>Trips as Passenger</h4>
                             </div>
                             <div className="header-info-section">
                                 <RoadRouteArrowUp size={40} weight="bold" />
-                                <h2>{profileData.tripDistance} km</h2>
+                                <h2>{getDistanceInKm(statisticData.tripDistance)}</h2>
                                 <h4>Travelled as Both</h4>
                             </div>
                         </div>
                         <div id="user-identity">
                             <h1>{profileData.firstName} {profileData.lastName}</h1>
-                            <h4>Joined: {profileData.joined}</h4>
-                            <h4>{profileData.gender}, Age {profileData.age}</h4>
+                            <h4>Joined: {statisticData.joined}</h4>
+                            <h4>{profileData.gender ? profileData.gender : "N.A"}, Age {profileData.age > 0? profileData.age : "N.A"}</h4>
                         </div>
                     </div>
                 </div>
@@ -149,27 +222,26 @@ const Profile = (props) => {
                 <p>{profileData.desc}</p>
             </div>
 
-            <h2 className="underline">{profileData.firstName}'s Reviews</h2>
-            {username ? <div className="trip-btn" onClick={() => navigate('/edit-profile')}>Leave a Review</div> : <></>}
+            <h2 className="underline">{profileData.firstName ? profileData.firstName : "N.A"}'s Reviews</h2>
             <div id="both-profile-rating">
                 <div id="profile-rating">
                     <div className="individual-profile-rating">
                         <VanTruck size={40}/>
-                        <h2>{profileData.driverRating} / 5.0</h2>
+                        <h2>{statisticData.driverRating < 0 ? "N.A" : statisticData.driverRating} / 5.0</h2>
                         <h4>As a Driver</h4>
                     </div>
                     <div className="individual-profile-rating">
                         <RaiseHandsPeople size={40}/>
-                        <h2>{profileData.passengerRating} / 5.0</h2>
+                        <h2>{statisticData.passengerRating < 0 ? "N.A" : statisticData.passengerRating} / 5.0</h2>
                         <h4>As a Passenger</h4>
                     </div>
                 </div>
             </div>
             <div id="review-selector">
-                <Link className={reviewView ? "inactive-selector" : ""} id="driver-review-selector" onClick={() => setDriverReview()}><h2>Driver</h2></Link>
-                <Link className={reviewView ? "" : "inactive-selector"} id="passenger-review-selector" onClick={() => setPassengerReview()}><h2>Passenger</h2></Link>
+                <Link className={reviewView !== "Driver" ? "inactive-selector" : ""} id="driver-review-selector" onClick={() => setDriverReview()}><h2>Driver</h2></Link>
+                <Link className={reviewView !== "Driver" ? "" : "inactive-selector"} id="passenger-review-selector" onClick={() => setPassengerReview()}><h2>Passenger</h2></Link>
             </div>
-            <div className="review-section" id={reviewView ? "review-section-driver" : "review-section-passenger" }>
+            <div className="review-section" id={reviewView !== "Driver" ? "review-section-driver" : "review-section-passenger" }>
                 {reviews.length ? 
                 <>
                     {renderReviews()}

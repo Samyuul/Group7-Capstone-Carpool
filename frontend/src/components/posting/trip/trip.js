@@ -7,44 +7,22 @@ import DatePicker from "react-multi-date-picker";
 
 import { 
     XmarkCircle,
-    CalendarDots
+    CalendarDots,
+    PinDestination
  } from "@vectopus/atlas-icons-react";
-
-import waypoint from "../../../img/waypoint.svg";
 
 import { 
     useJsApiLoader, 
     GoogleMap, 
     Autocomplete,
-    DirectionsRenderer
+    DirectionsRenderer,
 } from '@react-google-maps/api';
+
+import TripRoutes from "../../../routes/tripRoutes";
+import ProfileRoutes from "../../../routes/profileRoutes";
 
 const google = window.google = window.google ? window.google : {}
 const libraries = ['places'];
-
-var data = {
-    _id: {
-      "$oid": "65eb74a4a88e8a0c5872dd28"
-    },
-    start: "Toronto, ON, Canada",
-    end: "Burlington, ON, Canada",
-    waypoints: ["Guelph, ON, Canada", "Hamilton, ON, Canada", "Dallas, TX"],
-    date: ["March 14, 2024","March 20, 2024","March 21, 2024"],
-    depart: "14:24",
-    return: "16:55",
-    model: "Ford Focus",
-    type: "Hatch Back",
-    color: "Red",
-    plate: "ABC 1234",
-    luggage: [false,false,true,false],
-    seat: [false,false,true,false,false,false,false],
-    pref: [true,true,true,false,false],
-    desc: "This is a test description for entering into the system. Please ignore what this message says.",
-    distance: "149840",
-    eta: "7186",
-    name: "Sarah Smith",
-    tripID: "469ed35b-c8f1-42df-9edb-d83764564acd"
-}
 
 const Trip = (props) => {
 
@@ -80,6 +58,8 @@ const Trip = (props) => {
     const [carType, setCarType] = useState('');
     const [carPlate, setCarPlate] = useState('');
 
+    const [tripID, setTripID] = useState('');
+
     const [seatBtn, setSeatBtn] = useState([true, false, false, false, false, false, false]);
     const [luggageBtn, setLuggageBtn] = useState([true, false, false, false]);
     const [otherPref, setOtherPref] = useState([false, false, false, false, false]);
@@ -89,77 +69,84 @@ const Trip = (props) => {
     // Load initial value if required
     useEffect(() => {
 
-        if (postID)
+        if (postID) // Editing existing post
         {
-            var pageData = data;
 
-            setStartPoint(pageData.start);
-            setEndPoint(pageData.end);
-            setDates(pageData.date);
-            setDepartTime(pageData.depart);
-            setReturnTime(pageData.return);
-            setCarModel(pageData.model);
-            setCarType(pageData.type);
-            setCarColor(pageData.color);
-            setCarPlate(pageData.plate);
-            setLuggageBtn(pageData.luggage);
-            setSeatBtn(pageData.seat);
-            setOtherPref(pageData.pref);
-            setTripDesc(pageData.desc);
-         
-            setInputTxtList(pageData.waypoints);
+            TripRoutes.getTrip({tripID: postID})
+            .then((response) => {
 
-            var currWayPointList = pageData.waypoints.map((val, i) => {
-                return {location: val, stopover: true}
-            });
+                var pageData = response.data;
 
-            setWayPointList(currWayPointList);
+                setStartPoint(pageData.start);
+                setEndPoint(pageData.end);
+                setDates([pageData.date]);
+                setDepartTime(pageData.depart);
+                setReturnTime(pageData.return);
+                setCarModel(pageData.model);
+                setCarType(pageData.type);
+                setCarColor(pageData.color);
+                setCarPlate(pageData.plate);
+                setLuggageBtn(pageData.luggage);
+                setSeatBtn(pageData.seat);
+                setOtherPref(pageData.pref);
+                setTripDesc(pageData.desc);
+                setTripID(pageData.tripID);
 
-            var currInputList = pageData.waypoints.map((val, i) => {
-                return ''
-            });
+                setInputTxtList(pageData.waypoints.length ? pageData.waypoints : ['']);
 
-            console.log(currInputList);
-            setInputList(currInputList);
+                var currWayPointList = pageData.waypoints.map((val, i) => {
+                    return {location: val, stopover: true}
+                });
 
-            const calculateExistingRoute = async () => {
-             
-                try {
-                    // Retrieve directions
-                    const directionService = new google.maps.DirectionsService()
-                    const results = await directionService.route({
-                        origin: pageData.start,
-                        destination: pageData.end,
-                        travelMode: google.maps.TravelMode.DRIVING,
-                        waypoints: pageData.waypoints
-                    })
+                setWayPointList(currWayPointList.length ? currWayPointList : [{location: '', stopover: true}]);
 
-                    // Calculate distance and estimated time 
-                    var legs = results.routes[0].legs;
-                    var estimatedDistance = 0.0;
-                    var estimatedDuration = 0.0;
+                var currInputList = pageData.waypoints.map((val, i) => {
+                    return ''
+                });
 
-                    for (var i = 0 ; i < legs.length; i++)
+                setInputList(currInputList.length ? currInputList : ['']);
+
+                const calculateExistingRoute = async () => {
+                
+                    try {
+                        // Retrieve directions
+                        const directionService = new google.maps.DirectionsService()
+                        const results = await directionService.route({
+                            origin: pageData.start,
+                            destination: pageData.end,
+                            travelMode: google.maps.TravelMode.DRIVING,
+                            waypoints: pageData.waypoints
+                        })
+
+                        // Calculate distance and estimated time 
+                        var legs = results.routes[0].legs;
+                        var estimatedDistance = 0.0;
+                        var estimatedDuration = 0.0;
+
+                        for (var i = 0 ; i < legs.length; i++)
+                        {
+                            estimatedDistance = estimatedDistance + legs[i].distance.value;
+                            estimatedDuration = estimatedDuration + legs[i].duration.value;
+                        }
+
+                        setDirection(results);
+                        setDistance(estimatedDistance);
+                        setDuration(estimatedDuration);
+                    }
+                    catch (ex) 
                     {
-                        estimatedDistance = estimatedDistance + legs[i].distance.value;
-                        estimatedDuration = estimatedDuration + legs[i].duration.value;
+                        console.log(ex.message);
                     }
 
-                    setDirection(results);
-                    setDistance(estimatedDistance);
-                    setDuration(estimatedDuration);
-                }
-                catch (ex) 
-                {
-                    console.log(ex.message);
+
                 }
 
+                setLoadFlag(true);
 
-            }
+            }).catch((e) => {
+                console.log(e.message);
+            })
 
-
-            setLoadFlag(true);
-            //calculateExistingRoute();
         }
 
     }, [])
@@ -190,7 +177,6 @@ const Trip = (props) => {
         }
         else 
         {
-            
             val.splice(4, 1);
             setDates(val);
         }
@@ -211,11 +197,11 @@ const Trip = (props) => {
 			const place = inputList[index].getPlace();
 			const formattedAddress = place.formatted_address;
 
-            var currList = [...wayPointList];
+            var currWaypointList = [...wayPointList];
             var currTxtList = [...inputTxtList];
-            currList[index]['location'] = formattedAddress;
+            currWaypointList[index]['location'] = formattedAddress;
             currTxtList[index] = formattedAddress;
-            setWayPointList(currList);
+            setWayPointList(currWaypointList);
             setInputTxtList(currTxtList);
 		} else {
 			alert("Please enter text");
@@ -223,16 +209,26 @@ const Trip = (props) => {
 	}
 
     // Text changed via typing (Don't update waypoint)
+    // Act as clearing input
     const handleChange = (index, e) => {
-        let currList = [...inputTxtList];
-        currList[index] = e.target.value;
-        setInputTxtList(currList);
+
+        let currWaypointList = [...wayPointList];
+        let currTxtList = [...inputTxtList];
+        
+        if (currWaypointList[index]['location'] != '') // Not already empty
+        {
+            currWaypointList[index]['location'] = '';
+            setWayPointList(currWaypointList);
+        }
+
+        currTxtList[index] = e.target.value;
+        setInputTxtList(currTxtList);
     }   
 
     // Remove waypoint 
     const handleRemove = (index) => {
 
-        var currList = [...wayPointList];
+        var currWaypointList = [...wayPointList];
         var currTxtList = [...inputTxtList];
         var currInputList = [...inputList];
 
@@ -240,19 +236,19 @@ const Trip = (props) => {
         {
             if (wayPointList[0]['location']) // There's something to clear
             {
-                currList[index]['location'] = '';
+                currWaypointList[index]['location'] = '';
                 currTxtList[index] = '';
-                setWayPointList(currList);
+                setWayPointList(currWaypointList);
                 setInputTxtList(currTxtList);
             }
         }
         else 
         {
 
-            currList.splice(index , 1);
+            currWaypointList.splice(index , 1);
             currTxtList.splice(index, 1);
             currInputList.splice(index, 1);
-            setWayPointList(currList);
+            setWayPointList(currWaypointList);
             setInputTxtList(currTxtList);
             setInputList(currInputList);
         }
@@ -267,7 +263,6 @@ const Trip = (props) => {
     }
 
     // Display and calculate route on map
-
     const calculateRoute = useCallback(async() => {
 
         // No destination or origin set
@@ -318,7 +313,7 @@ const Trip = (props) => {
                 {inputList.map((x, i) => {
                     return(
                         <div key={i} className="itinerary waypoint">
-                            <img className="waypoint-svg" alt="waypoint" src={waypoint}></img>
+                            <PinDestination className="waypoint-svg" size={24}/>
                             <Autocomplete onPlaceChanged={() => onPlaceChanged(i)} onLoad={(e) => onLoad(e, i)}>
                                 <input
                                     type="text"
@@ -326,8 +321,7 @@ const Trip = (props) => {
                                     onChange={(e) => handleChange(i, e)}
                                     value={inputTxtList[i] || ''}
                                 />
-                            </Autocomplete>
-                            
+                            </Autocomplete>     
                             <XmarkCircle className="exit-svg" onClick={() => handleRemove(i)} size={24} /> 
                         </div>
                     )
@@ -363,67 +357,125 @@ const Trip = (props) => {
     const submitTrip = () => {
         console.log("submitTrip");
 
-        // Convert date object into string for database
-        var datesAsString = dates.map((date, i) => {
-            return date.month.name + " " + date.day + ", " + date.year
+        ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
+        .then(response => {
+
+            // Convert date object into string for database
+            var datesAsString = dates.map((date, i) => {
+                return date.month.name + " " + date.day + ", " + date.year
+            });
+            
+            // Convert waypoint object into string for database
+            var waypointArray = wayPointList.map((waypoint, i) => {
+                return waypoint.location
+            });
+
+            // Remove empty entries
+            waypointArray = waypointArray.filter((waypoint) => waypoint);
+
+            var currName = response.data.firstName + " " + response.data.lastName;
+
+            var newTrip  = {
+                start: originRef.current.value, 
+                end: destinationRef.current.value,
+                waypoints: waypointArray,
+                date: datesAsString,
+                depart: departTime,
+                return: returnTime,
+                model: carModel,
+                type: carType,
+                color: carColor,
+                plate: carPlate,
+                luggage: luggageBtn,
+                seat: seatBtn,
+                pref: otherPref,
+                desc: tripDesc,
+                distance: distance,
+                eta: duration,
+                name: currName,
+                postType: true,
+                userID: localStorage.getItem("userID"),
+                username: localStorage.getItem("username")
+            }
+    
+            console.log(newTrip);
+    
+            TripRoutes.createTrip(newTrip)
+            .then(response => {
+                console.log("success!");
+                console.log(response.data);
+            }).catch(e => {
+                console.log(e.message);
+            })
+    
+
+        }).catch(e => {
+            console.log(e.message);
         });
+    }
+
+    const editTrip = () => {
+
+        if(dates.length == 1) // Only allow single selection for date
+        {
+            ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
+            .then(response => {
+
+                if (typeof(dates[0]) == "string") // No new selection made
+                    var datesAsString = dates;
+                else                              // Convert date input into string
+                    var datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
+
+                // Convert waypoint object into string for database
+                var waypointArray = wayPointList.map((waypoint, i) => {
+                    return waypoint.location
+                });
+
+                // Remove empty entries
+                waypointArray = waypointArray.filter((waypoint) => waypoint);
+                var currName = response.data.firstName + " " + response.data.lastName;
+
+                var editedTrip  = {
+                    start: originRef.current.value, 
+                    end: destinationRef.current.value,
+                    waypoints: waypointArray,
+                    date: datesAsString,
+                    depart: departTime,
+                    return: returnTime,
+                    model: carModel,
+                    type: carType,
+                    color: carColor,
+                    plate: carPlate,
+                    luggage: luggageBtn,
+                    seat: seatBtn,
+                    pref: otherPref,
+                    desc: tripDesc,
+                    distance: distance,
+                    eta: duration,
+                    name: currName,
+                    postType: true,
+                    userID: localStorage.getItem("userID"),
+                    tripID: tripID
+                }
+    
+                console.log(editedTrip);
+
+                TripRoutes.editTrip(editedTrip)
+                .then((response) => {
+                    console.log("success");
+                    console.log(response.data);
+                }).catch((e) => {
+                    console.log("failure");
+                    console.log(e.message);
+                })   
         
-        // Convert waypoint object into string for database
-        var waypointArray = wayPointList.map((waypoint, i) => {
-            return waypoint.location
-        });
 
-        // Remove empty entries
-        waypointArray = waypointArray.filter((waypoint) => waypoint);
+            }).catch(e => {
+                console.log(e.message);
+            });
 
-        var newTrip  = {
-            start: originRef.current.value, 
-            end: destinationRef.current.value,
-            waypoints: waypointArray,
-            date: datesAsString,
-            depart: departTime,
-            return: returnTime,
-            model: carModel,
-            type: carType,
-            color: carColor,
-            plate: carPlate,
-            luggage: luggageBtn,
-            seat: seatBtn,
-            pref: otherPref,
-            desc: tripDesc,
-            distance: distance,
-            eta: duration,
-            name: "Sarah Smith",
-            requestType: true,
-            tripID: uuidv4()
+        
         }
-
-        console.log(newTrip);
-
-        var test = {
-            start:"Toronto, ON, Canada",
-            end:"Burlington, ON, Canada",
-            waypoints:["Guelph, ON, Canada"],
-            date:["March 14, 2024","March 20, 2024","March 21, 2024"],
-            depart:"14:24",
-            return:"17:25",
-            model:"Ford Focus",
-            type:"Hatch Back",
-            color:"Red",
-            plate:"ABC 1234",
-            luggage:[false,false,true,false],
-            seat:[false,false,true,false,false,false,false],
-            pref:[true,true,true,false,false],
-            desc:"This is a test description for entering into the system. Please ignore what this message says.",
-            distance:149840,
-            eta:7186,
-            name:"Sarah Smith",
-            userID:"444ed35b-c8f1-42df-9edb-d83764564acd",
-            postType: true,
-            tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"}
-
-        console.log(test);
-
     }
 
     const getTimeInHrsMin = (seconds) => {
@@ -443,7 +495,7 @@ const Trip = (props) => {
         "Dark Gray",
         "Blue",
         "Green"
-    ]
+    ];
 
     // Don't page if maps hasn't been loaded successfully 
     if (!isLoaded) {
@@ -466,7 +518,7 @@ const Trip = (props) => {
                     <div className="form-cell itinerary dest">
                         <label htmlFor="start-point">Starting Point: </label>
 
-                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                        <PinDestination className="waypoint-svg" size={24}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input defaultValue={startPoint} id="start-point" ref={originRef}/>
                         </Autocomplete>
@@ -474,7 +526,7 @@ const Trip = (props) => {
 
                     <div className="form-cell itinerary dest">
                         <label htmlFor="end-point">Destination: </label>
-                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                        <PinDestination className="waypoint-svg" size={24}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
                             <input defaultValue={endPoint} id="end-point" ref={destinationRef}/>
                         </Autocomplete>
@@ -492,7 +544,6 @@ const Trip = (props) => {
                 </div>
 
                 <div className="google-map">
-
                     {direction ? 
                         <GoogleMap
                             mapContainerStyle={{width: '100%', height: '100%'}}>
@@ -608,18 +659,16 @@ const Trip = (props) => {
                             ])}
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             <h4 className="underline">Trip Description</h4>
-                <div className="form-cell">
-                    <label htmlFor="trip-desc-input">Description: </label>
-                    <div className="textarea-container">
-                        <textarea value={tripDesc} onChange={(e) => setTripDesc(e.target.value)} id="trip-desc-input"/>
-                    </div>
+            <div className="form-cell">
+                <label htmlFor="trip-desc-input">Description: </label>
+                <div className="textarea-container">
+                    <textarea value={tripDesc} onChange={(e) => setTripDesc(e.target.value)} id="trip-desc-input"/>
                 </div>
+            </div>
 
             <h4 className="underline">Rules</h4>
             <div className="form-cell flex-inline">
@@ -629,7 +678,7 @@ const Trip = (props) => {
                     if any of these rules are broken. 
                 </label>
             </div>
-            <button className="trip-btn btn-spacing" onClick={submitTrip}>
+            <button className="trip-btn btn-spacing" onClick={postID ? editTrip : submitTrip}>
                 Submit
             </button>
         </div> : <></>

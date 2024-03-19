@@ -2,6 +2,8 @@ import "./header.css"
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import AccountRoutes from "../../../routes/accountRoutes";
+
 import { 
     PlusCircle, 
     MagnifyingGlass
@@ -10,11 +12,21 @@ import {
 const Header = (props) => {
 
     const getProfileImage = () => {
-        return require('../../../img/thumbnail.webp');
+        return require('../../../img/head.webp');
     }
 
-    const handleLogout = (event) => {
-        localStorage.clear();
+    async function handleLogout() {
+
+        await AccountRoutes.logoutSession()
+        .then(async (response) => {
+
+            await localStorage.clear();
+            
+        }).catch(e => {
+            console.log(e.message);
+
+        });      
+        
     }
 
     return (
@@ -28,7 +40,7 @@ const Header = (props) => {
                     <MagnifyingGlass size={24} weight="bold" />
                     Browse
                 </Link>
-                <Link to={!localStorage.getItem('user') ? "/login" : "/post"}>
+                <Link to={!localStorage.getItem('userID') ? "/login" : "/post"}>
                     <PlusCircle size={24} weight="bold" />
                     Post
                 </Link>
@@ -36,22 +48,22 @@ const Header = (props) => {
             
             <div id="header-login">
 
-                {!localStorage.getItem('user') ? 
+                {!localStorage.getItem('userID') ? 
                         <></> : 
                         <Link className="flex-link" to={"/history"}>
                             History
                         </Link> }
 
-                {!localStorage.getItem('user') ? 
+                {!localStorage.getItem('userID') ? 
                     <></> : 
-                    <Link id="profile-link" to={"/profile/"}>
+                    <Link id="profile-link" to={"/profile/"} reloadDocument>
                         <img id="thumbnail-image" src={getProfileImage()} alt="profile"></img>
                         Profile
                     </Link> }
 
-                {!localStorage.getItem('user') ? 
+                {!localStorage.getItem('userID') ? 
                     <Link to={"/login"} className="flex-link">Login</Link> : 
-                    <Link to={"/login"} className="flex-link" onClick={handleLogout} reloadDocument>Logout</Link> }
+                    <Link className="flex-link" onClick={handleLogout} reloadDocument>Logout</Link> }
             </div>
         </header>
     )

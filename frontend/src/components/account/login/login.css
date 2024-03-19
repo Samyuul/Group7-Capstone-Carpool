@@ -93,6 +93,7 @@
     position: relative;
     top: 35px;
     left: 8px;
+    pointer-events: none;
 }
 
 .login-input-cell p {

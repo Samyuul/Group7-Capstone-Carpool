@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom'; 
 
 const Private = ({ children }) => {
-    const [userName, setUserName] = useState(localStorage.getItem('user'));
+    const [userName, setUserName] = useState(localStorage.getItem('userID'));
 
     return (
         userName ? <Navigate to={"/Home"} /> : children

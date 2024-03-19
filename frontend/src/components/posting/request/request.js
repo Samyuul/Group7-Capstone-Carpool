@@ -1,11 +1,14 @@
 import "./request.css"
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useParams } from "react-router-dom";
 
 import DatePicker from "react-multi-date-picker";
-import waypoint from "../../../img/waypoint.svg";
 
-import { CalendarDots } from "@vectopus/atlas-icons-react";
+import { 
+    CalendarDots,
+    PinDestination
+ } from "@vectopus/atlas-icons-react";
 
 import { 
     useJsApiLoader, 
@@ -14,10 +17,16 @@ import {
     DirectionsRenderer
 } from '@react-google-maps/api';
 
+import ProfileRoutes from "../../../routes/profileRoutes";
+import TripRoutes from "../../../routes/tripRoutes";
+
 const google = window.google = window.google ? window.google : {}
 const libraries = ['places'];
 
 const Request = (props) => {
+
+    const { postID } = useParams();
+    const [loadFlag, setLoadFlag] = useState(false);
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
@@ -32,20 +41,88 @@ const Request = (props) => {
     const originRef = useRef();
     const destinationRef = useRef();
 
+    const [startPoint, setStartPoint] = useState('');
+    const [endPoint, setEndPoint] = useState('');
+
     const [dates, setDates] = useState([]);
     const [departTime, setDepartTime] = useState('');
     const [returnTime, setReturnTime] = useState('');
 
-    const [seatBtn, setSeatBtn] = useState([true, false, false, false, false, false, false]);
     const [luggageBtn, setLuggageBtn] = useState([true, false, false, false]);
     const [otherPref, setOtherPref] = useState([false, false, false, false, false]);
 
     const [tripDesc, setTripDesc] = useState('');
+    const [tripID, setTripID] = useState('');
 
-// ---------------------------------------
+
+    // Load initial value if required
+    useEffect(() => {
+
+        if(postID) 
+        {
+
+            TripRoutes.getTrip({tripID: postID})
+            .then((response) => {
+
+                var pageData = response.data;
+
+                setStartPoint(pageData.start);
+                setEndPoint(pageData.end);
+                setDates([pageData.date]);
+                setDepartTime(pageData.depart);
+                setReturnTime(pageData.return);
+                setLuggageBtn(pageData.luggage);
+                setOtherPref(pageData.pref);
+                setTripDesc(pageData.desc);
+                setTripID(pageData.tripID);
+
+                const calculateExistingRoute = async () => {
+                
+                    try {
+                        // Retrieve directions
+                        const directionService = new google.maps.DirectionsService()
+                        const results = await directionService.route({
+                            origin: pageData.start,
+                            destination: pageData.end,
+                            travelMode: google.maps.TravelMode.DRIVING,
+                            waypoints: pageData.waypoints
+                        })
+
+                        // Calculate distance and estimated time 
+                        var legs = results.routes[0].legs;
+                        var estimatedDistance = 0.0;
+                        var estimatedDuration = 0.0;
+
+                        for (var i = 0 ; i < legs.length; i++)
+                        {
+                            estimatedDistance = estimatedDistance + legs[i].distance.value;
+                            estimatedDuration = estimatedDuration + legs[i].duration.value;
+                        }
+
+                        setDirection(results);
+                        setDistance(estimatedDistance);
+                        setDuration(estimatedDuration);
+                    }
+                    catch (ex) 
+                    {
+                        console.log(ex.message);
+                    }
+
+                }
+
+                setLoadFlag(true);
+
+            }).catch((e) => {
+                console.log(e.message);
+            })
+
+        }
+
+    }, [])
+
+    // ---------------------------------------
     // Functions for waypoints for preferences
     // ---------------------------------------
-
     // Update current selector (achieve radio button effect)
     const setSelector = (index, size, setFunc) => {
         var newSelectArr = Array.from({length: size}, () => false);
@@ -77,6 +154,9 @@ const Request = (props) => {
     
     // Display and calculate route on map
     const calculateRoute = useCallback(async() => {
+
+        console.log("calc");
+
         // No destination or origin set
         if (originRef.current.value === '' || destinationRef.current.value === '') 
             return
@@ -103,7 +183,7 @@ const Request = (props) => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
-    }, [])
+    }, [startPoint])
 
     useEffect(() => {
         if(originRef.current && destinationRef.current)
@@ -133,7 +213,7 @@ const Request = (props) => {
         )
     }
 
-    const submitTrip = () => {
+const submitTrip = () => {
         console.log("submitTrip");
 
         // Convert date object into string for database
@@ -141,24 +221,92 @@ const Request = (props) => {
             return date.month.name + " " + date.day + ", " + date.year
         });
         
-        var newTrip  = {
-            start: originRef.current.value, 
-            end: destinationRef.current.value,
-            date: datesAsString,
-            depart: departTime,
-            return: returnTime,
-            luggage: luggageBtn,
-            seat: seatBtn,
-            pref: otherPref,
-            desc: tripDesc,
-            distance: distance,
-            eta: duration,
-            name: "Sarah Smith",
-            requestType: false,
-            tripID: uuidv4()
-        }
+        ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
+        .then(response => {
+            var currName = response.data.firstName + " " + response.data.lastName;
 
-        console.log(newTrip);
+            var newTrip  = {
+                start: originRef.current.value, 
+                end: destinationRef.current.value,
+                date: datesAsString,
+                depart: departTime,
+                return: returnTime,
+                luggage: luggageBtn,
+                pref: otherPref,
+                desc: tripDesc,
+                distance: distance,
+                eta: duration,
+                name: currName,
+                postType: false,
+                userID: localStorage.getItem("userID")
+            }
+    
+            console.log(newTrip);
+    
+            TripRoutes.createTrip(newTrip)
+            .then(response => {
+                console.log("success!");
+                console.log(response.data);
+            }).catch(e => {
+                console.log(e.message);
+            })
+    
+
+        }).catch(e => {
+            console.log(e.message);
+        });
+
+
+    }
+
+    const editTrip = () => {
+        console.log("editTrip");
+
+        if(dates.length == 1) // Only allow single selection for date
+        {
+            ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
+            .then(response => {
+
+                if (typeof(dates[0]) == "string") // No new selection made
+                    var datesAsString = dates;
+                else                              // Convert date input into string
+                    var datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
+
+                var currName = response.data.firstName + " " + response.data.lastName;
+
+                var editedTrip  = {
+                    start: originRef.current.value, 
+                    end: destinationRef.current.value,
+                    date: datesAsString,
+                    depart: departTime,
+                    return: returnTime,
+                    luggage: luggageBtn,
+                    pref: otherPref,
+                    desc: tripDesc,
+                    distance: distance,
+                    eta: duration,
+                    name: currName,
+                    postType: false,
+                    userID: localStorage.getItem("userID"),
+                    tripID: tripID
+                }
+    
+                console.log(editedTrip);
+
+                TripRoutes.editTrip(editedTrip)
+                .then((response) => {
+                    console.log("success");
+                    console.log(response.data);
+                }).catch((e) => {
+                    console.log("failure");
+                    console.log(e.message);
+                })   
+        
+
+            }).catch(e => {
+                console.log(e.message);
+            });
+        }
     }
 
     const getTimeInHrsMin = (seconds) => {
@@ -185,7 +333,7 @@ const Request = (props) => {
         return <></>
     }
 
-    return (
+    return ((loadFlag || typeof(postID) === 'undefined' ) ?
         <div id="trip-page">
             
             <h2 className="underline">Post Your Trip!</h2>
@@ -200,17 +348,17 @@ const Request = (props) => {
                     <div className="form-cell itinerary dest">
                         <label htmlFor="start-point">Starting Point: </label>
 
-                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                        <PinDestination className="waypoint-svg" size={24}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="start-point" ref={originRef}/>
+                            <input defaultValue={startPoint} id="start-point" ref={originRef}/>
                         </Autocomplete>
                     </div>
 
                     <div className="form-cell itinerary dest">
                         <label htmlFor="end-point">Destination: </label>
-                        <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                        <PinDestination className="waypoint-svg" size={24}/>
                         <Autocomplete onPlaceChanged={calculateRoute} className="flex-input">
-                            <input id="end-point" ref={destinationRef}/>
+                            <input defaultValue={endPoint} id="end-point" ref={destinationRef}/>
                         </Autocomplete>
                     </div>
 
@@ -221,12 +369,16 @@ const Request = (props) => {
                 </div>
 
                 <div className="google-map">
-                    <GoogleMap 
-                        zoom={direction ? "" : 3} 
-                        mapContainerStyle={{width: '100%', height: '100%'}}
-                        center={direction ? "" : {lat: 54.5260, lng: -105.2551}}>
-                        {direction ? <DirectionsRenderer directions={direction}/> : <></>}
-                    </GoogleMap>
+                {direction ? 
+                        <GoogleMap
+                            mapContainerStyle={{width: '100%', height: '100%'}}>
+                            <DirectionsRenderer directions={direction}/>   
+                        </GoogleMap>:
+                        <GoogleMap                        
+                            zoom={3} 
+                            mapContainerStyle={{width: '100%', height: '100%'}}
+                            center={{lat: 54.5260, lng: -105.2551}}>
+                        </GoogleMap>}
                 </div>
             </div>
 
@@ -253,19 +405,19 @@ const Request = (props) => {
 
                 <div className="flex-inline">
                     <label htmlFor="depart-time">Departure Time:</label>
-                    <input id="depart-time" onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
+                    <input id="depart-time" value={departTime} onChange={(e) => setDepartTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
 
                 <div className="flex-inline">
                     <label htmlFor="return-time">Return Time (Optional):</label>
-                    <input id="return-time" onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
+                    <input id="return-time" value={returnTime} onChange={(e) => setReturnTime(e.target.value)} className="time-picker" type="time"></input>
                 </div>
             </div>
 
             <h4 className="underline">Preferences</h4>
             <div className="preference-section">
 
-                <div className="preference-cell">
+            <div className="preference-cell">
                     <h5>Luggage: </h5>
                     <div className="form-cell">
                         <div className="selector-container">
@@ -276,22 +428,6 @@ const Request = (props) => {
                                     "Medium",
                                     "Large",
                                 ])}
-                        </div>
-                    </div>
-                    <h5>Number of Seats:</h5>
-
-                    <div className="form-cell">
-                        <div className="selector-container">
-                            {getButtons("seat-selector ", seatBtn, setSeatBtn, 
-                            [
-                                "1",
-                                "2",
-                                "3",
-                                "4",
-                                "5",
-                                "6",
-                                "7"
-                            ])}
                         </div>
                     </div>
 
@@ -309,18 +445,17 @@ const Request = (props) => {
                             ])}
                         </div>
                     </div>
-
                 </div>
 
             </div>
 
             <h4 className="underline">Trip Description</h4>
-                <div onChange={(e) => setTripDesc(e.target.value)} className="form-cell">
-                    <label htmlFor="trip-desc-input">Description: </label>
-                    <div className="textarea-container">
-                        <textarea id="trip-desc-input"/>
-                    </div>
+            <div className="form-cell">
+                <label htmlFor="trip-desc-input">Description: </label>
+                <div className="textarea-container">
+                    <textarea value={tripDesc} onChange={(e) => setTripDesc(e.target.value)} id="trip-desc-input"/>
                 </div>
+            </div>
 
             <h4 className="underline">Rules</h4>
             <div className="form-cell flex-inline">
@@ -330,10 +465,10 @@ const Request = (props) => {
                     if any of these rules are broken. 
                 </label>
             </div>
-            <button className="trip-btn btn-spacing" onClick={submitTrip}>
+            <button className="trip-btn btn-spacing" onClick={postID ? editTrip : submitTrip}>
                 Submit
             </button>
-        </div>
+        </div> : <></>
     )
 
 }

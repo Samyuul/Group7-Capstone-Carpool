@@ -40,6 +40,7 @@
     width: 30px;
     position: relative;
     left: 36px;
+    pointer-events: none;
 }
 
 .textarea-container {
@@ -50,7 +51,6 @@
 }
 
 #edit-profile label {
-
     font-weight: 700;
     margin: 15px 0;
 }
@@ -67,7 +67,3 @@
     width: 150px;
 }
 
-.profile-input-txt select {
-    padding: 15px 40px 15px 42px !important;
-    height: 55px !important;
-}

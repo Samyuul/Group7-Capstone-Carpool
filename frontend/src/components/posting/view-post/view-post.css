@@ -10,26 +10,20 @@
 
 }
 
-.trip-desc-page {
-    padding: 35px;
-    
+.view-post-info {
+    padding: 20px 35px;
     background-color: lightgray;
     border-radius: 15px;
     width: 80%;
     margin-bottom: 15px;
 }
 
-.car-info {
-    padding: 35px;
-    background-color: lightgray;
-    border-radius: 15px;
-    width: 80%;
+.view-post-info p {
+    margin: 0;
 }
 
 .trip-desc-page p {
     margin: 0;
 }
 
-.car-info p {
-    margin: 0;
-}
+.waypoint-post {}

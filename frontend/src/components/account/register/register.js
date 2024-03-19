@@ -1,6 +1,6 @@
 import "./register.css"
 import React, { useState } from 'react';
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext, useNavigate } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
 
@@ -23,6 +23,8 @@ const Register = (props) => {
     const [errorMsg, setErrorMsg] = useState(["", ""]);
     const [errorMsg2, setErrorMsg2] = useState();
 
+    const navigate = useNavigate();
+
     const registerAccount = (event) => {
 
         event.preventDefault();
@@ -38,13 +40,13 @@ const Register = (props) => {
         {
 
             var accountData = {
-                txtUsername: usernameInput,          // These values are from useState and they are updated by the onchange on the inputs
-                txtPassword: passwordInput
+                username: usernameInput,          
+                password: passwordInput
             }
     
-            AccountRoutes.registerAccount(accountData) // We are calling the registerAccount function in the AccountRoutes file and passing accountData
+            AccountRoutes.registerAccount(accountData) 
             .then(response => {
-                console.log("success!");
+                navigate('/login');
             }).catch (e => {
                 console.log(e.message);
                 console.log(e.response.data.message);
@@ -98,22 +100,23 @@ const Register = (props) => {
                         {errorMsg2} <XmarkCircle onClick={() => setErrorMsg2("")} size={24} />
                     </p> : <></>}
 
+                    <form onSubmit={registerAccount}>
                     <div className="login-input-cell">
-                        <Account className="login-svg" size={24} weight="bold"  />
-                        <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
-                        {errorMsg[0] ? 
-                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
-                    </div>
+                            <Account className="login-svg" size={24} weight="bold"  />
+                            <input id="username-input" className="login-input" onChange={(event) => setUsernameInput(event.target.value)}/>            
+                            {errorMsg[0] ? 
+                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[0]}</p></div> : ""}
+                        </div>
 
-                    <div className="login-input-cell">
-                        <Keys className="login-svg" size={24} weight="bold" />
-                        <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
-                        {errorMsg[1] ? 
-                            <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
-                    </div>
+                        <div className="login-input-cell">
+                            <Keys className="login-svg" size={24} weight="bold" />
+                            <input type="password" id="password-input" className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                            {errorMsg[1] ? 
+                                <div className="error-msg"><TriangleExclamation className="error-svg" size={24}/> <p className="login-error-msg">{errorMsg[1]}</p></div> : ""}
+                        </div>
 
-                    <button className="trip-btn login-submit" onClick={registerAccount}>Register</button>
-
+                        <button type="submit" className="trip-btn login-submit">Register</button>
+                    </form>
                     <Link className="hidden" id="reset-password">Forgot Password?</Link>
                 </div>
             </div>

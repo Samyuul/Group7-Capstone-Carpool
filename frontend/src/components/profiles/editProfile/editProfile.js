@@ -1,53 +1,139 @@
 import React, { useEffect, useState } from "react";
 import "./editProfile.css";
+import { useNavigate } from "react-router-dom";
 
 import { 
     CakeSlice,
     Account,
     Notebook,
     MaleFemale,
-    ImageGallery
+    ImageGallery,
+    ArrowDownCircle
 } from '@vectopus/atlas-icons-react';
+
+import ProfileRoutes from "../../../routes/profileRoutes";
 
 const EditProfile = () => {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [day, setDay] = useState("");
+    const [day, setDay] = useState(1);
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
     const [desc, setDesc] = useState("");
     const [gender, setGender] = useState("");
 
+    const [image, setImage] = useState("");
+
+    const navigate = useNavigate();
+
     const submitProfile = () => {
-        console.log("submitProfile");
+
+        var birthDate = new Date(year + "-" + month + "-" + day)
+
+        var ageDiffInMs = Date.now() - birthDate.getTime();
+        var ageDate = new Date(ageDiffInMs);
+        var age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        
+        const newProfile = {
+            firstName: firstName,
+            lastName: lastName,
+            age: age,
+            desc: desc,
+            gender: gender,
+            day: day,
+            month: month,
+            year: year,
+            profileImageData: image,
+            userID: localStorage.getItem("userID")
+        }
+
+        console.log("submit");
+
+        ProfileRoutes.editProfile(newProfile)
+        .then(response => {
+            navigate("/profile");
+        }).catch(e => {
+            console.log(e.message);
+        })
+        
+    }
+
+    const convertToBase64 = (e) => {
+        console.log(e);
+
+        var reader = new FileReader();
+        reader.readAsDataURL(e.target.files[0]);
+        reader.onload = () => {
+            //setImage(reader.result);
+            setImage("");
+        }
+
+        reader.onerror = (error) => {
+            console.log("Error: ", error);
+        }
+    }
+
+    const getDayDropdown = () => {
+
+        return (
+            Array.from(Array(31)).map((val, i) => {
+
+                return (
+                    <option key={i} value={i + 1}>{i + 1}</option>
+                )
+            })
+        )
+    }
+
+    const getMonthDropdown = () => {
+
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        return (
+            Array.from(Array(12)).map((val, i) => {
+
+                return (
+                    <option key={i} value={i + 1}>{months[i]}</option>
+                )
+
+            })
+        )
+    }
+
+    const getYearDropdown = () => {
+
+        return (
+            Array.from(Array(107), (_, i) => i + 1900).reverse().map((val, i) => {
+
+                return (
+                    <option key={i} value={val}>{val}</option>
+                )
+
+            })
+        )
     }
 
     // Initially load values
     useEffect(() => {
-        const profileData = {
-            firstName: "Sarah",
-            lastName: "Smith",
-            joined: "Sept 18, 2023",
-            tripDriver: 7,
-            tripPassenger: 3,
-            tripDistance: 54.2,
-            desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed placerat lectus, at porta risus. Cras scelerisque lobortis imperdiet. Cras rutrum tortor nec enim dictum, at lacinia sapien pharetra. Nunc congue sagittis nunc sit amet iaculis. Morbi pellentesque eget nisl sit amet condimentum. Aliquam sit amet tempor tellus. In interdum mauris vitae molestie tempor. Vestibulum quis purus quam.",
-            passengerRating: 4.3,
-            driverRating: 4.5,
-            gender: "Female",
-            day: 12,
-            month: 4,
-            year: 1996
-        }
         
-        setFirstName(profileData.firstName);
-        setLastName(profileData.lastName);
-        setDay(profileData.day);
-        setMonth(profileData.month);
-        setYear(profileData.year);
-        setDesc(profileData.desc);
-        setGender(profileData.gender);
+        ProfileRoutes.retrieveProfile({userID:localStorage.getItem("userID")})
+        .then((response) => {
+
+            const profileData = response.data;
+            setFirstName(profileData.firstName);
+            setLastName(profileData.lastName);
+            setDay(profileData.day === -1 ? "" : profileData.day);
+            setMonth(profileData.month === -1 ? "" : profileData.month);
+            setYear(profileData.year === -1 ? "" : profileData.year);
+            setDesc(profileData.desc);
+            setGender(profileData.gender);
+            setImage(profileData.profileImageData);
+
+        }).catch((err) => {
+            console.log(err.message);
+        })
+
     }, []);
 
     return (
@@ -69,11 +155,31 @@ const EditProfile = () => {
                 <label>Date of Birth: </label>
                 <div className="profile-input-txt">
                         <CakeSlice size={24}/>
-                        <input value={day} onChange={(e) => setDay(e.target.value)} id="profile-day" placeholder="Day"/>
+                        <select
+                            className="select-dropdown"
+                            value={month}
+                            onChange={(e) => setMonth(e.target.value)}>
+                            {getMonthDropdown()}
+                        </select>
+                        <ArrowDownCircle size={24} className="dropdown-svg"/>
+                        
                         <CakeSlice size={24}/>
-                        <input value={month} onChange={(e) => setMonth(e.target.value)} id="profile-month" placeholder="Month"/>
+                        <select
+                            className="select-dropdown"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value)}>
+                            {getDayDropdown()}
+                        </select>    
+                        <ArrowDownCircle size={24} className="dropdown-svg"/>
+                        
                         <CakeSlice size={24}/>
-                        <input value={year} onChange={(e) => setYear(e.target.value)} id="profile-year" placeholder="Year"/>
+                        <select
+                            className="select-dropdown"
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}>
+                            {getYearDropdown()}
+                        </select>   
+                        <ArrowDownCircle size={24} className="dropdown-svg"/>
                 </div>
 
                 <label htmlFor="profile-desc-input">Description: </label>
@@ -94,12 +200,15 @@ const EditProfile = () => {
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                     </select>
+                    <ArrowDownCircle size={24} className="dropdown-svg"/>
                 </div>
 
                 <label>Profile Image</label>
                 <div className="profile-input-txt">
                     <ImageGallery size={24} weight="bold"/>
-                    <input/>
+                    <input accept="image/*"
+                    type="file"
+                    onChange={convertToBase64}/>
                     <button className="trip-btn">Upload</button>
                 </div>
 

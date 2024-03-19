@@ -8,17 +8,21 @@ import {
     Autocomplete
 } from '@react-google-maps/api';
 
-import { CalendarDots } from "@vectopus/atlas-icons-react";
+import { 
+    CalendarDots,
+    Block,
+    PinDestination
+ } from "@vectopus/atlas-icons-react";
 
-import waypoint from "../../../img/waypoint.svg";
 import data from "./test.json";
-import PostTemplate from "../../template/postTemplate";
+
+import PostTemplate from "../../template/post/postTemplate";
 
 import ReactPaginate from 'react-paginate';
 
+import TripRoutes from "../../../routes/tripRoutes";
+
 const libraries = ['places'];
-const items = [...Array(33).keys()];
-const postData = data.concat(data).concat(data).concat(data);
 
 const Browse = (props) => {
 
@@ -30,28 +34,51 @@ const Browse = (props) => {
     const [startLoc, setStartLoc] = useState("");
     const [endLoc, setEndLoc] = useState("");
     const [dates, setDates] = useState([]);
+
+    const [pageData, setPageData] = useState([]);
+
+    const [fullFlag, setFullFlag] = useState(false);
+    const [requestFlag, setRequestFlag] = useState(false);
+
+    const [flag, setFlag] = useState(true);
+
     const originRef = useRef();
     const destinationRef = useRef();
 
+    const [pageNumber, setPageNumber] = useState(0);
+
     const itemsPerPage = 4;
+
+    // Fetch initial postings
+    useEffect(() => {
+
+        TripRoutes.getBrowseTrip()
+        .then((response) => {
+            var currData = response.data;
+            const endOffset = itemOffset + itemsPerPage;
+            setCurrentItems(currData.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(currData.length / itemsPerPage));
+            setPageData(currData);
+
+        }).catch((e) => {
+            console.log(e.message);
+        }) 
+
+    }, []);
 
     // Set up pagination 
     useEffect(() => {
         const endOffset = itemOffset + itemsPerPage;
-        setCurrentItems(postData.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(postData.length / itemsPerPage));
-        window.scrollTo({
-        //    top: 0,
-        //    left: 0,
-            behavior: "smooth"
-          });
-    }, [itemOffset, itemsPerPage]);
+        setCurrentItems(pageData.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(pageData.length / itemsPerPage));
+
+    }, [itemOffset, itemsPerPage, pageData, flag]);
     
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
-        const newOffset = event.selected * itemsPerPage % items.length;
-        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+        const newOffset = event.selected * itemsPerPage % pageData.length;
         setItemOffset(newOffset);
+        setPageNumber(event.selected);
     };
 
     const { isLoaded } = useJsApiLoader({
@@ -65,21 +92,38 @@ const Browse = (props) => {
         return (
             <div className="items">
                 {data && data.map((val, i) => {
-                    return(<PostTemplate key={i} data={val}/>)
+                    return(<PostTemplate key={i} clickable={true} data={val}/>)
                 })}
             </div>
         )
     }
     
     const searchFunc = () => {
-        
+
+        var datesAsString = dates.map((date, i) => {
+            return date.month.name + " " + date.day + ", " + date.year
+        });
+
         var searchConditions = {
             startLoc: startLoc,
             endLoc: endLoc,
-            dates: dates
+            dates: datesAsString,
+            requestFlag: requestFlag,
+            fullFlag: fullFlag
         }
 
-        console.log(searchConditions);
+        TripRoutes.getSearchResults(searchConditions)
+        .then((response) => {
+            const endOffset = itemOffset + itemsPerPage;
+            setCurrentItems(response.data.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(response.data.length / itemsPerPage));
+            setPageData(response.data);
+            setItemOffset(0);
+            setPageNumber(0);
+        }).catch((e) => {
+            console.log(e.message);
+        })
+
     }
 
     // Don't page if maps hasn't been loaded successfully 
@@ -98,16 +142,16 @@ const Browse = (props) => {
 
             <div className="search-bar">
                 <div className="flex-inline">
-                    <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                    <PinDestination className="waypoint-svg" size={24}/>
                     <Autocomplete onPlaceChanged={(e) => setStartLoc(originRef.current.value)}>
-                        <input placeholder="Start" ref={originRef}/>
+                        <input onChange={() => setStartLoc('')} placeholder="Start" ref={originRef}/>
                     </Autocomplete>
                 </div>
 
                 <div className="flex-inline">
-                    <img className="waypoint-svg" alt="waypoint" src={waypoint}/>
+                    <PinDestination className="waypoint-svg" size={24}/>
                     <Autocomplete onPlaceChanged={(e) => setEndLoc(destinationRef.current.value)}>
-                        <input placeholder="End" ref={destinationRef}/>
+                        <input onChange={() => setEndLoc('')} placeholder="End" ref={destinationRef}/>
                     </Autocomplete>
                 </div>
 
@@ -131,27 +175,47 @@ const Browse = (props) => {
 
             </div>
 
-            {renderPostings(currentItems)}
-            <ReactPaginate
-                nextLabel="&#8658;"
-                onPageChange={handlePageClick}
-                pageRangeDisplayed={2}
-                marginPagesDisplayed={2}
-                pageCount={pageCount}
-                previousLabel="&#8656;"
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousClassName="page-item"
-                previousLinkClassName="page-link"
-                nextClassName="page-item"
-                nextLinkClassName="page-link"
-                breakLabel="..."
-                breakClassName="page-item"
-                breakLinkClassName="page-link"
-                containerClassName="pagination"
-                activeClassName="active"
-                renderOnZeroPageCount={null}
-            />
+            <div id="checkbox-selector">
+                <div className="input-checkbox">
+                    <input id="full-flag" checked={fullFlag} onChange={() => setFullFlag(!fullFlag)} type="checkbox"/>
+                    <label htmlFor="full-flag">Hide Full Trips</label>
+                </div>
+                <div className="input-checkbox">
+                    <input id="request-flag" checked={requestFlag} onChange={() => setRequestFlag(!requestFlag)} type="checkbox"/>
+                    <label htmlFor="request-flag">Hide Requests</label>
+                </div>
+            </div>
+
+            { currentItems ?
+                (currentItems.length !== 0 ? 
+                <>
+                    {renderPostings(currentItems)}
+                    <ReactPaginate
+                        nextLabel="&#8658;"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={2}
+                        marginPagesDisplayed={2}
+                        pageCount={pageCount}
+                        previousLabel="&#8656;"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item"
+                        nextLinkClassName="page-link"
+                        breakLabel="..."
+                        breakClassName="page-item"
+                        breakLinkClassName="page-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                        renderOnZeroPageCount={null}
+                        forcePage={pageNumber}
+                    />
+                </> : <div id="empty-results-page">
+                    <Block size={44} weight="thin"/>
+                    <p>Sorry, there are no trips found!</p>
+                </div> 
+            ) : <></> }
     
         </div>
     )

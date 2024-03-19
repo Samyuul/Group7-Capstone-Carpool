@@ -66,7 +66,8 @@
 .waypoint-svg {
     width: 30px;
     position: relative;
-    left: 36px;
+    left: 33px;
+    pointer-events: none;
 }
 
 .exit-svg {
@@ -170,6 +171,7 @@
 .calendar-svg {
     position: relative;
     left: 35px;
+    pointer-events: none;
 }
 
 .model-svg {

@@ -15,8 +15,10 @@ const myWebsite = express.Router();
 const mongoose = require("mongoose");
 const cors = require('cors'); // You need to add this to every page
 // var myWebsite = express();
-const upload = require("express-fileupload");//need this !!!!!!!!!!!!
-myWebsite.use(upload());//need this !!!!!!!!!!!!
+
+
+//const upload = require("express-fileupload");//need this !!!!!!!!!!!!
+//myWebsite.use(upload());//need this !!!!!!!!!!!!
 
 
 myWebsite.use(cors()) // You need to add this to every page
@@ -35,7 +37,8 @@ mongoose.connect("mongodb://localhost:27017/vroom-room"),{
 //*********************************************/
 const Accounts = mongoose.model("Accounts",{
     username:String,
-    password:String
+    password:String,
+    accountID:String
 })
 
 const CookiesID = mongoose.model("CookiesID",{
@@ -62,7 +65,7 @@ function generateRandomId(length) {
     }
     
     return result;
-  }
+}
 
 // For example, you can delete this since we are rendering the login page using reactJS, you won't need res.render anywhere
 // Don't need to set ejs, view and all the other things we learned in the javascript course

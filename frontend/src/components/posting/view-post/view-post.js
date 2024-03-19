@@ -1,34 +1,19 @@
 import "./view-post.css"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
-import PostTemplate from "../../template/postTemplate";
+import PostTemplate from "../../template/post/postTemplate";
+
+import TripRoutes from "../../../routes/tripRoutes";
+import PassengerRoutes from "../../../routes/passengerRoutes";
 
 const ViewPost = (props) => {
 
     const { postID } = useParams();
-
-    const postData = {
-        start:"Toronto, ON, Canada",
-        end:"Burlington, ON, Canada",
-        waypoints:["Guelph, ON, Canada"],
-        date:["March 14, 2024","March 20, 2024","March 21, 2024"],
-        depart:"14:24",
-        return:"17:25",
-        model:"Ford Focus",
-        type:"Hatch Back",
-        color:"Red",
-        plate:"ABC 1234",
-        luggage:[false,false,true,false],
-        seat:[false,false,true,false,false,false,false],
-        pref:[true,true,true,false,false],
-        desc:"This is a test description for entering into the system. Please ignore what this message says.",
-        distance:149840,
-        eta:7186,
-        name:"Sarah Smith",
-        tripID:"469ed35b-c8f1-42df-9edb-d83764564acd"};
+    const [postData, setPostData] = useState({}); 
+    const [postFlag, setPostFlag] = useState(false);
 
     const getTimeInHrsMin = (seconds) => {
         return Math.floor(seconds / 3600) + " hrs " + Math.floor((seconds / 60) % 60) + " min";
@@ -38,23 +23,72 @@ const ViewPost = (props) => {
         return (meter / 1000.0).toFixed(2) + " km"
     }
 
-    return (
-        <div id="view-post-page">
+    const joinFutureTrip = () => {
+        console.log("joinTrip");
+        console.log(postData);
+
+        var userInfo = {
+            passengerID: localStorage.getItem("userID"),
+            passengerUsername: localStorage.getItem("username").toLowerCase(),
+            driverID: postData.userID,
+            driverUsername: postData.username,
+            tripID: postData.tripID
+        }
+
+        PassengerRoutes.joinTrip(userInfo)
+        .then((response) => {
+            console.log(response.data);
+        }).catch((e) => {
+            console.log(e.message);
+        })
+    }
+
+    useEffect(() => {
+
+        TripRoutes.getTrip({tripID: postID})
+        .then(response => {
+            //console.log(response.data);
+            setPostData(response.data);
+            setPostFlag(true);
+            console.log()
+            console.log("success");
+        }).catch(e => {
+            console.log("fail");
+        });
+
+    }, [])
+
+    return ( 
+        
+        <> {postFlag ? <div id="view-post-page">
             {<PostTemplate data={postData}/>}
 
-            <div className="trip-desc-page">
+            <div className="view-post-info">
                 <p>Estimated Duration: {getTimeInHrsMin(postData.eta)}</p>
                 <p>Estimated Distance: {getDistanceInKm(postData.distance)}</p>
             </div>
 
-            <div className="car-info">
-                <p>Car Model: {postData.model} - {postData.type}</p>
+            <div className="view-post-info">
+                <p>Car Model: {postData.model} - {postData.color} {postData.type}</p>
             </div>
 
-            <p className="trip-desc-page">Trip Descrption: {postData.desc}</p>
+            <div className="view-post-info">
+                <p>Trip Descrption: {postData.desc}</p>
+            </div>
 
-            <button className="trip-btn">Join This Trip!</button>
-        </div>
+            {!postData.waypoints.length ? <></> :
+            <div className="view-post-info">
+                <div>Waypoints: {postData.waypoints.map((val, i) => {
+                    return (
+                        <p className="waypoint-post" key={i}> - {val} </p>
+                    )
+                })}</div>
+            </div>}
+
+            {(postData.userID !== localStorage.getItem("userID") && !postData.seat.every(x => x === false)) ?
+            <button className="trip-btn" onClick={() => joinFutureTrip()}>Join This Trip!</button> : <></>}
+        </div> : <></>}</>
+        
     )
 
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 
 import './index.css';
 
@@ -111,8 +111,16 @@ const router = createBrowserRouter([
 				element: <Private><Review/></Private>	
 			},
 			{
+				path: '/create-review',
+				element: <Private><Review/></Private>
+			},
+			{
 				path: 'test',
 				element: <TestPage></TestPage>
+			},
+			{
+				path: '*',
+				element: <Navigate to="/profile"/>
 			}
 		]
 	}

@@ -22,19 +22,18 @@ const Login = (props) => {
 
     const handleLogin = (event) => {
 
+        event.preventDefault();
+
         const userLogin = { 
             username: usernameInput, 
             password: passwordInput 
         };
 
-        console.log(userLogin);
-
         AccountRoutes.checkLoginInfo(userLogin)
         .then(response => {
-
-            console.log("successful login!");
-            console.log(response.data);
-            localStorage.setItem('user', usernameInput);
+            localStorage.setItem('userID', response.data.userID);
+            localStorage.setItem('AuthKey', response.data.authKey);
+            localStorage.setItem('username', response.data.username);
             setUserName(usernameInput);
             navigate('/profile');
             
@@ -42,11 +41,8 @@ const Login = (props) => {
             console.log(e.message);
             setErrorMsg("Invalid Login Credentials");
             setPasswordInput("");
-        })      
+        });      
         
-        //localStorage.setItem('user', usernameInput);
-        //setUserName(usernameInput);
-        //navigate('/profile');
     }
 
     return (
@@ -72,17 +68,21 @@ const Login = (props) => {
                         {errorMsg} <XmarkCircle onClick={() => setErrorMsg("")} size={24} /> 
                     </p>: <></>}
 
-                    <div className="login-input-cell">
-                        <Account size={24} weight="bold" className="login-svg" />
-                        <input id="username-input" className="login-input" value={usernameInput} onChange={(event) => setUsernameInput(event.target.value)}/>            
-                    </div>
+                    <form onSubmit={handleLogin}>
 
-                    <div className="login-input-cell">
-                        <Keys size={24} weight="bold" className="login-svg" />
-                        <input type="password" id="password-input" value={passwordInput} className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
-                    </div>
+                        <div className="login-input-cell">
+                            <Account size={24} weight="bold" className="login-svg" />
+                            <input id="username-input" className="login-input" value={usernameInput} onChange={(event) => setUsernameInput(event.target.value)}/>            
+                        </div>
 
-                    <button className="trip-btn login-submit" onClick={handleLogin}>Login</button>
+                        <div className="login-input-cell">
+                            <Keys size={24} weight="bold" className="login-svg" />
+                            <input type="password" id="password-input" value={passwordInput} className="login-input" onChange={(event) => setPasswordInput(event.target.value)}/>
+                        </div>
+
+                        <button type="submit" className="trip-btn login-submit" >Login</button>
+                    </form>
+
                     <Link id="reset-password">Forgot Password?</Link>
 
                 </div>
