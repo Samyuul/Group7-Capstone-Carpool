@@ -36,7 +36,7 @@ myWebsite.use(archivedRoutes);
 // Deployments
 __dirname = path.resolve();
 
-//if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
 
     myWebsite.use(express.static(path.join(__dirname, 'frontend/build')));
 
@@ -44,7 +44,7 @@ __dirname = path.resolve();
         res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
     })
 
-//}
+}
 
 // Start server
 const PORT = process.env.PORT || 8080;
