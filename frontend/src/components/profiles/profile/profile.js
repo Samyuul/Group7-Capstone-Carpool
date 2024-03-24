@@ -8,7 +8,6 @@ import {
     RoadRouteArrowUp,
     VanTruck,
     RaiseHandsPeople,
-    Star,
     BlockProhibited
 } from '@vectopus/atlas-icons-react';
 
@@ -17,7 +16,6 @@ import StatisticsRoutes from "../../../routes/statisticsRoutes";
 import ReviewRoutes from "../../../routes/reviewRoutes";
 
 import AltReviewTemplate from "../../template/review/reviewTemplate";
-import PostTemplate from "../../template/post/postTemplate";
 
 const Profile = (props) => {
 
@@ -70,8 +68,9 @@ const Profile = (props) => {
 
                     setProfileData(response.data);
     
-                }).catch((e) => {
-                    console.log(e.message)
+                }).catch((e) => { // Not found, redirect to our profile
+                    navigate("/profile");
+                    window.location.reload();
                 })          
 
             }
@@ -112,7 +111,7 @@ const Profile = (props) => {
 
         fetchData();
         
-    }, [])
+    }, [navigate])
 
     // User clicks read more
     useEffect(() => {

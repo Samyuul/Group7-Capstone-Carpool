@@ -1,3 +1,5 @@
+require('dotenv').config(); 
+
 const express = require("express");
 const myWebsite = express.Router();
 const mongoose = require("mongoose");
@@ -7,7 +9,7 @@ myWebsite.use(cors())
 myWebsite.use(express.urlencoded({extended:true}));
 myWebsite.use(express.json());
 
-mongoose.connect("mongodb://localhost:27017/vroom-room"),{
+mongoose.connect(process.env.MONGO_URI),{
     UserNewUrlParser: true,
     UserUnifiedTopology:true
 }

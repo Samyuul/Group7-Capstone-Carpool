@@ -4,7 +4,7 @@ module.exports = (mongoose) => {
         username: String,
         password: String,
         userID: String,
-        lowerCase: String
+        lowercase: String
     })
 
     return Account

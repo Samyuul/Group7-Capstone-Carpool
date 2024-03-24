@@ -17,10 +17,11 @@ const Header = (props) => {
 
     async function handleLogout() {
 
-        await AccountRoutes.logoutSession()
+        await AccountRoutes.logoutSession({userID: localStorage.getItem("userID")})
         .then(async (response) => {
 
             await localStorage.clear();
+            await window.location.reload();
             
         }).catch(e => {
             console.log(e.message);
@@ -63,7 +64,7 @@ const Header = (props) => {
 
                 {!localStorage.getItem('userID') ? 
                     <Link to={"/login"} className="flex-link">Login</Link> : 
-                    <Link className="flex-link" onClick={handleLogout} reloadDocument>Logout</Link> }
+                    <Link className="flex-link" onClick={handleLogout} >Logout</Link> }
             </div>
         </header>
     )

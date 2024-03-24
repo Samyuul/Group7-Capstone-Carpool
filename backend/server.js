@@ -1,21 +1,54 @@
+require("dotenv").config();
+const path = require("path");
+
 const express = require("express");
 const mongoose = require("mongoose");
-//const path = require("path");
+const cors = require('cors');
 var myWebsite = express();
 
-const upload = require("express-fileupload");
-myWebsite.use(upload());
-
+myWebsite.use(cors()) 
 myWebsite.use(express.urlencoded({extended:true}));
+myWebsite.use(express.json());
 
-//myWebsite.set("views",path.join(__dirname,"../frontend/src")); //This section should change to cd../frontend/src/components
-//myWebsite.use(express.static(__dirname+"../frontend/src"));//For css file but I think we don't need it
-myWebsite.set("view engine","ejs")
-
-const {check,validationResult}= require("express-validator");
-const { stringify } = require("querystring");
-
-mongoose.connect("mongodb://localhost:27017/vroom-room"),{
-     UserNewUrlParser: true,
-     UserUnifiedTopology:true
+mongoose.connect(process.env.MONGO_URI),{
+    UserNewUrlParser: true,
+    UserUnifiedTopology:true
 }
+
+// Import routes from other files
+const accountRoutes = require("./app/controller/account.controller.js");
+const profileRoutes = require("./app/controller/profile.controller.js");
+const tripRoutes = require("./app/controller/trip.controller.js");
+const statisticRoutes = require("./app/controller/statistics.controller.js");
+const reviewRoutes = require("./app/controller/review.controller.js");
+const passengerRoutes = require("./app/controller/passenger.controller.js");
+const archivedRoutes = require("./app/controller/archived.controller.js");
+
+// Use routes
+myWebsite.use(accountRoutes);
+myWebsite.use(profileRoutes);
+myWebsite.use(tripRoutes);
+myWebsite.use(statisticRoutes);
+myWebsite.use(reviewRoutes);
+myWebsite.use(passengerRoutes);
+myWebsite.use(archivedRoutes);
+
+// Deployments
+__dirname = path.resolve();
+
+//if (process.env.NODE_ENV === "production") {
+
+    myWebsite.use(express.static(path.join(__dirname, 'frontend/build')));
+
+    myWebsite.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+    })
+
+//}
+
+// Start server
+const PORT = process.env.PORT || 8080;
+myWebsite.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+

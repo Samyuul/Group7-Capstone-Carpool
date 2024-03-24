@@ -45,6 +45,8 @@ myWebsite.post("/register", async (req, res) => {
                 lowercase: lowercase
             }
 
+            console.log(accountData);
+
             var profileData = {
                 firstName: "",
                 lastName: "",
@@ -71,7 +73,10 @@ myWebsite.post("/register", async (req, res) => {
                 userID: userID
             }
 
+            console.log(accountData);
             var newAccount = new Accounts(accountData);
+            console.log(newAccount);
+
             await newAccount.save().then(() => {
                 console.log("New Account Created Successfully!");
                 res.send("New Account Created Successfully!"); 
@@ -121,41 +126,30 @@ myWebsite.post("/login", async (req, res) => {
         
         if (Account) 
         {            
-            await Sessions.findOne({ userID: Account.userID }).then(async (CurrSession) =>{
+            await Sessions.findOneAndDelete({ userID: Account.userID }).then(async (CurrSession) =>{
 
-                // Session exists
-                if (CurrSession) {
-                    console.log(`Account haven't logout yet!`);
-                    console.log(`Account session:${CurrSession}`);
+                // Generate new session
+                const authKey = uuidv4();
 
-                    // This lets you send an error, with error code 500 and custom message
-                    res.status(500).send({
-                        message: "Account haven't logout yet!."
-                    })
+                var newInput = {
+                    userID : Account.userID,
+                    authKey: authKey
                 }
-                else 
-                {
-                    const authKey = uuidv4();
 
-                    var newInput = {
-                        userID : Account.userID,
-                        authKey: authKey
-                    }
+                var newSession = new Sessions(newInput);
+                
+                newInput.username = Account.username; // Send username as well
 
-                    var newSession = new Sessions(newInput);
-                    
-                    newInput.username = Account.username; // Send username as well
-
-                    await newSession.save().then(() => {
-                        console.log("New session created Successfully!");
-                        res.send(newInput); 
-                    }).catch((Ex) => {
-                        console.log(`Db Error: ${Ex.toString()}`);
-                        res.status(404).send({    
-                            message: `Db Error: ${Ex.toString()}`
-                        })
+                await newSession.save().then(() => {
+                    console.log("New session created Successfully!");
+                    res.send(newInput); 
+                }).catch((Ex) => {
+                    console.log(`Db Error: ${Ex.toString()}`);
+                    res.status(404).send({    
+                        message: `Db Error: ${Ex.toString()}`
                     })
-                }
+                })
+                
             })
         }
         else{
@@ -174,12 +168,15 @@ myWebsite.post("/login", async (req, res) => {
 
 // Logout 
 myWebsite.post("/logout", async (req, res) => {
-    await Sessions.deleteMany({}).then((test) => {
+
+    await Sessions.findOneAndDelete({ userID: req.body.userID }).then((test) => {
         console.log("logout");
-        res.send("success");
     }).catch((err) => {
         console.log(`Error: ${err}`);
     });
+
+    res.send("success");
+
 })
 
 module.exports = myWebsite;

@@ -27,7 +27,7 @@ const libraries = ['places'];
 const Browse = (props) => {
 
     // Pagination variables
-    const [currentItems, setCurrentItems] = useState(null);
+    const [currentItems, setCurrentItems] = useState([]);
     const [pageCount, setPageCount] = useState(0);
     const [itemOffset, setItemOffset] = useState(0);
 
@@ -89,11 +89,15 @@ const Browse = (props) => {
 
     const renderPostings = (data) => {
 
+        console.log(currentItems);
+        console.log(data);
+        console.log(pageData);
+
         return (
             <div className="items">
-                {data && data.map((val, i) => {
+                {data ? data.map((val, i) => {
                     return(<PostTemplate key={i} clickable={true} data={val}/>)
-                })}
+                }) : <></>}
             </div>
         )
     }
