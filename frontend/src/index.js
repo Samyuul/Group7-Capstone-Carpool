@@ -5,8 +5,6 @@ import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-rou
 
 import './index.css';
 
-import TestPage from './test/testPage';
-
 import {
 	Header,
 	Footer,
