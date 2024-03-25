@@ -115,10 +115,6 @@ const router = createBrowserRouter([
 				element: <Private><Review/></Private>
 			},
 			{
-				path: 'test',
-				element: <TestPage></TestPage>
-			},
-			{
 				path: '*',
 				element: <Navigate to="/profile"/>
 			}

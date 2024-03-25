@@ -36,7 +36,7 @@ myWebsite.use(archivedRoutes);
 // Deployments
 __dirname = path.resolve();
 
-if (process.env.NODE_ENV === "production2") {
+if (process.env.NODE_ENV === "production") {
 
     myWebsite.use(express.static(path.join(__dirname, 'frontend/build')));
 
