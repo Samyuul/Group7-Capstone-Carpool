@@ -23,7 +23,7 @@ myWebsite.post("/register", async (req, res) => {
 
         if (account) // Account already exists
         { 
-            res.status(500).send({
+            res.status(403).send({
                 message: "The account already been created."
             })
         }
@@ -45,8 +45,6 @@ myWebsite.post("/register", async (req, res) => {
                 lowercase: lowercase
             }
 
-            console.log(accountData);
-
             var profileData = {
                 firstName: "",
                 lastName: "",
@@ -56,8 +54,7 @@ myWebsite.post("/register", async (req, res) => {
                 day: 1,
                 month: 1,
                 year: 2000,
-                profileImageData: null,
-                profileImageType: "",
+                profileImage: "",
                 userID: userID,
                 username: username,
                 lowercase: lowercase
@@ -73,41 +70,36 @@ myWebsite.post("/register", async (req, res) => {
                 userID: userID
             }
 
-            console.log(accountData);
             var newAccount = new Accounts(accountData);
-            console.log(newAccount);
 
             await newAccount.save().then(() => {
-                console.log("New Account Created Successfully!");
-                res.send("New Account Created Successfully!"); 
             }).catch((Ex) => {
-                console.log(`Db Error: ${Ex.toString()}`);
-                res.status(404).send({     
+                res.status(500).send({     
                     message: `Db Error: ${Ex.toString()}`
                 })
             })
 
             var newProfiles = new Profiles(profileData);
             await newProfiles.save().then(() => {
-                console.log("New profiles Created Successfully!");
             }).catch((Ex) => {
-                console.log(`Db Error: ${Ex.toString()}`);
-                res.status(404).send({    
+                res.status(500).send({    
                     message: `Db Error: ${Ex.toString()}`
                 })
             })
 
             var newStatistics = new Statistics(statisticsData);
             await newStatistics.save().then(() => {
-                console.log("New statistics saved successfully!");
             }).catch((Ex) => {
-                console.log(`Db Error: ${Ex.toString()}`);
-                res.status(404).send({    
+                res.status(500).send({    
                     message: `Db Error: ${Ex.toString()}`
                 })
             })
 
+            res.send("New Account Created Successfully!"); 
+
         }
+    }).catch((e) => {
+        res.status(500).send("Site currently down!");
     })
 
 });
@@ -118,11 +110,8 @@ myWebsite.post("/login", async (req, res) => {
     var password = req.body.password;
     var lowercase = username.toLowerCase();
 
-    console.log(`username:${username} & password:${password}`);
-
     // Check if 
     await Accounts.findOne({ lowercase: lowercase, password: password }).then(async (Account) => {
-        console.log(`Accounts:${Account}`);
         
         if (Account) 
         {            
@@ -138,29 +127,36 @@ myWebsite.post("/login", async (req, res) => {
 
                 var newSession = new Sessions(newInput);
                 
-                newInput.username = Account.username; // Send username as well
+                // Retrieve username
+                newInput.username = Account.username; 
+
+                // Retrieve profile image
+                await Profiles.findOne({ userID: Account.userID })
+                .then((profile) => {
+                    newInput.profileImage = profile.profileImage;
+                }).catch((err) => {
+                    res.status(500).send({
+                        message: `Error: ${err}`
+                    })
+                })
 
                 await newSession.save().then(() => {
-                    console.log("New session created Successfully!");
                     res.send(newInput); 
                 }).catch((Ex) => {
-                    console.log(`Db Error: ${Ex.toString()}`);
-                    res.status(404).send({    
+                    res.status(500).send({    
                         message: `Db Error: ${Ex.toString()}`
                     })
                 })
-                
+
             })
         }
-        else{
-            console.log("No account found");
-            res.status(500).send({                               
+        else {
+            res.status(404).send({                               
                 message: "No account found"
-            })        }
+            })        
+        }
     }).catch((err) => {
-        console.log(`Error: ${err}`);
-
-        res.status(404).send({
+        res.status(500).send({
             message: `Error: ${err}`
         })
     })
@@ -169,11 +165,8 @@ myWebsite.post("/login", async (req, res) => {
 // Logout 
 myWebsite.post("/logout", async (req, res) => {
 
-    await Sessions.findOneAndDelete({ userID: req.body.userID }).then((test) => {
-        console.log("logout");
-    }).catch((err) => {
-        console.log(`Error: ${err}`);
-    });
+    await Sessions.findOneAndDelete({ userID: req.body.userID })
+    .then((test) => {}).catch((err) => {});
 
     res.send("success");
 

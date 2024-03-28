@@ -10,8 +10,10 @@ const myWebsite = db.myWebsite;
 
 const { v4: uuidv4 } = require('uuid');
 
+const checkValidLogin = db.checkValidLogin;
+
 // Join a trip as a passenger
-myWebsite.post("/join-trip", (req, res) => {
+myWebsite.post("/join-trip", checkValidLogin, (req, res) => {
 
     Passengers.findOne({tripID: req.body.tripID}).then(async (trip) => {
 
@@ -28,53 +30,37 @@ myWebsite.post("/join-trip", (req, res) => {
                 trip.passengerUsername.push(req.body.passengerUsername);
                 trip.passengerName.push(fullName);
     
-                await trip.save().then(() => {
-                    console.log("success!");
-                })
-        
-                await Trips.findOne({tripID: req.body.tripID}).then((tripData) => {
-    
-                    var numSeats = tripData.seat.indexOf(true);
-                    var newSeatArr = Array.from({length: 7}, () => false);
-                    newSeatArr[numSeats - 1] = true;
-                    tripData.seat = newSeatArr;
-    
-                    tripData.save().then(() => {
-                        console.log("success Save");
-                    }).catch((e) => {
-                        console.log(e.message);
-                    })
-        
-                }).catch((e) => {
-                    console.log(e.message);
-                })
+                await trip.save().then(async () => {
 
-            }).catch((e) => {
-                console.log(e.message);
+                    await Trips.findOne({tripID: req.body.tripID}).then(async (tripData) => {
+    
+                        var numSeats = tripData.seat.indexOf(true);
+                        var newSeatArr = Array.from({length: 7}, () => false);
+                        newSeatArr[numSeats - 1] = true;
+                        tripData.seat = newSeatArr;
+        
+                        await tripData.save().then(() => {
+                            res.send("succes!");
+                        })
+                    })
+                })
             })
     
         }
         else 
         {
-            console.log("already joined!");
             res.status(500).send("Already joined!");    
         }
     
 
     }).catch((e) => {
-        console.log(e.message);
+        res.status(404).send(e.message);
     })
 
 
 });
 
-// Leave a trip as a passenger
-myWebsite.post("/leave-trip", (req, res) => {
-
-});
-
-// View passengers for a trip
-myWebsite.post("/view-passengers", (req, res) => {
+myWebsite.post("/view-passengers", checkValidLogin, (req, res) => {
 
 });
 

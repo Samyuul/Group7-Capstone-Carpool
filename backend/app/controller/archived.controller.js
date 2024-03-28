@@ -8,25 +8,28 @@ const myWebsite = db.myWebsite;
 
 const { v4: uuidv4 } = require('uuid');
 
+const checkValidLogin = db.checkValidLogin;
+
 // Retrieve Archived Posts
-myWebsite.post("/get-archived", (req, res) => {
+myWebsite.post("/get-archived", checkValidLogin, (req, res) => {
 
     Archives.find({$or: [{userID: req.body.userID}, {passengerID: {$in: req.body.userID}}]})
     .then((archives) => {
         res.send(archives);
     }).catch((e) => {
-        console.log(e.message);
+        res.status(404).send(e.message);
     })
 
 });
 
-myWebsite.post("/get-single-archived", (req, res) => {
+// Retrieve a singular archived post
+myWebsite.post("/get-single-archived", checkValidLogin, (req, res) => {
 
     Archives.findOne({tripID: req.body.tripID})
     .then((response) => {
         res.send(response)
     }).catch((e) => {
-        console.log(e.message);
+        res.status(404).send(e.message);
     })
 
 });

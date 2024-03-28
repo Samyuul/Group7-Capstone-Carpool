@@ -16,6 +16,7 @@ import {
  } from "@vectopus/atlas-icons-react";
 
 import StatisticsRoutes from "../../../routes/statisticsRoutes";
+import ProfileRoutes from "../../../routes/profileRoutes";
 
 const PostTemplate = (props) => {
 
@@ -23,14 +24,14 @@ const PostTemplate = (props) => {
     const clickable = props.clickable;
 
     const [rating, setRating] = useState("");
-    const [numTrips, setNumTrips] = useState("");
+    const [numTrips, setNumTrips] = useState("");   
+    const [profileImage, setProfileImage] = useState("");
 
     let navigate = useNavigate();
 
     const getProfileImage = () => {
-        return require('../../../img/thumbnail.webp');
+        return profileImage;
     }
-
     const getLuggageSize = (arr) => {
 
         const sizes = ["N", "S", "M", "L"];
@@ -69,27 +70,39 @@ const PostTemplate = (props) => {
 
     useEffect(() => {
 
-        //console.log(val);
+        async function loadData() {
+            await StatisticsRoutes.retrieveStatistics({userID: val.userID})
+            .then((response) => {
+                // console.log(response.data);
+    
+                if(val.postType) // Driver post
+                {
+                    setRating(response.data.driverRating < 0 ? "N.A" : response.data.driverRating);
+                    setNumTrips(response.data.tripDriver + " Driven");
+                }
+                else // Passenger Request 
+                {
+                    setRating(response.data.passengerRating < 0 ? "N.A" : response.data.passengerRating);
+                    setNumTrips(response.data.tripPassenger + " Ridden");
+                }
+                
+    
+            }).catch((err) => {
+                console.log(err.message);
+            })
 
-        StatisticsRoutes.retrieveStatistics({userID: val.userID})
-        .then((response) => {
-            // console.log(response.data);
-
-            if(val.postType) // Driver post
-            {
-                setRating(response.data.driverRating < 0 ? "N.A" : response.data.driverRating);
-                setNumTrips(response.data.tripDriver + " Driven");
-            }
-            else // Passenger Request 
-            {
-                setRating(response.data.passengerRating < 0 ? "N.A" : response.data.passengerRating);
-                setNumTrips(response.data.tripPassenger + " Ridden");
-            }
+            await ProfileRoutes.getProfileImage({userID: val.userID})
+            .then((response) => {
+                setProfileImage(response.data);
+            }).catch((err) => {
+                console.log(err.message);
+            })
             
+        }
 
-        }).catch((err) => {
-            console.log(err.message);
-        })
+        loadData();
+
+
     }, [val])
 
     return (

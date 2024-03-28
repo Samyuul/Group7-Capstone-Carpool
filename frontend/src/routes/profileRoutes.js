@@ -12,10 +12,15 @@ const editProfile = (data) => {
     return http.post("/edit-profile", data);
 }
 
+const getProfileImage = (data) => {
+    return http.post("/get-profile-image", data);
+}
+
 const ProfileRoutes = {
     retrieveProfile,
     editProfile,
-    retrieveOthersProfile
+    retrieveOthersProfile,
+    getProfileImage
 }
 
 export default ProfileRoutes

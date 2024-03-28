@@ -9,10 +9,10 @@ import {
     MagnifyingGlass
 } from '@vectopus/atlas-icons-react';
 
-const Header = (props) => {
+const Header = () => {
 
     const getProfileImage = () => {
-        return require('../../../img/head.webp');
+        return localStorage.getItem("profileImage");
     }
 
     async function handleLogout() {
@@ -25,7 +25,6 @@ const Header = (props) => {
             
         }).catch(e => {
             console.log(e.message);
-
         });      
         
     }
@@ -41,7 +40,7 @@ const Header = (props) => {
                     <MagnifyingGlass size={24} weight="bold" />
                     Browse
                 </Link>
-                <Link to={!localStorage.getItem('userID') ? "/login" : "/post"}>
+                <Link to={!localStorage.getItem('userID') ? "/" : "/post"}>
                     <PlusCircle size={24} weight="bold" />
                     Post
                 </Link>
@@ -63,7 +62,7 @@ const Header = (props) => {
                     </Link> }
 
                 {!localStorage.getItem('userID') ? 
-                    <Link to={"/login"} className="flex-link">Login</Link> : 
+                    <Link to={"/"} className="flex-link">Login</Link> : 
                     <Link className="flex-link" onClick={handleLogout} >Logout</Link> }
             </div>
         </header>

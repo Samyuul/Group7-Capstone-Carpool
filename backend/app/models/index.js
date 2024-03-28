@@ -5,6 +5,10 @@ const myWebsite = express.Router();
 const mongoose = require("mongoose");
 const cors = require('cors'); 
 
+const multer = require("multer");
+const Aws = require('aws-sdk');
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
+
 myWebsite.use(cors())
 myWebsite.use(express.urlencoded({extended:true}));
 myWebsite.use(express.json());
@@ -25,6 +29,27 @@ const Reviews = require("./review.model.js")(mongoose);
 
 const db = {};
 
+// Middleware function
+const checkValidLogin = (req, res, next) => {
+
+    const authKey = req.body.AuthKey;
+    const authUserID = req.body.AuthUserID;
+
+    // Check with user's session variables
+    Sessions.findOne({userID: authUserID, authKey: authKey})
+    .then((response) => {
+
+        if (response) // Session exists
+            next();
+        else
+            res.status(401).send("Invalid Credentials");
+
+    }).catch((e) => {
+        res.status(500).send(e.message);
+    })
+
+}
+
 db.mongoose = mongoose;
 db.Accounts = Accounts;
 db.Sessions = Sessions;
@@ -35,5 +60,8 @@ db.Trips = Trips;
 db.Archives = Archives;
 db.Passengers = Passengers;
 db.Reviews = Reviews;
+db.multer = multer;
+db.Aws = Aws;
+db.checkValidLogin = checkValidLogin;
 
 module.exports = db;

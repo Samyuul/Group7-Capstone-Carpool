@@ -1,7 +1,6 @@
 import "./trip.css"
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import DatePicker from "react-multi-date-picker";
 
@@ -24,14 +23,13 @@ import ProfileRoutes from "../../../routes/profileRoutes";
 const google = window.google = window.google ? window.google : {}
 const libraries = ['places'];
 
-const Trip = (props) => {
+const Trip = () => {
 
     const { postID } = useParams();
     const [loadFlag, setLoadFlag] = useState(false);
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-        //googleMapsApiKey: "",
         libraries
     })
 
@@ -65,6 +63,9 @@ const Trip = (props) => {
     const [otherPref, setOtherPref] = useState([false, false, false, false, false]);
 
     const [tripDesc, setTripDesc] = useState('');
+    const [optimizeWaypoints, setOptimizeWaypoints] = useState(false);
+
+    const navigate = useNavigate();
 
     // Load initial value if required
     useEffect(() => {
@@ -91,6 +92,7 @@ const Trip = (props) => {
                 setOtherPref(pageData.pref);
                 setTripDesc(pageData.desc);
                 setTripID(pageData.tripID);
+                setOptimizeWaypoints(pageData.optimize);
 
                 setInputTxtList(pageData.waypoints.length ? pageData.waypoints : ['']);
 
@@ -106,41 +108,6 @@ const Trip = (props) => {
 
                 setInputList(currInputList.length ? currInputList : ['']);
 
-                const calculateExistingRoute = async () => {
-                
-                    try {
-                        // Retrieve directions
-                        const directionService = new google.maps.DirectionsService()
-                        const results = await directionService.route({
-                            origin: pageData.start,
-                            destination: pageData.end,
-                            travelMode: google.maps.TravelMode.DRIVING,
-                            waypoints: pageData.waypoints
-                        })
-
-                        // Calculate distance and estimated time 
-                        var legs = results.routes[0].legs;
-                        var estimatedDistance = 0.0;
-                        var estimatedDuration = 0.0;
-
-                        for (var i = 0 ; i < legs.length; i++)
-                        {
-                            estimatedDistance = estimatedDistance + legs[i].distance.value;
-                            estimatedDuration = estimatedDuration + legs[i].duration.value;
-                        }
-
-                        setDirection(results);
-                        setDistance(estimatedDistance);
-                        setDuration(estimatedDuration);
-                    }
-                    catch (ex) 
-                    {
-                        console.log(ex.message);
-                    }
-
-
-                }
-
                 setLoadFlag(true);
 
             }).catch((e) => {
@@ -149,7 +116,7 @@ const Trip = (props) => {
 
         }
 
-    }, [])
+    }, [postID])
 
     // ---------------------------------------
     // Functions for waypoints for preferences
@@ -215,7 +182,7 @@ const Trip = (props) => {
         let currWaypointList = [...wayPointList];
         let currTxtList = [...inputTxtList];
         
-        if (currWaypointList[index]['location'] != '') // Not already empty
+        if (currWaypointList[index]['location'] !== '') // Not already empty
         {
             currWaypointList[index]['location'] = '';
             setWayPointList(currWaypointList);
@@ -265,6 +232,8 @@ const Trip = (props) => {
     // Display and calculate route on map
     const calculateRoute = useCallback(async() => {
 
+        console.log(optimizeWaypoints);
+
         // No destination or origin set
         if (originRef.current.value === '' || destinationRef.current.value === '') 
             return
@@ -282,7 +251,8 @@ const Trip = (props) => {
             origin: originRef.current.value,
             destination: destinationRef.current.value,
             travelMode: google.maps.TravelMode.DRIVING,
-            waypoints: validWayPointList
+            waypoints: validWayPointList,
+            optimizeWaypoints: optimizeWaypoints
         })
 
         // Calculate distance and estimated time 
@@ -299,7 +269,7 @@ const Trip = (props) => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
-    }, [wayPointList])
+    }, [wayPointList, optimizeWaypoints])
 
     useEffect(() => {
         if(originRef.current && destinationRef.current)
@@ -355,7 +325,6 @@ const Trip = (props) => {
     }
 
     const submitTrip = () => {
-        console.log("submitTrip");
 
         ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
         .then(response => {
@@ -395,36 +364,30 @@ const Trip = (props) => {
                 name: currName,
                 postType: true,
                 userID: localStorage.getItem("userID"),
-                username: localStorage.getItem("username")
+                username: localStorage.getItem("username"),
+                optimize: optimizeWaypoints
             }
-    
-            console.log(newTrip);
     
             TripRoutes.createTrip(newTrip)
             .then(response => {
-                console.log("success!");
-                console.log(response.data);
-            }).catch(e => {
-                console.log(e.message);
-            })
-    
-
-        }).catch(e => {
-            console.log(e.message);
-        });
+                navigate("/post");
+            }).catch(e => {})
+        }).catch(e => {});
     }
 
     const editTrip = () => {
 
-        if(dates.length == 1) // Only allow single selection for date
+        if(dates.length === 1) // Only allow single selection for date
         {
             ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
             .then(response => {
 
+                var datesAsString = "";
+
                 if (typeof(dates[0]) == "string") // No new selection made
-                    var datesAsString = dates;
+                    datesAsString = dates;
                 else                              // Convert date input into string
-                    var datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
+                    datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
 
                 // Convert waypoint object into string for database
                 var waypointArray = wayPointList.map((waypoint, i) => {
@@ -455,26 +418,16 @@ const Trip = (props) => {
                     name: currName,
                     postType: true,
                     userID: localStorage.getItem("userID"),
-                    tripID: tripID
+                    tripID: tripID,
+                    optimize: optimizeWaypoints
                 }
     
-                console.log(editedTrip);
-
                 TripRoutes.editTrip(editedTrip)
                 .then((response) => {
-                    console.log("success");
-                    console.log(response.data);
-                }).catch((e) => {
-                    console.log("failure");
-                    console.log(e.message);
-                })   
+                    navigate("/history");
+                }).catch((e) => {})   
         
-
-            }).catch(e => {
-                console.log(e.message);
-            });
-
-        
+            }).catch(e => {});
         }
     }
 
@@ -486,16 +439,9 @@ const Trip = (props) => {
         return (meter / 1000.0).toFixed(2) + " km"
     }
 
-    const colorOption = [
-        "Red",
-        "Black",
-        "White",
-        "Silver",
-        "Light Gray",
-        "Dark Gray",
-        "Blue",
-        "Green"
-    ];
+    const toggleOptimize = (e) => {
+        setOptimizeWaypoints(!optimizeWaypoints);
+    }
 
     // Don't page if maps hasn't been loaded successfully 
     if (!isLoaded) {
@@ -534,6 +480,10 @@ const Trip = (props) => {
 
                     <div id="waypoint-container" className="form-cell">
                         <label>Additional Stops: </label>
+                        <div id="optimize-checkbox">
+                            <input id="optimize" checked={optimizeWaypoints} onChange={() => toggleOptimize()} type="checkbox"/>
+                            <label htmlFor="optimize">Optimize Waypoint</label>
+                        </div>
                         {getWaypoints()}
                     </div>
 

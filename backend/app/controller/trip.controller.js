@@ -9,10 +9,12 @@ const Statistics = db.Statistics;
 const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
+const checkValidLogin = db.checkValidLogin;
+
 const { v4: uuidv4 } = require('uuid');
 
 // Create a new post
-myWebsite.post("/create-post", async (req, res) => {
+myWebsite.post("/create-post", checkValidLogin, async (req, res) => {
 
     var dates = req.body.date;
 
@@ -42,13 +44,12 @@ myWebsite.post("/create-post", async (req, res) => {
             tripID: currTripID,
             postType: req.body.postType,
             userID: req.body.userID,
-            username: req.body.username
+            username: req.body.username,
+            optimize: req.body.optimize
         }    
         
         var newTrip = new Trips(tripData);
         await newTrip.save().then(async () => {
-            console.log("new trip created successfully!");
-            console.log(currTripID);
 
             if (req.body.postType) // Is a trip post
             {
@@ -62,29 +63,21 @@ myWebsite.post("/create-post", async (req, res) => {
                 }
     
                 var newPassengerData = new Passengers(PassengerData);
-                await newPassengerData.save().then(() => {
-                    console.log("New passenger entry!");
-                }).catch((e) => {
-                    console.log(e.message);
-                })
-    
+                await newPassengerData.save();
             }
 
-        }).catch((Ex) => {
-            console.log(`Db Error: ${Ex.toString()}`);
-            res.status(404).send({     
-                message: `Db Error: ${Ex.toString()}`
-            })
+            res.send("new trip(s) created successfully!");
+
+        }).catch((e) => {
+            res.status(500).send(e.message);
         })
 
     }
 
-    res.send("new trip(s) created successfully!");
-
 });
 
 // Edit a post
-myWebsite.post("/edit-post", async (req, res) => {
+myWebsite.post("/edit-post", checkValidLogin, async (req, res) => {
 
     var tripID = req.body.tripID
     
@@ -106,22 +99,20 @@ myWebsite.post("/edit-post", async (req, res) => {
         currTrip.desc = req.body.desc;
         currTrip.distance = req.body.distance;
         currTrip.eta = req.body.eta;
+        currTrip.optimize = req.body.optimize;
 
         await currTrip.save().then(() => {
-            console.log("success");
             res.send("success");
-        }).catch((e) => {
-            console.log(e.message);
         })
 
     }).catch((e) => {
-        console.log(e.message);
+        res.status(500).send(e.message);
     })
 
 });
 
 // Retrieve a single driver's trip
-myWebsite.post("/get-post", async (req, res) => {
+myWebsite.post("/get-post", checkValidLogin, async (req, res) => {
 
     var tripID = req.body.tripID;
 
@@ -130,25 +121,27 @@ myWebsite.post("/get-post", async (req, res) => {
         if (Trip) 
             res.send(Trip);
         else 
-            res.status(400).send("Error!");
+            res.status(500).send("Error!");
     })
 
 });
 
 // Retrieve all active trips for a user for history page
-myWebsite.post("/get-active", async (req, res) => {
+myWebsite.post("/get-active", checkValidLogin, async (req, res) => {
 
     var userID = req.body.userID;
     var postType = req.body.postType;
 
     await Trips.find({userID: userID, postType: postType}).then((AllActiveTrips) => {
         res.send(AllActiveTrips);
+    }).catch((e) => {
+        res.status(500).send(e.message);
     })
 
 });
 
 // Retrieve all active trips based on search conditions
-myWebsite.post("/get-filtered-active", async (req, res) => {
+myWebsite.post("/get-filtered-active", checkValidLogin, async (req, res) => {
 
     var startConditions = [];
     var endConditions = [];
@@ -186,36 +179,28 @@ myWebsite.post("/get-filtered-active", async (req, res) => {
     // Join conditions together if necessary
     var filterConditions = conditions.length ? {$and: conditions} : {};
 
-    //console.log(conditions);
-    console.log(filterConditions);
-
     await Trips.find(filterConditions)
     .then((SearchResult) => {
-        //console.log(SearchResult);
-        res.send(SearchResult);
-        
+        res.send(SearchResult);        
     }).catch((e) => {
-        console.log(e.message);
+        res.status(500).send(e.message);
     })
-
-    //console.log(req.body);
 
 });
 
 // Retrieve all trips for browse page 
-myWebsite.post("/browse-all", async (req, res) => {
+myWebsite.post("/browse-all", checkValidLogin, async (req, res) => {
 
     await Trips.find().then((AllTrips) => {
         res.send(AllTrips);
     }).catch((e) => {
         res.status(500).send("Error!");
-        console.log(e.message);
     })
 
 });
 
 // Delete any trip
-myWebsite.post("/delete-trip", async (req, res) => {
+myWebsite.post("/delete-trip", checkValidLogin, async (req, res) => {
     
     var tripID = req.body.tripID;
     
@@ -223,12 +208,11 @@ myWebsite.post("/delete-trip", async (req, res) => {
         res.send("success!");
     }).catch((e) => {
         res.status(500).send("Error!");
-        console.log(e.message);
     })
 });
 
 // Archive a trip
-myWebsite.post("/archive-trip", async (req, res) => {
+myWebsite.post("/archive-trip", checkValidLogin, async (req, res) => {
 
     await Archives.findOne({tripID: req.body.tripID})
     .then(async (Archive) => {
@@ -268,17 +252,13 @@ myWebsite.post("/archive-trip", async (req, res) => {
                             username: Trip.username,
                             passengerID: Passenger.passengerID,
                             passengerUsername: Passenger.passengerUsername,
-                            passengerName: Passenger.passengerName
+                            passengerName: Passenger.passengerName,
+                            optimize: Trip.optimize
                         }
             
                         var ArchivedTrip = Archives(ArchiveData);
                     
-                        await ArchivedTrip.save()
-                        .then(() => {
-                            console.log('successfully archived!');
-                        }).catch((e) => {
-                            console.log(e.message);
-                        })
+                        await ArchivedTrip.save();
     
                         // Update statistics of driver
                         await Statistics.findOne({userID: ArchivedTrip.userID})
@@ -286,16 +266,10 @@ myWebsite.post("/archive-trip", async (req, res) => {
             
                             driverStatistics.tripDriver += 1;
                             driverStatistics.tripDistance += ArchivedTrip.distance;
-                            driverStatistics.save().then(() => {
+                            driverStatistics.save();
             
-                            }).catch((e) => {
-                                console.log(e.message);
-                            })
-            
-                        }).catch((e) => {
-                            console.log(e.message);
-                        })
-            
+                        });
+
                         // Update statistics of passengers
                         for (const passenger of ArchivedTrip.passengerID)
                         {
@@ -304,29 +278,16 @@ myWebsite.post("/archive-trip", async (req, res) => {
                                 
                                 passengerStatistics.tripPassenger += 1;
                                 passengerStatistics.tripDistance += ArchivedTrip.distance;
-                                passengerStatistics.save().then(() => {
+                                passengerStatistics.save();
             
-                                }).catch((e) => {
-                                    console.log(e.message);
-                                })
-            
-                            }).catch((e) => {
-                                console.log(e.message);
                             })
                         }
     
                         res.send("success");
 
                         // Remove from passengers collection
-                        Passengers.findOneAndDelete({tripID: req.body.tripID})
-                        .then(() => {
-                            console.log("deleted");
-                        }).catch(() => {
-                            console.log(e.message);
-                        })
+                        Passengers.findOneAndDelete({tripID: req.body.tripID});
     
-                    }).catch((e) => {
-                        console.log(e.message);
                     })
                 }
                 else 
@@ -334,24 +295,22 @@ myWebsite.post("/archive-trip", async (req, res) => {
                     res.send("success");
                 }
 
-            }).catch((e) => {
-                console.log(e.message);
             })
 
         }
         else 
         {
-            console.log("already archived");
+            res.status(500).send("Already archived!");
         }
+
     }).catch((e) => {
-        console.log(e.message);
+        res.status(500).send(e.message);
     })
 
 }); 
 
 // Retrieve all trips as a passenger 
-myWebsite.post("/retrieve-passenger-trips", (req, res) => {
-
+myWebsite.post("/retrieve-passenger-trips", checkValidLogin, (req, res) => {
 
     Passengers.find({passengerID: {$in: req.body.userID}}, {_id: 0, tripID: 1})
     .then((tripIDs) => {
@@ -366,29 +325,22 @@ myWebsite.post("/retrieve-passenger-trips", (req, res) => {
 
         Trips.find(condition)
         .then((AllTrips) => {
-            res.send(AllTrips)
-        }).catch(() => {
-
+            res.send(AllTrips);
         })
 
     }).catch((e) => {
-        console.log(e.message);
+        res.status(500).send(e.message);
     })
 
 });
 
 // Leave a trip as a passenger
-myWebsite.post("/leave-trip", (req, res) => {
-
-    console.log(req.body.tripID);
-    console.log(req.body.userID);
+myWebsite.post("/leave-trip", checkValidLogin, (req, res) => {
 
     Passengers.findOne({tripID: req.body.tripID})
     .then(async (trip) => {
         
-        console.log(trip);
         const index = trip.passengerID.indexOf(req.body.userID);
-        console.log(index);
         
         if (index > -1) // Array is found
         {
@@ -397,33 +349,27 @@ myWebsite.post("/leave-trip", (req, res) => {
             trip.passengerUsername.splice(index, 1);
         }
 
-        trip.save().then(() => {
-            console.log("success");
-        }).catch((e) => {
-            console.log(e.message);
-        })
-
-        await Trips.findOne({tripID: req.body.tripID}).then((tripData) => {
+        trip.save().then(async () => {
+           
+            await Trips.findOne({tripID: req.body.tripID}).then((tripData) => {
     
-            var numSeats = tripData.seat.indexOf(true);
-            var newSeatArr = Array.from({length: 7}, () => false);
-            newSeatArr[numSeats + 1] = true;
-            tripData.seat = newSeatArr;
-
-            tripData.save().then(() => {
-                console.log("success Save");
-            }).catch((e) => {
-                console.log(e.message);
+                var numSeats = tripData.seat.indexOf(true);
+                var newSeatArr = Array.from({length: 7}, () => false);
+                newSeatArr[numSeats + 1] = true;
+                tripData.seat = newSeatArr;
+    
+                tripData.save().then(() => {
+                    res.send("success!");
+                })
+    
             })
 
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        });
 
+    }).catch((e) => {
+        res.status(500).send(e.message);
     })
 
-    res.send("leave");
-    console.log("leave");
 });
 
 module.exports = myWebsite;

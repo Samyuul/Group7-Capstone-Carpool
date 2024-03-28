@@ -1,19 +1,20 @@
 import "./view-post.css"
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
 
 import PostTemplate from "../../template/post/postTemplate";
 
 import TripRoutes from "../../../routes/tripRoutes";
 import PassengerRoutes from "../../../routes/passengerRoutes";
 
-const ViewPost = (props) => {
+const ViewPost = () => {
 
     const { postID } = useParams();
     const [postData, setPostData] = useState({}); 
     const [postFlag, setPostFlag] = useState(false);
+
+    const navigate = useNavigate();
 
     const getTimeInHrsMin = (seconds) => {
         return Math.floor(seconds / 3600) + " hrs " + Math.floor((seconds / 60) % 60) + " min";
@@ -24,8 +25,6 @@ const ViewPost = (props) => {
     }
 
     const joinFutureTrip = () => {
-        console.log("joinTrip");
-        console.log(postData);
 
         var userInfo = {
             passengerID: localStorage.getItem("userID"),
@@ -37,7 +36,7 @@ const ViewPost = (props) => {
 
         PassengerRoutes.joinTrip(userInfo)
         .then((response) => {
-            console.log(response.data);
+            navigate("/browse");
         }).catch((e) => {
             console.log(e.message);
         })
@@ -47,16 +46,14 @@ const ViewPost = (props) => {
 
         TripRoutes.getTrip({tripID: postID})
         .then(response => {
-            //console.log(response.data);
             setPostData(response.data);
             setPostFlag(true);
-            console.log()
-            console.log("success");
+
         }).catch(e => {
             console.log("fail");
         });
 
-    }, [])
+    }, [postID])
 
     return ( 
         

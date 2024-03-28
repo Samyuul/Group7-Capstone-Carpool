@@ -1,6 +1,6 @@
 import "./register.css"
 import React, { useState } from 'react';
-import { Link, useOutletContext, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import loginImage from "../../../img/testImage.webp";
 
@@ -13,9 +13,7 @@ import {
     XmarkCircle
 } from '@vectopus/atlas-icons-react';
 
-const Register = (props) => {
-
-    const [userName, setUserName] = useOutletContext();
+const Register = () => {
 
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
@@ -26,6 +24,8 @@ const Register = (props) => {
     const navigate = useNavigate();
 
     const registerAccount = (event) => {
+
+        var text_inputs = '';
 
         event.preventDefault();
         var errorMsgTemp = ["", ""];
@@ -54,7 +54,7 @@ const Register = (props) => {
             })
             
             // Apply red highlight
-            var text_inputs = document.getElementsByClassName("login-input-cell")
+            text_inputs = document.getElementsByClassName("login-input-cell")
             text_inputs[0].getElementsByTagName("input")[0].style.border = "none";
             text_inputs[1].getElementsByTagName("input")[0].style.border = "none";
             setErrorMsg(errorMsgTemp);
@@ -66,7 +66,7 @@ const Register = (props) => {
             setErrorMsg2("");
 
             // Apply red highlight
-            var text_inputs = document.getElementsByClassName("login-input-cell")
+            text_inputs = document.getElementsByClassName("login-input-cell")
 
             if(errorMsgTemp[0] !== "")
                 text_inputs[0].getElementsByTagName("input")[0].style.border = "2px solid red";
@@ -82,7 +82,7 @@ const Register = (props) => {
         <div id="login-page">
             
             <div id="login-image">
-                <img src={loginImage}></img>
+                <img src={loginImage} alt="login design"></img>
             </div>
 
             <div id="login-form">

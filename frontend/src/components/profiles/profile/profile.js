@@ -17,7 +17,7 @@ import ReviewRoutes from "../../../routes/reviewRoutes";
 
 import AltReviewTemplate from "../../template/review/reviewTemplate";
 
-const Profile = (props) => {
+const Profile = () => {
 
     const { username } = useParams();
     const [reviews, setReviews] = useState([]);
@@ -31,7 +31,7 @@ const Profile = (props) => {
     const [reviewData, setReviewData] = useState([]);
 
     const getProfileImage = () => {
-        return require('../../../img/head.webp');
+        return localStorage.getItem("profileImage");
     }
 
     // On initial load
@@ -111,7 +111,7 @@ const Profile = (props) => {
 
         fetchData();
         
-    }, [navigate])
+    }, [navigate, username])
 
     // User clicks read more
     useEffect(() => {
@@ -145,7 +145,6 @@ const Profile = (props) => {
     }, [index, reviewView, reviewData])
 
     const renderReviews = () => {
-        console.log(reviews);
         return(
             reviews.map((val, i) => {
                 return(

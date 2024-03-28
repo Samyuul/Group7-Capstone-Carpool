@@ -21,7 +21,8 @@ module.exports = (mongoose) => {
         tripID: String,
         userID: String,
         postType: Boolean,
-        username: String
+        username: String,
+        optimize: Boolean
     })
 
     return Trip

@@ -9,7 +9,7 @@ module.exports = (mongoose) => {
         day: Number,
         month: Number,
         year: Number,
-        profileImageData: String,
+        profileImage: String,
         userID: String,
         username: String,
         lowercase: String

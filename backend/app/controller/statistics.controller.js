@@ -6,10 +6,12 @@ const Statistics = db.Statistics;
 const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
+const checkValidLogin = db.checkValidLogin;
+
 const { v4: uuidv4 } = require('uuid');
 
 // Retrieve statistics
-myWebsite.post("/get-stats", (req, res) => {
+myWebsite.post("/get-stats", checkValidLogin, (req, res) => {
 
     var userID = req.body.userID;
 

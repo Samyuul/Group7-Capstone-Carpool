@@ -12,7 +12,7 @@ import {
     XmarkCircle
 } from '@vectopus/atlas-icons-react';
 
-const Login = (props) => {
+const Login = () => {
 
     const [userName, setUserName] = useOutletContext();
     const [usernameInput, setUsernameInput] = useState("");
@@ -34,6 +34,7 @@ const Login = (props) => {
             localStorage.setItem('userID', response.data.userID);
             localStorage.setItem('AuthKey', response.data.authKey);
             localStorage.setItem('username', response.data.username);
+            localStorage.setItem('profileImage', response.data.profileImage);
             setUserName(usernameInput);
             navigate('/profile');
             
@@ -49,7 +50,7 @@ const Login = (props) => {
         <div id="login-page">
             
             <div id="login-image">
-                <img src={loginImage}></img>
+                <img src={loginImage} alt="login design"></img>
             </div>
 
             <div id="login-form">

@@ -1,8 +1,7 @@
 import "./footer.css"
-import React, { useState } from 'react';
+import React from 'react';
 
-const Footer = (props) => {
-
+const Footer = () => {
 
     return (
         <footer>

@@ -1,6 +1,5 @@
 import "./request.css"
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useParams } from "react-router-dom";
 
 import DatePicker from "react-multi-date-picker";
@@ -23,7 +22,7 @@ import TripRoutes from "../../../routes/tripRoutes";
 const google = window.google = window.google ? window.google : {}
 const libraries = ['places'];
 
-const Request = (props) => {
+const Request = () => {
 
     const { postID } = useParams();
     const [loadFlag, setLoadFlag] = useState(false);
@@ -75,41 +74,6 @@ const Request = (props) => {
                 setOtherPref(pageData.pref);
                 setTripDesc(pageData.desc);
                 setTripID(pageData.tripID);
-
-                const calculateExistingRoute = async () => {
-                
-                    try {
-                        // Retrieve directions
-                        const directionService = new google.maps.DirectionsService()
-                        const results = await directionService.route({
-                            origin: pageData.start,
-                            destination: pageData.end,
-                            travelMode: google.maps.TravelMode.DRIVING,
-                            waypoints: pageData.waypoints
-                        })
-
-                        // Calculate distance and estimated time 
-                        var legs = results.routes[0].legs;
-                        var estimatedDistance = 0.0;
-                        var estimatedDuration = 0.0;
-
-                        for (var i = 0 ; i < legs.length; i++)
-                        {
-                            estimatedDistance = estimatedDistance + legs[i].distance.value;
-                            estimatedDuration = estimatedDuration + legs[i].duration.value;
-                        }
-
-                        setDirection(results);
-                        setDistance(estimatedDistance);
-                        setDuration(estimatedDuration);
-                    }
-                    catch (ex) 
-                    {
-                        console.log(ex.message);
-                    }
-
-                }
-
                 setLoadFlag(true);
 
             }).catch((e) => {
@@ -118,7 +82,7 @@ const Request = (props) => {
 
         }
 
-    }, [])
+    }, [postID])
 
     // ---------------------------------------
     // Functions for waypoints for preferences
@@ -183,7 +147,7 @@ const Request = (props) => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
-    }, [startPoint])
+    }, [])
 
     useEffect(() => {
         if(originRef.current && destinationRef.current)
@@ -262,15 +226,17 @@ const submitTrip = () => {
     const editTrip = () => {
         console.log("editTrip");
 
-        if(dates.length == 1) // Only allow single selection for date
+        if(dates.length === 1) // Only allow single selection for date
         {
             ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
             .then(response => {
 
+                var datesAsString = "";
+
                 if (typeof(dates[0]) == "string") // No new selection made
-                    var datesAsString = dates;
+                    datesAsString = dates;
                 else                              // Convert date input into string
-                    var datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
+                    datesAsString = [dates[0].month.name + " " + dates[0].day + ", " + dates[0].year];
 
                 var currName = response.data.firstName + " " + response.data.lastName;
 
@@ -316,17 +282,6 @@ const submitTrip = () => {
     const getDistanceInKm = (meter) => {
         return (meter / 1000.0).toFixed(2) + " km"
     }
-
-    const colorOption = [
-        "Red",
-        "Black",
-        "White",
-        "Silver",
-        "Light Gray",
-        "Dark Gray",
-        "Blue",
-        "Green"
-    ]
 
     // Don't page if maps hasn't been loaded successfully 
     if (!isLoaded) {

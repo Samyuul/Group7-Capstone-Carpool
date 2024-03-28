@@ -1,5 +1,5 @@
 import "./post.css"
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -8,7 +8,7 @@ import {
     ArrowLeftLine
 } from '@vectopus/atlas-icons-react';
 
-const Post = (props) => {
+const Post = () => {
 
     return (
         <div id="post-page">

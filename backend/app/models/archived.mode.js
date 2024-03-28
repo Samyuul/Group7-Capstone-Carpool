@@ -24,7 +24,8 @@ module.exports = (mongoose) => {
         userID: String,
         passengerID: [String],
         passengerUsername: [String],
-        passengerName: [String]
+        passengerName: [String],
+        optimize: Boolean
     })
 
     return Archived

@@ -16,7 +16,7 @@ import {
 import ReviewRoutes from '../../../routes/reviewRoutes';
 import ArchiveRoutes from '../../../routes/archiveRoutes';
 
-const Review = (props) => {
+const Review = () => {
 
     const [subject, setSubject] = useState("");
     const [rating, setRating] = useState("");
@@ -215,7 +215,7 @@ const Review = (props) => {
 
         }
 
-    }, [])
+    }, [state])
 
     return (
         <div id="edit-review">

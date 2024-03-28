@@ -14,8 +14,6 @@ import {
     PinDestination
  } from "@vectopus/atlas-icons-react";
 
-import data from "./test.json";
-
 import PostTemplate from "../../template/post/postTemplate";
 
 import ReactPaginate from 'react-paginate';
@@ -24,7 +22,7 @@ import TripRoutes from "../../../routes/tripRoutes";
 
 const libraries = ['places'];
 
-const Browse = (props) => {
+const Browse = () => {
 
     // Pagination variables
     const [currentItems, setCurrentItems] = useState([]);
@@ -40,8 +38,6 @@ const Browse = (props) => {
     const [fullFlag, setFullFlag] = useState(false);
     const [requestFlag, setRequestFlag] = useState(false);
 
-    const [flag, setFlag] = useState(true);
-
     const originRef = useRef();
     const destinationRef = useRef();
 
@@ -52,10 +48,10 @@ const Browse = (props) => {
     // Fetch initial postings
     useEffect(() => {
 
-        TripRoutes.getBrowseTrip()
+        TripRoutes.getBrowseTrip({})
         .then((response) => {
             var currData = response.data;
-            const endOffset = itemOffset + itemsPerPage;
+            const endOffset = 0 + itemsPerPage;
             setCurrentItems(currData.slice(itemOffset, endOffset));
             setPageCount(Math.ceil(currData.length / itemsPerPage));
             setPageData(currData);
@@ -72,7 +68,7 @@ const Browse = (props) => {
         setCurrentItems(pageData.slice(itemOffset, endOffset));
         setPageCount(Math.ceil(pageData.length / itemsPerPage));
 
-    }, [itemOffset, itemsPerPage, pageData, flag]);
+    }, [itemOffset, itemsPerPage, pageData]);
     
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
@@ -88,10 +84,6 @@ const Browse = (props) => {
     })
 
     const renderPostings = (data) => {
-
-        console.log(currentItems);
-        console.log(data);
-        console.log(pageData);
 
         return (
             <div className="items">

@@ -9,10 +9,6 @@ const ReviewTemplate = (props) => {
 
     const val = props.data;
 
-    const navigateToProfile = () => {
-        console.log("navigate");
-    }
-
     return (
         <> {val ? <> 
             <div className="review">

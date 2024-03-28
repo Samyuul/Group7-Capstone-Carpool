@@ -1,6 +1,6 @@
 import "./history.css";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PostTemplate from "../../template/post/postTemplate";
 import { useNavigate } from "react-router-dom";
 
@@ -9,14 +9,12 @@ import ArchiveRoutes from "../../../routes/archiveRoutes";
 import ReviewRoutes from "../../../routes/reviewRoutes";
 
 import { Block } from "@vectopus/atlas-icons-react";
-import ReviewTemplate from "../../template/review/reviewTemplate";
 import AltReviewTemplate from "../../template/altReview/altReviewTemplate";
 
-const History = (props) => {
+const History = () => {
 
     const navigate = useNavigate();
 
-    const [postType, setPostType] = useState(true);
     const [pageData, setPageData] = useState([]);
     const [visiblePosts, setVisiblePosts] = useState([]);
 
@@ -62,13 +60,15 @@ const History = (props) => {
             setVisiblePosts(validPosts);
         }
 
-    }, [index, pageData, reviewData])
+    }, [index, pageData, reviewData, pageView])
 
     useEffect(() => {
 
+        var filter = {};
+
         if(pageView[0]) // Driver posts
         {
-            var filter = {
+            filter = {
                 userID: localStorage.getItem("userID"),
                 postType: true
             }
@@ -84,7 +84,7 @@ const History = (props) => {
 
         else if(pageView[1]) // Request posts
         {
-            var filter = {
+            filter = {
                 userID: localStorage.getItem("userID"),
                 postType: false
             }

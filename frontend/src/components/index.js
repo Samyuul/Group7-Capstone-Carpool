@@ -1,8 +1,6 @@
 export { default as Header   } from "./marginals/header/header.js";
 export { default as Footer   } from "./marginals/footer/footer.js";
 export { default as Login    } from "./account/login/login.js";
-export { default as Title    } from './title/title.js';
-export { default as Home     } from "./account/home/home.js";
 export { default as Post     } from "./posting/post/post.js";
 export { default as Browse   } from './posting/browse/browse.js';
 export { default as Trip     } from "./posting/trip/trip.js"
