@@ -145,7 +145,9 @@ const Request = () => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
-
+        setStartPoint(originRef.current.value);
+        setEndPoint(destinationRef.current.value);
+        
     }, [loadFlag])
 
     useEffect(() => {
