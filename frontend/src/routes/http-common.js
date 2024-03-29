@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // Need to remove baseURL
 var http = axios.create({
-    baseURL: process.env.REACT_APP_URL_PROXY,
     headers: {
         "Content-Type": "application/json"
     }
