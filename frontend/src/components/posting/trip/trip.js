@@ -110,9 +110,7 @@ const Trip = () => {
 
                 setLoadFlag(true);
 
-            }).catch((e) => {
-                console.log(e.message);
-            })
+            }).catch((e) => {})
 
         }
 
@@ -170,9 +168,7 @@ const Trip = () => {
             currTxtList[index] = formattedAddress;
             setWayPointList(currWaypointList);
             setInputTxtList(currTxtList);
-		} else {
-			alert("Please enter text");
-		}
+		} 
 	}
 
     // Text changed via typing (Don't update waypoint)
@@ -232,8 +228,6 @@ const Trip = () => {
     // Display and calculate route on map
     const calculateRoute = useCallback(async() => {
 
-        console.log(optimizeWaypoints);
-
         // No destination or origin set
         if (originRef.current.value === '' || destinationRef.current.value === '') 
             return
@@ -269,6 +263,7 @@ const Trip = () => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
+
     }, [wayPointList, optimizeWaypoints])
 
     useEffect(() => {

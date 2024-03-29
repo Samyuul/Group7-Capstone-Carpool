@@ -50,17 +50,24 @@ myWebsite.post("/join-trip", checkValidLogin, (req, res) => {
         else 
         {
             res.status(500).send("Already joined!");    
-        }
-    
+        }    
 
     }).catch((e) => {
         res.status(404).send(e.message);
     })
 
-
 });
 
 myWebsite.post("/view-passengers", checkValidLogin, (req, res) => {
+
+
+    Passengers.findOne({tripID: req.body.tripID})
+    .then((passengerData) => {
+
+        res.send(passengerData);
+    }).catch((e) => {
+        res.status(500).send("Db Error");
+    })
 
 });
 

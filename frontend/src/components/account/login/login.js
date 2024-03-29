@@ -14,6 +14,7 @@ import {
 
 const Login = () => {
 
+    // eslint-disable-next-line
     const [userName, setUserName] = useOutletContext();
     const [usernameInput, setUsernameInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
@@ -39,7 +40,6 @@ const Login = () => {
             navigate('/profile');
             
         }).catch(e => {
-            console.log(e.message);
             setErrorMsg("Invalid Login Credentials");
             setPasswordInput("");
         });      

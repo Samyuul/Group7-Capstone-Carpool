@@ -30,9 +30,7 @@ const Profile = () => {
     const [statisticData, setStatisticData] = useState({});
     const [reviewData, setReviewData] = useState([]);
 
-    const getProfileImage = () => {
-        return localStorage.getItem("profileImage");
-    }
+    const [profileImage, setProfileImage] = useState("");
 
     // On initial load
     useEffect(() => {
@@ -44,7 +42,7 @@ const Profile = () => {
                 await ProfileRoutes.retrieveOthersProfile({username: username})
                 .then(async (response) => {
     
-                    if (response.data.userID === localStorage.getItem("userID"))
+                    if (response.data.userID === localStorage.getItem("userID")) // Redirect to your own profile
                     {
                         navigate("/profile");
                         window.location.reload();
@@ -53,20 +51,15 @@ const Profile = () => {
                     await StatisticsRoutes.retrieveStatistics({userID: response.data.userID})
                     .then((response) => {
                         setStatisticData(response.data);
-                    }).catch((e) => {
-                        console.log(e.message);
-                    })
+                    }).catch((e) => {})
 
                     await ReviewRoutes.retrieveAllReviews({userID: response.data.userID})
                     .then(async (response) => {
-    
                         setReviewData(response.data);
-    
-                    }).catch((e) => {
-                        console.log(e.message);
-                    });
+                    }).catch((e) => {});
 
                     setProfileData(response.data);
+                    setProfileImage(response.data.profileImage);
     
                 }).catch((e) => { // Not found, redirect to our profile
                     navigate("/profile");
@@ -74,38 +67,27 @@ const Profile = () => {
                 })          
 
             }
-            else 
+            else // Loading your own profile
             {
                 
                 // Load profile data
                 await ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
                 .then(async (response) => {
-    
                     setProfileData(response.data);
-    
-                }).catch((e) => {
-                    console.log(e.message);
-                });
+                    setProfileImage(response.data.profileImage);
+                }).catch((e) => {});
 
                 // Load statistic data
                 await StatisticsRoutes.retrieveStatistics({userID: localStorage.getItem("userID")})
                 .then(async (response) => {
-
                     setStatisticData(response.data);
-                    
-                }).catch((e) => {
-                    console.log(e.message);
-                });
+                }).catch((e) => {});
 
                 // Load review data
                 await ReviewRoutes.retrieveAllReviews({userID: localStorage.getItem("userID")})
                 .then(async (response) => {
-
                     setReviewData(response.data);
-
-                }).catch((e) => {
-                    console.log(e.message);
-                });
+                }).catch((e) => {});
             }
         }
 
@@ -185,7 +167,7 @@ const Profile = () => {
             
             <div id="profile-header">
                 <div id="profile-image">
-                    <img src={getProfileImage()} alt="profile"></img>
+                    <img src={profileImage ? profileImage : require("../../../img/Default_pfp.jpg")} alt="profile"></img>
                     <div id="user-info">
                         {username ? <></> :
                             <div className="trip-btn" onClick={() => navigate('/edit-profile')}>Edit</div>}

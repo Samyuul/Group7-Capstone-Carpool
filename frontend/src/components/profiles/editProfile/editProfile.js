@@ -18,8 +18,8 @@ import ProfileRoutes from "../../../routes/profileRoutes";
 
 const EditProfile = () => {
 
+    // eslint-disable-next-line
     const [userName, setUserName] = useOutletContext();
-
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [day, setDay] = useState(1);
@@ -141,9 +141,7 @@ const EditProfile = () => {
             setDesc(profileData.desc);
             setGender(profileData.gender);
 
-        }).catch((err) => {
-            console.log(err.message);
-        })
+        }).catch((err) => {})
 
     }, []);
 

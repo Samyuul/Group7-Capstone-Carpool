@@ -92,7 +92,6 @@ myWebsite.post("/create-review", checkValidLogin, async (req, res) => {
         res.status(500).send(e.message);
     })
 
-
 });
 
 // Retrieve all reviews for a user

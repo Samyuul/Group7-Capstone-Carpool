@@ -60,13 +60,11 @@ const Review = () => {
 
         if(!subject.length || !rating.length)
         {
-            console.log("error!!!!");
             return
         }
 
         if(!isDriver) // Leave a passenger review
         {
-            console.log(passengerIDs);
 
             review = {
                 subject: subject,
@@ -101,15 +99,11 @@ const Review = () => {
             }    
         }
 
-        console.log(review);
-
         ReviewRoutes.createReview(review)
         .then((response) => {
             navigate("/history");
             window.location.reload();
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
 
     }
 
@@ -117,7 +111,6 @@ const Review = () => {
 
         if(!subject.length || !rating.length)
         {
-            console.log("error!!!!");
             return
         }
 
@@ -132,9 +125,7 @@ const Review = () => {
         .then((response) => {
             navigate("/history");
             window.location.reload();
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
 
     }
 
@@ -192,10 +183,7 @@ const Review = () => {
                 setEnd(tripData.end);
                 setDate(tripData.date);
     
-    
-            }).catch((e) => {
-                console.log(e.message);
-            })
+            }).catch((e) => {})
         }
         else if(state.reviewData)
         {

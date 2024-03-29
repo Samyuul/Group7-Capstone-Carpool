@@ -30,7 +30,7 @@ const PostTemplate = (props) => {
     let navigate = useNavigate();
 
     const getProfileImage = () => {
-        return profileImage;
+        return profileImage ? profileImage : require("../../../img/Default_pfp.jpg");
     }
     const getLuggageSize = (arr) => {
 
@@ -107,16 +107,16 @@ const PostTemplate = (props) => {
 
     return (
         <div className={"posting " + (val.postType ? "trip-posting" : "request-posting")}  onClick={() => clickable ? navigate('/post/view/' + val.tripID) : {}}>
-            <div className="user-info" onClick={(e) => clickProfile(e, val.username)}>
-                <img src={getProfileImage()} alt="profile"></img>
+            
+            <div onClick={(e) => clickable ? clickProfile(e) : {}} className="user-info">
+                <img src={getProfileImage()} alt="profile"/>
                 <div className="user-info-txt">
                     <div className="pref-symbol"><Account size={24} /><p>{val.name}</p></div>
                     <div className="pref-symbol"><Star size={24}/><p>{rating} / 5.0 - {numTrips}</p></div>
                 </div>
             </div>
 
-            <div className="trip-info">
-
+            <div className={"trip-info" + (val.postType ? " borderless" : "")}>
                 <div className="schedule">
                     <p>From: {val.start}</p>
                     <p>To: {val.end}</p>
@@ -133,7 +133,7 @@ const PostTemplate = (props) => {
                     {getPref(val.pref)}
                 </div> : <></>
             }
-
+        
         </div>
     )
 

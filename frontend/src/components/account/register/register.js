@@ -48,8 +48,6 @@ const Register = () => {
             .then(response => {
                 navigate('/login');
             }).catch (e => {
-                console.log(e.message);
-                console.log(e.response.data.message);
                 setErrorMsg2(e.response.data.message);
             })
             

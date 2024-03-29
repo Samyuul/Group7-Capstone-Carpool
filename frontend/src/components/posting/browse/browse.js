@@ -52,13 +52,11 @@ const Browse = () => {
         .then((response) => {
             var currData = response.data;
             const endOffset = 0 + itemsPerPage;
-            setCurrentItems(currData.slice(itemOffset, endOffset));
+            setCurrentItems(currData.slice(0, endOffset));
             setPageCount(Math.ceil(currData.length / itemsPerPage));
             setPageData(currData);
 
-        }).catch((e) => {
-            console.log(e.message);
-        }) 
+        }).catch((e) => {}) 
 
     }, []);
 
@@ -79,7 +77,6 @@ const Browse = () => {
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-        //googleMapsApiKey: "",
         libraries
     })
 
@@ -116,9 +113,7 @@ const Browse = () => {
             setPageData(response.data);
             setItemOffset(0);
             setPageNumber(0);
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
 
     }
 

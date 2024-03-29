@@ -1,6 +1,6 @@
 import "./request.css"
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import DatePicker from "react-multi-date-picker";
 
@@ -29,7 +29,6 @@ const Request = () => {
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-        //googleMapsApiKey: "",
         libraries
     })
 
@@ -53,6 +52,7 @@ const Request = () => {
     const [tripDesc, setTripDesc] = useState('');
     const [tripID, setTripID] = useState('');
 
+    const navigate = useNavigate();
 
     // Load initial value if required
     useEffect(() => {
@@ -74,11 +74,11 @@ const Request = () => {
                 setOtherPref(pageData.pref);
                 setTripDesc(pageData.desc);
                 setTripID(pageData.tripID);
+                setDistance(pageData.distance);
+                setDuration(pageData.eta);
                 setLoadFlag(true);
 
-            }).catch((e) => {
-                console.log(e.message);
-            })
+            }).catch((e) => {})
 
         }
 
@@ -109,17 +109,13 @@ const Request = () => {
         }
         else 
         {
-            
             val.splice(4, 1);
             setDates(val);
         }
     }
 
-    
     // Display and calculate route on map
     const calculateRoute = useCallback(async() => {
-
-        console.log("calc");
 
         // No destination or origin set
         if (originRef.current.value === '' || destinationRef.current.value === '') 
@@ -140,14 +136,15 @@ const Request = () => {
 
         for (var i = 0 ; i < legs.length; i++)
         {
-        estimatedDistance = estimatedDistance + legs[i].distance.value;
-        estimatedDuration = estimatedDuration + legs[i].duration.value;
+            estimatedDistance = estimatedDistance + legs[i].distance.value;
+            estimatedDuration = estimatedDuration + legs[i].duration.value;
         }
 
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
-    }, [])
+
+    }, [loadFlag])
 
     useEffect(() => {
         if(originRef.current && destinationRef.current)
@@ -178,7 +175,6 @@ const Request = () => {
     }
 
 const submitTrip = () => {
-        console.log("submitTrip");
 
         // Convert date object into string for database
         var datesAsString = dates.map((date, i) => {
@@ -205,26 +201,16 @@ const submitTrip = () => {
                 userID: localStorage.getItem("userID")
             }
     
-            console.log(newTrip);
-    
             TripRoutes.createTrip(newTrip)
             .then(response => {
-                console.log("success!");
-                console.log(response.data);
-            }).catch(e => {
-                console.log(e.message);
+                navigate("/post");
             })
     
-
-        }).catch(e => {
-            console.log(e.message);
-        });
-
+        }).catch(e => {});
 
     }
 
     const editTrip = () => {
-        console.log("editTrip");
 
         if(dates.length === 1) // Only allow single selection for date
         {
@@ -257,21 +243,12 @@ const submitTrip = () => {
                     tripID: tripID
                 }
     
-                console.log(editedTrip);
-
                 TripRoutes.editTrip(editedTrip)
                 .then((response) => {
-                    console.log("success");
-                    console.log(response.data);
-                }).catch((e) => {
-                    console.log("failure");
-                    console.log(e.message);
-                })   
+                    navigate("/history");
+                })
         
-
-            }).catch(e => {
-                console.log(e.message);
-            });
+            }).catch(e => {});
         }
     }
 

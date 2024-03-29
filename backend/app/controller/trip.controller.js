@@ -66,13 +66,13 @@ myWebsite.post("/create-post", checkValidLogin, async (req, res) => {
                 await newPassengerData.save();
             }
 
-            res.send("new trip(s) created successfully!");
-
         }).catch((e) => {
             res.status(500).send(e.message);
         })
 
     }
+
+    res.send("new trip(s) created successfully!");
 
 });
 
@@ -141,7 +141,7 @@ myWebsite.post("/get-active", checkValidLogin, async (req, res) => {
 });
 
 // Retrieve all active trips based on search conditions
-myWebsite.post("/get-filtered-active", checkValidLogin, async (req, res) => {
+myWebsite.post("/get-filtered-active", async (req, res) => {
 
     var startConditions = [];
     var endConditions = [];
@@ -189,7 +189,7 @@ myWebsite.post("/get-filtered-active", checkValidLogin, async (req, res) => {
 });
 
 // Retrieve all trips for browse page 
-myWebsite.post("/browse-all", checkValidLogin, async (req, res) => {
+myWebsite.post("/browse-all", async (req, res) => {
 
     await Trips.find().then((AllTrips) => {
         res.send(AllTrips);

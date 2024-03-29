@@ -1,7 +1,7 @@
 import "./view-post.css"
 
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState, Fragment } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 import PostTemplate from "../../template/post/postTemplate";
 
@@ -13,6 +13,9 @@ const ViewPost = () => {
     const { postID } = useParams();
     const [postData, setPostData] = useState({}); 
     const [postFlag, setPostFlag] = useState(false);
+    const [postFlag2, setPostFlag2] = useState(false);
+    const [passengerData, setPassengerData] = useState([]);
+    const [errorMsg, setErrorMsg] = useState("");
 
     const navigate = useNavigate();
 
@@ -38,52 +41,82 @@ const ViewPost = () => {
         .then((response) => {
             navigate("/browse");
         }).catch((e) => {
-            console.log(e.message);
-        })
+            setErrorMsg("Already Joined!");
+        });
     }
 
     useEffect(() => {
 
-        TripRoutes.getTrip({tripID: postID})
-        .then(response => {
-            setPostData(response.data);
-            setPostFlag(true);
+        async function loadData() {
 
-        }).catch(e => {
-            console.log("fail");
-        });
+            await TripRoutes.getTrip({tripID: postID})
+            .then((response) => {
+                setPostData(response.data);
+                setPostFlag(true);
+            }).catch(e => {});
+    
+            await PassengerRoutes.viewPassengers({tripID: postID})
+            .then((response) => {
+                setPassengerData(response.data);
+                setPostFlag2(true);
+            }).catch(e => {});
+
+        }
+
+        loadData();
 
     }, [postID])
 
     return ( 
         
-        <> {postFlag ? <div id="view-post-page">
+        <> {postFlag && postFlag2 ? <div id="view-post-page">
             {<PostTemplate data={postData}/>}
 
-            <div className="view-post-info">
-                <p>Estimated Duration: {getTimeInHrsMin(postData.eta)}</p>
-                <p>Estimated Distance: {getDistanceInKm(postData.distance)}</p>
+            <div className="flex-double-container">
+
+                <div className="view-post-info">
+                    <p>Estimated Duration: {getTimeInHrsMin(postData.eta)}</p>
+                    <p>Estimated Distance: {getDistanceInKm(postData.distance)}</p>
+                </div>
+
+                {postData.model ? 
+                <div className="view-post-info">
+                    <p>Car Model: {postData.model} - {postData.color} {postData.type}</p>
+                </div> : <></>}
             </div>
 
             <div className="view-post-info">
-                <p>Car Model: {postData.model} - {postData.color} {postData.type}</p>
+                <p>Trip Descrption: {postData.desc ? postData.desc : "..."}</p>
             </div>
 
-            <div className="view-post-info">
-                <p>Trip Descrption: {postData.desc}</p>
-            </div>
+            <div className="flex-double-container">
 
-            {!postData.waypoints.length ? <></> :
-            <div className="view-post-info">
-                <div>Waypoints: {postData.waypoints.map((val, i) => {
-                    return (
-                        <p className="waypoint-post" key={i}> - {val} </p>
-                    )
-                })}</div>
-            </div>}
+                {postData.waypoints && postData.waypoints.length !== 0 ? 
+                <div className="view-post-info">
+                    <div>Waypoints: {postData.waypoints.map((val, i) => {
+                        return (
+                            <p className="waypoint-post" key={i}> - {val} </p>
+                        )
+                    })}</div>
+                </div> : <></>}
+
+                {passengerData.passengerName && passengerData.passengerName.length !== 0? <div className="view-post-info">
+                    <div>Passengers: {passengerData.passengerName.map((val, i) => {
+                        return (
+                            <Fragment key={i}>
+                                {i ? ", ": ""}<Link to={"/profile/" + passengerData.passengerUsername[i]} className="waypoint-post" key={i}> {val}</Link> 
+                            </Fragment>
+                        )
+                    })}</div>
+                </div> : <></>}
+
+            </div>
 
             {(postData.userID !== localStorage.getItem("userID") && !postData.seat.every(x => x === false)) ?
             <button className="trip-btn" onClick={() => joinFutureTrip()}>Join This Trip!</button> : <></>}
+        
+            {errorMsg ? <p>{errorMsg}</p> : <></>}
+        
         </div> : <></>}</>
         
     )

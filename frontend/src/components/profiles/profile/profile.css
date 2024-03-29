@@ -179,7 +179,9 @@
     width: 80%;
     margin: 35px auto;
 
-    background-color: lightsalmon;
+    background-color: white;
+    box-shadow: 0 0 20px 10px lightgray;
+
     padding: 15px;
 
     border-radius: 15px;
@@ -210,7 +212,7 @@
 }
 
 .empty-msg {
-    width: 100%;
+    width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,6 +220,12 @@
     font-size: 20px;
     margin: 50px auto;
     font-weight: 700;
+
+    background-color: #9B2226;
+    padding: 15px 45px;
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 0 20px 3px #e78267;
 }
 
 .empty-msg p {

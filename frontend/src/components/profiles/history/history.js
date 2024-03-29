@@ -77,9 +77,7 @@ const History = () => {
             .then((response) => {
                 setPageData(response.data);
                 setIndex(0);
-            }).catch((e) => {
-                console.log(e.message)
-            })    
+            }).catch((e) => {})    
         }
 
         else if(pageView[1]) // Request posts
@@ -93,9 +91,7 @@ const History = () => {
             .then((response) => {
                 setPageData(response.data);
                 setIndex(0);
-            }).catch((e) => {
-                console.log(e.message)
-            })   
+            }).catch((e) => {})   
         }
 
         else if(pageView[2]) // Riding as passenger posts
@@ -104,9 +100,7 @@ const History = () => {
             .then((response) => {
                 setPageData(response.data);
                 setIndex(0);
-            }).catch((e) => {
-                console.log(e.message);
-            })
+            }).catch((e) => {})
         }
 
         else if(pageView[3]) // Reviews
@@ -115,9 +109,7 @@ const History = () => {
             .then((response) => {
                 setReviewData(response.data);
                 setIndex(0);
-            }).catch((e) => {
-                console.log(e.message);;
-            })
+            }).catch((e) => {})
         }
 
         else if(pageView[4]) // Archived trips 
@@ -126,9 +118,7 @@ const History = () => {
             .then((response) => {
                 setPageData(response.data);
                 setIndex(0);
-            }).catch((e) => {
-                console.log(e.message);;
-            })
+            }).catch((e) => {})
         }
 
     }, [pageView])
@@ -138,25 +128,18 @@ const History = () => {
         ArchiveRoutes.archiveTrip({tripID: tripID})
         .then((response) => {
             window.location.reload();
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
     }
 
     const deletePost = (tripID) => {
 
         TripRoutes.deleteTrip({tripID: tripID})
         .then((response) => {
-            console.log(response.data);
             window.location.reload();
-        }).catch((e) => {
-            console.log(e.message);
-        })
-
+        }).catch((e) => {})
     }
 
     const createReview = (tripID) => {
-        console.log("pog");
         navigate("/create-review", {
             state: {
                 tripID: tripID
@@ -168,11 +151,8 @@ const History = () => {
 
         TripRoutes.leaveTrip({tripID: tripID, userID: localStorage.getItem("userID")})
         .then((response) => {
-            console.log(response.data);
             window.location.reload();
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
     }
 
     const renderPostings = () => {
@@ -193,18 +173,13 @@ const History = () => {
             { visiblePosts ? visiblePosts.map((val, i) => {
                 return (
                     <div className="history-container" key={i}>
-                        <PostTemplate clickable={false} data={val}/>
+                        <PostTemplate clickable={true} data={val}/>
                         {
                             pageView[4] ? 
                             <div>
                                 <button onClick={() => createReview(val.tripID)} className="trip-btn">Review</button>
                             </div> : 
                             
-                            pageView[3] ? 
-                            <div>
-                                <button>YEP</button>
-                            </div> :
-
                             pageView[2] ? 
                             <div>
                                 <button onClick={() => leaveTrip(val.tripID)} className="trip-btn">Leave</button>
@@ -224,31 +199,23 @@ const History = () => {
     }
 
     const editReview = (reviewID) => {
-        console.log(reviewID);
 
         ReviewRoutes.retrieveSingleReview({reviewID: reviewID})
         .then((response) => {
-            console.log(response.data);
             navigate("/create-review", {
                 state: {
                     reviewData: response.data
                 }
             });
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
 
     }
 
     const deleteReview = (reviewID) => {
-        console.log(reviewID);
 
         ReviewRoutes.deleteReview({reviewID :reviewID})
         .then((response) => {
-            console.log(response);
-        }).catch((e) => {
-            console.log(e.message);
-        })
+        }).catch((e) => {})
 
     }
 

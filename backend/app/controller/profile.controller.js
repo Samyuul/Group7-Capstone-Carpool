@@ -3,6 +3,8 @@ const db = require("../models");
 // Models
 const Profiles = db.Profiles;
 const Trips = db.Trips;
+const Passengers = db.Passengers;
+const Archives = db.Archives;
 
 const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
@@ -98,10 +100,42 @@ myWebsite.post("/edit-profile", upload.single('file'), checkValidLogin, async (r
             if (currProfile.firstName !== data.firstName || 
                 currProfile.lastName !== data.lastName) // Update name on postings
             {
+    
+                // Update name of in postings
+                await Trips.updateMany(
+                    { userID: data.userID}, 
+                    { $set: {"name" : data.firstName + " " + data.lastName} }
+                );
+
+                // Update name inside archived posts
+                await Archives.updateMany(
+                    { passengerID: {$in: data.userID} },
+                    { $set: {"passengerName.$[name]" : data.firstName + " " + data.lastName} },
+                    { arrayFilters: [ {"name" : currProfile.firstName + " " + currProfile.lastName}] }
+                );
+
+                // Update name inside passengers collection
+                await Passengers.updateMany(
+                    { passengerID: {$in: data.userID} },
+                    { $set: {"passengerName.$[name]" : data.firstName + " " + data.lastName} },
+                    { arrayFilters: [ {"name" : currProfile.firstName + " " + currProfile.lastName}] }
+                );
+
+                // Update Reviews as author
+                await db.Reviews.updateMany(
+                    { posterID: data.userID },
+                    { $set: {"name" : data.firstName + " " + data.lastName} }
+                );
+
+                // Update Reviews as subject
+                await db.Reviews.updateMany(
+                    { subjectID: data.userID },
+                    { $set: {"subjectName" : data.firstName + " " + data.lastName} }
+                )
+
                 currProfile.firstName = data.firstName;
                 currProfile.lastName = data.lastName;
-    
-                await Trips.updateMany({userID: data.userID}, {$set: {"name" : data.firstName + " " + data.lastName}});
+
             } 
     
             currProfile.age = data.age;

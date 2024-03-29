@@ -1,7 +1,7 @@
 #view-post-page {
 
     flex: 1;
-    width: 60%;
+    width: 50%;
     margin: auto;
 
     display: flex;
@@ -14,8 +14,13 @@
     padding: 20px 35px;
     background-color: lightgray;
     border-radius: 15px;
-    width: 80%;
+    width: 100%;
     margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.view-post-info a {
+    color: blue;
 }
 
 .view-post-info p {
@@ -26,4 +31,8 @@
     margin: 0;
 }
 
-.waypoint-post {}
+.flex-double-container {
+    display: flex;
+    width: 100%;
+    column-gap: 20px;
+}

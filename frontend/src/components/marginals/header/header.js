@@ -1,6 +1,6 @@
 import "./header.css"
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import AccountRoutes from "../../../routes/accountRoutes";
 
@@ -11,8 +11,10 @@ import {
 
 const Header = () => {
 
+    const navigate = useNavigate();
+
     const getProfileImage = () => {
-        return localStorage.getItem("profileImage");
+        return localStorage.getItem("profileImage") ? localStorage.getItem("profileImage") : require("../../../img/Default_pfp.jpg");
     }
 
     async function handleLogout() {
@@ -21,11 +23,9 @@ const Header = () => {
         .then(async (response) => {
 
             await localStorage.clear();
-            await window.location.reload();
-            
-        }).catch(e => {
-            console.log(e.message);
-        });      
+            navigate("/login");
+
+        }).catch(e => {});      
         
     }
 
@@ -56,14 +56,15 @@ const Header = () => {
 
                 {!localStorage.getItem('userID') ? 
                     <></> : 
-                    <Link id="profile-link" to={"/profile/"} reloadDocument>
+                    <Link id="profile-link" to={"/profile/"} >
                         <img id="thumbnail-image" src={getProfileImage()} alt="profile"></img>
                         Profile
                     </Link> }
 
                 {!localStorage.getItem('userID') ? 
                     <Link to={"/"} className="flex-link">Login</Link> : 
-                    <Link className="flex-link" onClick={handleLogout} >Logout</Link> }
+                    // eslint-disable-next-line
+                    <a tabIndex={0} onClick={handleLogout} className="flex-link" >Logout</a> }
             </div>
         </header>
     )
