@@ -173,7 +173,7 @@ const History = () => {
             { visiblePosts ? visiblePosts.map((val, i) => {
                 return (
                     <div className="history-container" key={i}>
-                        <PostTemplate clickable={true} data={val}/>
+                        <PostTemplate clickable={pageView[4] ? false : true} data={val}/>
                         {
                             pageView[4] ? 
                             <div>

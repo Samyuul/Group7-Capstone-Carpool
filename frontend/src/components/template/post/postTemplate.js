@@ -99,7 +99,6 @@ const PostTemplate = (props) => {
 
         loadData();
 
-
     }, [val])
 
     return (
