@@ -2,11 +2,7 @@ const db = require("../models");
 
 // Models 
 const Archives = db.Archives;
-
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
-
-const { v4: uuidv4 } = require('uuid');
 
 const checkValidLogin = db.checkValidLogin;
 

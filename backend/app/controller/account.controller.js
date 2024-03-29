@@ -6,7 +6,6 @@ const Sessions = db.Sessions;
 const Profiles = db.Profiles;
 const Statistics = db.Statistics;
 
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
 const { v4: uuidv4 } = require('uuid');

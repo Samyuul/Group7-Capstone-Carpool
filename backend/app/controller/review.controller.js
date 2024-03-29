@@ -5,7 +5,6 @@ const Profiles = db.Profiles;
 const Statistics = db.Statistics;
 const Reviews = db.Reviews;
 
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
 const checkValidLogin = db.checkValidLogin;

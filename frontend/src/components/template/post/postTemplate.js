@@ -118,6 +118,7 @@ const PostTemplate = (props) => {
                     <p>From: {val.start}</p>
                     <p>To: {val.end}</p>
                     <p>On: {val.date} at {val.depart}</p>
+                    {val.return ? <p>Will Return At: {val.return}</p> : <></>}
                 </div>
 
                 <div className="pref-symbol"><Baggage size={24}/>{getLuggageSize(val.luggage)}</div>

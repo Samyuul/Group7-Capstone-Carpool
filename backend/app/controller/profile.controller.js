@@ -6,7 +6,6 @@ const Trips = db.Trips;
 const Passengers = db.Passengers;
 const Archives = db.Archives;
 
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
 const multer = db.multer;

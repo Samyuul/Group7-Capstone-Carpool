@@ -3,12 +3,9 @@ const db = require("../models");
 // Models
 const Statistics = db.Statistics;
 
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
 const checkValidLogin = db.checkValidLogin;
-
-const { v4: uuidv4 } = require('uuid');
 
 // Retrieve statistics
 myWebsite.post("/get-stats", (req, res) => {

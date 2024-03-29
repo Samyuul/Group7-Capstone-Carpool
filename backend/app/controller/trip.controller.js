@@ -6,7 +6,6 @@ const Passengers = db.Passengers;
 const Archives = db.Archives;
 const Statistics = db.Statistics;
 
-const mongoose = db.mongoose;
 const myWebsite = db.myWebsite;
 
 const checkValidLogin = db.checkValidLogin;
