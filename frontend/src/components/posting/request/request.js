@@ -52,6 +52,8 @@ const Request = () => {
     const [tripDesc, setTripDesc] = useState('');
     const [tripID, setTripID] = useState('');
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const navigate = useNavigate();
 
     // Load initial value if required
@@ -174,7 +176,41 @@ const Request = () => {
         )
     }
 
-const submitTrip = () => {
+    const checkAllValidInputs = () => {
+
+        var fieldNames = [
+            "Starting Point",
+            "Destination",
+            "Date",
+            "Departure Time",
+        ]
+
+        var errorCheck = [
+            startPoint,
+            endPoint,
+            dates.length ? "dates" : "",
+            departTime
+        ];
+
+        var errorMsgArray = errorCheck.map((val, i) => {
+            return(val ? '' : fieldNames[i]);
+        });
+
+        var errorString = errorMsgArray.filter((x) => x.length > 0).join(', ');
+
+        return errorString;
+
+    }
+
+    const submitTrip = () => {
+
+        var errorString = checkAllValidInputs();
+
+        if (errorString) 
+        {
+            setErrorMsg("Please fill out these fields: " + errorString);
+            return
+        }
 
         // Convert date object into string for database
         var datesAsString = dates.map((date, i) => {
@@ -316,7 +352,7 @@ const submitTrip = () => {
 
             <h4 className="underline">Departure Time</h4>
             <p className="trip-desc-txt">
-                Please enter the date(s) of your trip (up to a total of 5 if necessary). Along with
+                Please enter the date of your trip. Along with
                 a departure time and a return time if applicable.
             </p>
             
@@ -400,6 +436,8 @@ const submitTrip = () => {
             <button className="trip-btn btn-spacing" onClick={postID ? editTrip : submitTrip}>
                 Submit
             </button>
+
+            {errorMsg ? <p className="trip-error-msg">{errorMsg}</p> : <></>}
         </div> : <></>
     )
 

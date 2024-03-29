@@ -65,6 +65,8 @@ const Trip = () => {
     const [tripDesc, setTripDesc] = useState('');
     const [optimizeWaypoints, setOptimizeWaypoints] = useState(false);
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const navigate = useNavigate();
 
     // Load initial value if required
@@ -263,6 +265,8 @@ const Trip = () => {
         setDirection(results);
         setDistance(estimatedDistance);
         setDuration(estimatedDuration);
+        setStartPoint(originRef.current.value);
+        setEndPoint(destinationRef.current.value);
 
     }, [wayPointList, optimizeWaypoints])
 
@@ -319,7 +323,49 @@ const Trip = () => {
         )
     }
 
+    const checkAllValidInputs = () => {
+
+        var fieldNames = [
+            "Starting Point",
+            "Destination",
+            "Date",
+            "Departure Time",
+            "Car Model",
+            "Car Type",
+            "Car Color",
+            "Car License Plate"
+        ]
+
+        var errorCheck = [
+            startPoint,
+            endPoint,
+            dates.length ? "dates" : "",
+            departTime,
+            carModel,
+            carType,
+            carColor,
+            carPlate
+        ];
+
+        var errorMsgArray = errorCheck.map((val, i) => {
+            return(val ? '' : fieldNames[i]);
+        });
+
+        var errorString = errorMsgArray.filter((x) => x.length > 0).join(', ');
+
+        return errorString;
+
+    }
+
     const submitTrip = () => {
+
+        var errorString = checkAllValidInputs();
+
+        if (errorString) 
+        {
+            setErrorMsg("Please fill out these fields: " + errorString);
+            return
+        }
 
         ProfileRoutes.retrieveProfile({userID: localStorage.getItem("userID")})
         .then(response => {
@@ -368,6 +414,7 @@ const Trip = () => {
                 navigate("/post");
             }).catch(e => {})
         }).catch(e => {});
+        
     }
 
     const editTrip = () => {
@@ -626,6 +673,8 @@ const Trip = () => {
             <button className="trip-btn btn-spacing" onClick={postID ? editTrip : submitTrip}>
                 Submit
             </button>
+
+            {errorMsg ? <p className="trip-error-msg">{errorMsg}</p> : <></>}
         </div> : <></>
 
     )

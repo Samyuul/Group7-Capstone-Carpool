@@ -278,3 +278,8 @@
 
     margin-left: 30px;
 }
+
+.trip-error-msg {
+    margin-bottom: 50px;
+    text-align: center;
+}

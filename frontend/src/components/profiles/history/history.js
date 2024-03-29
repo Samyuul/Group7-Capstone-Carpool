@@ -177,23 +177,23 @@ const History = () => {
                         {
                             pageView[4] ? 
                             <div>
-                                <button onClick={() => createReview(val.tripID)} className="trip-btn">Review</button>
+                                <button onClick={() => createReview(val.tripID)} className="history-btn">Review</button>
                             </div> : 
                             
                             pageView[2] ? 
                             <div>
-                                <button onClick={() => leaveTrip(val.tripID)} className="trip-btn">Leave</button>
+                                <button onClick={() => leaveTrip(val.tripID)} className="history-btn">Leave</button>
                             </div> :
-                            <div>
-                                <button onClick={() => archiveTrip(val.tripID)} className="trip-btn">Resolve</button>
-                                <button onClick={() => {val.postType ? navigate('/edit-trip/' + val.tripID) : navigate('/edit-request/' + val.tripID)}} className="trip-btn">Edit</button>
-                                <button onClick={() => deletePost(val.tripID)} className="trip-btn">Delete</button>
+                            <div className="history-btn-container">
+                                <button onClick={() => archiveTrip(val.tripID)} className="history-btn">Resolve</button>
+                                <button onClick={() => {val.postType ? navigate('/edit-trip/' + val.tripID) : navigate('/edit-request/' + val.tripID)}} className="history-btn">Edit</button>
+                                <button onClick={() => deletePost(val.tripID)} className="history-btn">Delete</button>
                             </div>
                         }
                     </div>
                 )
             }) : <></>}
-            <button className="read-more-btn trip-btn history-btn" onClick={() => setIndex(index + 1)}>Load More</button>
+            <button className="read-more-btn trip-btn" onClick={() => setIndex(index + 1)}>Load More</button>
             </div>
         )     
     }
@@ -239,15 +239,15 @@ const History = () => {
                     <div className="history-container" key={i}>
                         <AltReviewTemplate data={val}/>
                         {
-                            <div>
-                                <button onClick={() => editReview(val.reviewID)} className="trip-btn">Edit</button>
-                                <button onClick={() => deleteReview(val.reviewID)} className="trip-btn">Delete</button>
+                            <div className="history-btn-container">
+                                <button onClick={() => editReview(val.reviewID)} className="history-btn">Edit</button>
+                                <button onClick={() => deleteReview(val.reviewID)} className="history-btn">Delete</button>
                             </div> 
                         }
                     </div>
                 )
             }) : <></>}
-            <button className="read-more-btn trip-btn history-btn" onClick={() => setIndex(index + 1)}>Load More</button>
+            <button className="read-more-btn trip-btn" onClick={() => setIndex(index + 1)}>Load More</button>
             </div>
         )     
 
@@ -272,7 +272,6 @@ const History = () => {
                     Archived
                 </button>
             </div>
-            <div className="underline"></div>
             {pageView[3] ? renderReviews() : renderPostings()}
         </div>
     )
