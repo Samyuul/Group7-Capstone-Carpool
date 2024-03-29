@@ -208,7 +208,7 @@ myWebsite.post("/get-profile-image", (req, res) => {
 
     Profiles.findOne({userID: req.body.userID})
     .then((profile) => {
-        res.send(profile.profileImage);
+        res.send({profileImage: profile.profileImage, username: profile.username});
     }).catch((e) => {
         res.status(500).send(e.message);
     })

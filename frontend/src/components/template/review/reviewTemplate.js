@@ -1,5 +1,3 @@
-import "./reviewTemplate.css";
-
 import React from 'react';
 
 import { Star } from "@vectopus/atlas-icons-react";

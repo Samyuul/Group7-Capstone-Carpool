@@ -26,11 +26,12 @@ const PostTemplate = (props) => {
     const [rating, setRating] = useState("");
     const [numTrips, setNumTrips] = useState("");   
     const [profileImage, setProfileImage] = useState("");
+    const [username, setUsername] = useState("");
 
     let navigate = useNavigate();
 
     const getProfileImage = () => {
-        return profileImage ? profileImage : require("../../../img/Default_pfp.jpg");
+        return profileImage ? profileImage: require("../../../img/Default_pfp.jpg");
     }
     const getLuggageSize = (arr) => {
 
@@ -73,7 +74,6 @@ const PostTemplate = (props) => {
         async function loadData() {
             await StatisticsRoutes.retrieveStatistics({userID: val.userID})
             .then((response) => {
-                // console.log(response.data);
     
                 if(val.postType) // Driver post
                 {
@@ -85,18 +85,14 @@ const PostTemplate = (props) => {
                     setRating(response.data.passengerRating < 0 ? "N.A" : response.data.passengerRating);
                     setNumTrips(response.data.tripPassenger + " Ridden");
                 }
-                
     
-            }).catch((err) => {
-                console.log(err.message);
-            })
+            }).catch((err) => {})
 
             await ProfileRoutes.getProfileImage({userID: val.userID})
             .then((response) => {
-                setProfileImage(response.data);
-            }).catch((err) => {
-                console.log(err.message);
-            })
+                setProfileImage(response.data.profileImage);
+                setUsername(response.data.username);
+            }).catch((err) => {})
             
         }
 
@@ -108,7 +104,7 @@ const PostTemplate = (props) => {
     return (
         <div className={"posting " + (val.postType ? "trip-posting" : "request-posting")}  onClick={() => clickable ? navigate('/post/view/' + val.tripID) : {}}>
             
-            <div onClick={(e) => clickable ? clickProfile(e) : {}} className="user-info">
+            <div onClick={(e) => clickProfile(e, username)} className="user-info">
                 <img src={getProfileImage()} alt="profile"/>
                 <div className="user-info-txt">
                     <div className="pref-symbol"><Account size={24} /><p>{val.name}</p></div>
