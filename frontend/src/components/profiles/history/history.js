@@ -215,6 +215,7 @@ const History = () => {
 
         ReviewRoutes.deleteReview({reviewID :reviewID})
         .then((response) => {
+            window.location.reload();
         }).catch((e) => {})
 
     }
