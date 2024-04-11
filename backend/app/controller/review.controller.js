@@ -63,7 +63,7 @@ myWebsite.post("/create-review", checkValidLogin, async (req, res) => {
                             let average = 0;
 
                             if (scores.length) // Non empty scores
-                                average = scores.reduce((a, b) => a + b) / scores.length;
+                                average = (scores.reduce((a, b) => a + b) / scores.length).toFixed(2);
                             else 
                                 average = -1.1;
 
@@ -153,7 +153,7 @@ myWebsite.post("/edit-review", checkValidLogin, async (req, res) => {
                     let average = 0;
 
                     if (scores.length) // Non empty scores
-                        average = scores.reduce((a, b) => a + b) / scores.length;
+                        average = (scores.reduce((a, b) => a + b) / scores.length).toFixed(2);
                     else 
                         average = -1.1;
 
@@ -195,7 +195,7 @@ myWebsite.post("/delete-review", checkValidLogin, async (req, res) => {
                 let average = 0;
 
                 if (scores.length) // Non empty scores
-                    average = scores.reduce((a, b) => a + b) / scores.length;
+                    average = (scores.reduce((a, b) => a + b) / scores.length).toFixed(2);
                 else 
                     average = -1.1;
 
