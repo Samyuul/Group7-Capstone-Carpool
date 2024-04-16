@@ -90,7 +90,6 @@ const PostTemplate = (props) => {
 
             await ProfileRoutes.getProfileImage({userID: val.userID})
             .then((response) => {
-                console.log(response);
                 setProfileImage(response.data.profileImage);
                 setUsername(response.data.username);
             }).catch((err) => {})

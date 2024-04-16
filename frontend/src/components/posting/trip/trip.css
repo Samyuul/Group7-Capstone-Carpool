@@ -2,6 +2,7 @@
     width: 60%;
     margin: 0 auto;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-width: 1000px;
 }
 
 #trip-page h2, #request-page h2 {
