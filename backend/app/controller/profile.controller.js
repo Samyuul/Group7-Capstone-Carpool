@@ -154,36 +154,43 @@ myWebsite.post("/edit-profile", upload.single('file'), checkValidLogin, async (r
                     ContentType: req.file.mimetype
                 }
                 
+                console.log(params);
+
                 await s3.upload(params, async (error, aws_response) => {
+
+                    console.log(error);
+                    console.log(aws_response);
 
                     if(error) {
                         res.status(500).send(error.message);
                     }
-                
-                    if(currProfile.profileImage) // Image already exists
+                    else
                     {
-                        var arr = currProfile.profileImage.split("/");
-                        var prevID = arr.pop();
+                        if(currProfile.profileImage) // Image already exists
+                        {
+                            var arr = currProfile.profileImage.split("/");
+                            var prevID = arr.pop();
 
-                        // Delete previous image object from bucket
-                        var prevParams = {
-                            Bucket: process.env.AWS_BUCKET_NAME,
-                            Key: prevID
+                            // Delete previous image object from bucket
+                            var prevParams = {
+                                Bucket: process.env.AWS_BUCKET_NAME,
+                                Key: prevID
+                            }
+
+                            await s3.deleteObject(prevParams, (err, prevData) => {
+
+                                if(error) {
+                                    res.status(500).send(error.message);
+                                }
+                            }).promise();
                         }
 
-                        await s3.deleteObject(prevParams, (err, prevData) => {
-
-                            if(error) {
-                                res.status(500).send(error.message);
-                            }
-                        }).promise();
+                        currProfile.profileImage = aws_response.Location;
+                        
+                        await currProfile.save().then(() => {
+                            res.send(aws_response.Location);
+                        })
                     }
-
-                    currProfile.profileImage = aws_response.Location;
-                    
-                    await currProfile.save().then(() => {
-                        res.send(aws_response.Location);
-                    })
                     
                 })
                 
